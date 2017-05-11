@@ -3,7 +3,7 @@ package dto;
 public class DTOBranch {
 	@Override
 	public String toString() {
-		return "DTOBranch [name=" + name + ", id=" + id + "]";
+		return name;
 	}
 	String name;
 	int id;

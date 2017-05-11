@@ -6,8 +6,7 @@ import java.util.Map;
 public class DTOServicePoint {
 	@Override
 	public String toString() {
-		return "DTOServicePoint [id=" + id + ", name=" + name + ", unitId=" + unitId + ", parameters=" + parameters
-				+ ", deviceTypes=" + deviceTypes + ", profileUnitName=" + profileUnitName + "]";
+		return name;
 	}
 
 	int id;

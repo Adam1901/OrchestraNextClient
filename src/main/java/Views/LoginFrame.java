@@ -13,11 +13,12 @@ import javax.swing.JButton;
 import javax.swing.JPasswordField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.SwingConstants;
 
 public class LoginFrame extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField textField;
+	private JTextField txtSuperadmin;
 	private JPasswordField passwordField;
 	private JTextField txtHttp;
 
@@ -54,6 +55,8 @@ public class LoginFrame extends JFrame {
 		contentPane.setLayout(gbl_contentPane);
 		
 		txtHttp = new JTextField();
+		txtHttp.setHorizontalAlignment(SwingConstants.CENTER);
+		txtHttp.setText("http://54.229.6.91:8080");
 		GridBagConstraints gbc_txtHttp = new GridBagConstraints();
 		gbc_txtHttp.insets = new Insets(0, 0, 5, 0);
 		gbc_txtHttp.fill = GridBagConstraints.HORIZONTAL;
@@ -62,16 +65,19 @@ public class LoginFrame extends JFrame {
 		contentPane.add(txtHttp, gbc_txtHttp);
 		txtHttp.setColumns(10);
 		
-		textField = new JTextField();
-		GridBagConstraints gbc_textField = new GridBagConstraints();
-		gbc_textField.insets = new Insets(0, 0, 5, 0);
-		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField.gridx = 0;
-		gbc_textField.gridy = 1;
-		contentPane.add(textField, gbc_textField);
-		textField.setColumns(10);
+		txtSuperadmin = new JTextField();
+		txtSuperadmin.setHorizontalAlignment(SwingConstants.CENTER);
+		txtSuperadmin.setText("superadmin");
+		GridBagConstraints gbc_txtSuperadmin = new GridBagConstraints();
+		gbc_txtSuperadmin.insets = new Insets(0, 0, 5, 0);
+		gbc_txtSuperadmin.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtSuperadmin.gridx = 0;
+		gbc_txtSuperadmin.gridy = 1;
+		contentPane.add(txtSuperadmin, gbc_txtSuperadmin);
+		txtSuperadmin.setColumns(10);
 		
 		passwordField = new JPasswordField();
+		passwordField.setHorizontalAlignment(SwingConstants.CENTER);
 		GridBagConstraints gbc_passwordField = new GridBagConstraints();
 		gbc_passwordField.insets = new Insets(0, 0, 5, 0);
 		gbc_passwordField.fill = GridBagConstraints.HORIZONTAL;
@@ -79,10 +85,12 @@ public class LoginFrame extends JFrame {
 		gbc_passwordField.gridy = 2;
 		contentPane.add(passwordField, gbc_passwordField);
 		
+		passwordField.setText("ulan");
+		
 		JButton btnLogin = new JButton("Login");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				LoginUser lu = new LoginUser(textField.getText(), passwordField.getText(), txtHttp.getText());
+				LoginUser lu = new LoginUser(txtSuperadmin.getText(), passwordField.getText(), txtHttp.getText());
 				new Main(lu).setVisible(true);
 				setVisible(false);
 			}
