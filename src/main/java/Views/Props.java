@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 
 public class Props {
 	private final static Logger LOGGER = Logger.getLogger(Props.class.getName());
-	private static final String CONFIG_PROPERTIES = "config.properties";
+	public static final String CONFIG_PROPERTIES = "config.properties";
 	private static Properties prop = new Properties();
 
 	public static void setProperty(String propKey, String propVal) {

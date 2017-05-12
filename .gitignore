@@ -1,0 +1,8 @@
+config.properties
+target\
+.project
+.classpath
+.settings\
+*.prefs
+src/main/java/dto/test.java
+target/classes/META-INF/maven/OrchestraNextClient/OrchestraNextClient/pom.properties

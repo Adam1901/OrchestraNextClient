@@ -70,9 +70,9 @@ public class Controller {
 
 		HttpResponse<JsonNode> asJson = Unirest
 				.put(lu.getServerIPPort()
-						+ "/rest/servicepoint/branches/{branchId}/servicePoints/{servicePointId}/users/superadmin/")
-				.routeParam("branchID", branchId).routeParam("servicePointId", spId)
-				.basicAuth(lu.getUsername(), lu.getPassword()).asJson();
+						+ "/rest/servicepoint/branches/{branchId}/servicePoints/{servicePointId}/users/{username}/")
+				.routeParam("branchId", branchId).routeParam("servicePointId", spId)
+				.routeParam("username", lu.getUsername()).basicAuth(lu.getUsername(), lu.getPassword()).asJson();
 
 		System.out.println(asJson.getStatus());
 		System.out.println(asJson.getStatusText());
@@ -82,25 +82,55 @@ public class Controller {
 
 	}
 
-	public void callNext(LoginUser lu, String branchId, String spId) throws UnirestException {
+	public boolean endSession(LoginUser lu, String branchId, String spId) throws UnirestException {
 
-		{
-			HttpResponse<JsonNode> asJson = Unirest
-					.post(lu.getServerIPPort()
-							+ "/rest/servicepoint/branches/{branchID}/servicePoints/{servicePointId}/visits/next/")
-					.routeParam("branchID", branchId).routeParam("servicePointId", spId).header("Allow", "POST")
-					.basicAuth(lu.getUsername(), lu.getPassword()).asJson();
+		HttpResponse<JsonNode> asJson = Unirest
+				.delete(lu.getServerIPPort()
+						+ "/rest/servicepoint/branches/{branchId}/servicePoints/{servicePointId}/users/{username}/")
+				.routeParam("branchId", branchId).routeParam("servicePointId", spId)
+				.routeParam("username", lu.getUsername()).basicAuth(lu.getUsername(), lu.getPassword()).asJson();
 
-			System.out.println(asJson.getStatus());
-			System.out.println(asJson.getStatusText());
-			System.out.println(asJson.getHeaders());
-			System.out.println(asJson.getBody());
+		System.out.println(asJson.getStatus());
+		System.out.println(asJson.getStatusText());
+		System.out.println(asJson.getHeaders());
+		System.out.println(asJson.getBody());
+		return false;
 
-			JSONObject object = new JSONObject(asJson.getBody());
-			JSONObject visit = object.getJSONArray("visit").getJSONObject(1);
-			System.out.println(visit.get("ticketId"));
-		}
+	}
 
+	public JSONObject callNext(LoginUser lu, String branchId, String spId) throws UnirestException {
+
+		HttpResponse<JsonNode> asJson = Unirest
+				.post(lu.getServerIPPort()
+						+ "/rest/servicepoint/branches/{branchID}/servicePoints/{servicePointId}/visits/next/")
+				.routeParam("branchID", branchId).routeParam("servicePointId", spId).header("Allow", "POST")
+				.basicAuth(lu.getUsername(), lu.getPassword()).asJson();
+
+		System.out.println(asJson.getStatus());
+		System.out.println(asJson.getStatusText());
+		System.out.println(asJson.getHeaders());
+		System.out.println(asJson.getBody());
+
+		JSONObject object = new JSONObject(asJson.getBody());
+
+		return object;
+	}
+
+	public JSONObject recall(LoginUser lu, String branchId, String spId) throws UnirestException {
+
+		HttpResponse<JsonNode> asJson = Unirest
+				.put(lu.getServerIPPort()
+						+ "/rest/servicepoint/branches/{branchID}/servicePoints/{servicePointId}/visit/recall/")
+				.routeParam("branchID", branchId).routeParam("servicePointId", spId).header("Allow", "PUT")
+				.basicAuth(lu.getUsername(), lu.getPassword()).asJson();
+
+		System.out.println(asJson.getStatus());
+		System.out.println(asJson.getStatusText());
+		System.out.println(asJson.getHeaders());
+		System.out.println(asJson.getBody());
+
+		JSONObject object = new JSONObject(asJson.getBody());
+		return object;
 	}
 
 	public void setWorkProfile(LoginUser lu, String branchId, String wpId) throws UnirestException {
@@ -115,5 +145,18 @@ public class Controller {
 		System.out.println(asJson.getStatusText());
 		System.out.println(asJson.getHeaders());
 		System.out.println(asJson.getBody());
+	}
+
+	public void endVisit(LoginUser lu, String branchId, String visitId) throws UnirestException {
+		HttpResponse<JsonNode> asJson = Unirest
+				.put(lu.getServerIPPort()
+						+ "/rest/servicepoint/branches/{branchID}/visits/{visitId}/end/")
+				.routeParam("branchID", branchId).routeParam("visitId", visitId).header("Allow", "PUT")
+				.basicAuth(lu.getUsername(), lu.getPassword()).asJson();
+		System.out.println(asJson.getStatus());
+		System.out.println(asJson.getStatusText());
+		System.out.println(asJson.getHeaders());
+		System.out.println(asJson.getBody());
+		
 	}
 }
