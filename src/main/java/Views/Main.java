@@ -18,9 +18,8 @@ import javax.swing.JButton;
 import java.awt.GridBagConstraints;
 import javax.swing.JComboBox;
 import java.awt.Insets;
-import java.awt.event.ActionListener;
 import java.util.List;
-import java.awt.event.ActionEvent;
+
 import javax.swing.JLabel;
 
 public class Main extends JFrame {
@@ -144,21 +143,19 @@ public class Main extends JFrame {
 		gbc_cmbWorkProfile.insets = new Insets(0, 0, 5, 0);
 		gbc_cmbWorkProfile.gridx = 1;
 		gbc_cmbWorkProfile.gridy = 2;
-		cmbWorkProfile.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (cmbWorkProfile.getItemCount() == 0) {
-					return;
-				}
-				Controller cont = new Controller();
-				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
+		cmbWorkProfile.addActionListener(e -> {
+			if (cmbWorkProfile.getItemCount() == 0) {
+				return;
+			}
+			Controller cont = new Controller();
+			DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
 
-				DTOWorkProfile wp = (DTOWorkProfile) cmbWorkProfile.getSelectedItem();
-				try {
-					cont.setWorkProfile(lu, String.valueOf(branch.getId()), String.valueOf(wp.getId()));
-				} catch (UnirestException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+			DTOWorkProfile wp = (DTOWorkProfile) cmbWorkProfile.getSelectedItem();
+			try {
+				cont.setWorkProfile(lu, String.valueOf(branch.getId()), String.valueOf(wp.getId()));
+			} catch (UnirestException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 		});
 
@@ -185,20 +182,18 @@ public class Main extends JFrame {
 		contentPane.add(lblA, gbc_lblA);
 
 		JButton btnNext = new JButton("Next");
-		btnNext.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				Controller cont = new Controller();
-				try {
-					DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
-					DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
-					JSONObject callNext = cont.callNext(lu, String.valueOf(branch.getId()), String.valueOf(sp.getId()));
-					System.out.println(callNext);
-					lblA.setText(callNext.getJSONObject("object").getJSONObject("visit").get("ticketId").toString());
-					visit = callNext;
-				} catch (UnirestException | JSONException e) {
-					lblA.setText("ERROR - Please try Again");
-					e.printStackTrace();
-				}
+		btnNext.addActionListener(arg0 -> {
+			Controller cont = new Controller();
+			try {
+				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
+				DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
+				JSONObject callNext = cont.callNext(lu, String.valueOf(branch.getId()), String.valueOf(sp.getId()));
+				System.out.println(callNext);
+				lblA.setText(callNext.getJSONObject("object").getJSONObject("visit").get("ticketId").toString());
+				visit = callNext;
+			} catch (UnirestException | JSONException e) {
+				lblA.setText("ERROR - Please try Again");
+				e.printStackTrace();
 			}
 		});
 		GridBagConstraints gbc_btnNext = new GridBagConstraints();
@@ -208,127 +203,115 @@ public class Main extends JFrame {
 		gbc_btnNext.gridx = 3;
 		gbc_btnNext.gridy = 3;
 		contentPane.add(btnNext, gbc_btnNext);
-				
-						GridBagConstraints gbc_btnNewButton_2 = new GridBagConstraints();
-						gbc_btnNewButton_2.gridx = 5;
-						gbc_btnNewButton_2.gridy = 4;
-						btnClose.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent arg0) {
-								DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
-								DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
 
-								Controller cont = new Controller();
-								try {
-									cont.endSession(lu, String.valueOf(branch.getId()), String.valueOf(sp.getId()));
-								} catch (UnirestException e) {
-									e.printStackTrace();
-								}
-							}
-						});
-						
-								GridBagConstraints gbc_btnNewButton2 = new GridBagConstraints();
-								gbc_btnNewButton2.insets = new Insets(0, 0, 0, 5);
-								gbc_btnNewButton2.gridx = 4;
-								gbc_btnNewButton2.gridy = 4;
-								btnEnd.addActionListener(new ActionListener() {
-									public void actionPerformed(ActionEvent arg0) {
+		GridBagConstraints gbc_btnNewButton_2 = new GridBagConstraints();
+		gbc_btnNewButton_2.gridx = 5;
+		gbc_btnNewButton_2.gridy = 4;
+		btnClose.addActionListener(arg0 -> {
+			DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
+			DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
 
-										DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
-										DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
-										String visitId = visit.getJSONObject("object").getJSONObject("visit").get("id").toString();
-										Controller cont = new Controller();
-										visit = null;
-										lblA.setText("Not Serving");
-										try {
-											cont.endVisit(lu, String.valueOf(branch.getId()), visitId);
-										} catch (UnirestException e) {
-											e.printStackTrace();
-										}
-									}
-								});
-								
-										GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
-										gbc_btnNewButton_1.insets = new Insets(0, 0, 0, 5);
-										gbc_btnNewButton_1.gridx = 3;
-										gbc_btnNewButton_1.gridy = 4;
-										btnRecall.addActionListener(new ActionListener() {
-											public void actionPerformed(ActionEvent arg0) {
-												DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
-												DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
-
-												Controller cont = new Controller();
-												try {
-													JSONObject recall = cont.recall(lu, String.valueOf(branch.getId()), String.valueOf(sp.getId()));
-													visit = recall;
-												} catch (UnirestException e) {
-													// TODO Auto-generated catch block
-													e.printStackTrace();
-												}
-											}
-										});
-										
-												GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-												gbc_btnNewButton.insets = new Insets(0, 0, 0, 5);
-												gbc_btnNewButton.gridx = 2;
-												gbc_btnNewButton.gridy = 4;
-												btnOpenCounter.addActionListener(new ActionListener() {
-													public void actionPerformed(ActionEvent arg0) {
-														DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
-														DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
-
-														Controller cont = new Controller();
-														try {
-															cont.startSession(lu, String.valueOf(branch.getId()), String.valueOf(sp.getId()));
-														} catch (UnirestException e) {
-															// TODO Auto-generated catch block
-															e.printStackTrace();
-														}
-													}
-												});
-												contentPane.add(btnOpenCounter, gbc_btnNewButton);
-										contentPane.add(btnRecall, gbc_btnNewButton_1);
-								contentPane.add(btnEnd, gbc_btnNewButton2);
-						contentPane.add(btnClose, gbc_btnNewButton_2);
-
-		cmbBranch.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				if (cmbBranch.getItemCount() == 0) {
-					return;
-				}
-				Controller cont = new Controller();
-				DTOBranch selBranch = (DTOBranch) cmbBranch.getSelectedItem();
-				Props.setProperty("branchIdLastUsed", String.valueOf(selBranch.getId()));
-				cmbCounter.removeAllItems();
-				try {
-					for (DTOServicePoint dtoServicePoint : cont.getServicePoints(lu,
-							String.valueOf(selBranch.getId()))) {
-						cmbCounter.addItem(dtoServicePoint);
-					}
-				} catch (UnirestException e) {
-					e.printStackTrace();
-				}
+			Controller cont = new Controller();
+			try {
+				cont.endSession(lu, String.valueOf(branch.getId()), String.valueOf(sp.getId()));
+			} catch (UnirestException e) {
+				e.printStackTrace();
 			}
 		});
 
-		cmbCounter.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (cmbCounter.getItemCount() == 0) {
-					return;
-				}
-				Controller cont = new Controller();
-				DTOBranch selBranch = (DTOBranch) cmbBranch.getSelectedItem();
+		GridBagConstraints gbc_btnNewButton2 = new GridBagConstraints();
+		gbc_btnNewButton2.insets = new Insets(0, 0, 0, 5);
+		gbc_btnNewButton2.gridx = 4;
+		gbc_btnNewButton2.gridy = 4;
+		btnEnd.addActionListener(arg0 -> {
 
-				try {
-					if (cmbWorkProfile.getItemCount() != 0) {
-						cmbWorkProfile.removeAllItems();
-					}
-					for (DTOWorkProfile dtoWp : cont.getWorkProfile(lu, String.valueOf(selBranch.getId()))) {
-						cmbWorkProfile.addItem(dtoWp);
-					}
-				} catch (UnirestException ee) {
-					// TODO Auto-generated catch block
-					ee.printStackTrace();
+			DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
+			DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
+			String visitId = visit.getJSONObject("object").getJSONObject("visit").get("id").toString();
+			Controller cont = new Controller();
+			visit = null;
+			lblA.setText("Not Serving");
+			try {
+				cont.endVisit(lu, String.valueOf(branch.getId()), visitId);
+			} catch (UnirestException e) {
+				e.printStackTrace();
+			}
+		});
+
+		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
+		gbc_btnNewButton_1.insets = new Insets(0, 0, 0, 5);
+		gbc_btnNewButton_1.gridx = 3;
+		gbc_btnNewButton_1.gridy = 4;
+		btnRecall.addActionListener(arg0 -> {
+			DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
+			DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
+
+			Controller cont = new Controller();
+			try {
+				JSONObject recall = cont.recall(lu, String.valueOf(branch.getId()), String.valueOf(sp.getId()));
+				visit = recall;
+			} catch (UnirestException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+
+		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
+		gbc_btnNewButton.insets = new Insets(0, 0, 0, 5);
+		gbc_btnNewButton.gridx = 2;
+		gbc_btnNewButton.gridy = 4;
+		btnOpenCounter.addActionListener(arg0 -> {
+			DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
+			DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
+
+			Controller cont = new Controller();
+			try {
+				cont.startSession(lu, String.valueOf(branch.getId()), String.valueOf(sp.getId()));
+			} catch (UnirestException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+		contentPane.add(btnOpenCounter, gbc_btnNewButton);
+		contentPane.add(btnRecall, gbc_btnNewButton_1);
+		contentPane.add(btnEnd, gbc_btnNewButton2);
+		contentPane.add(btnClose, gbc_btnNewButton_2);
+
+		cmbBranch.addActionListener(arg0 -> {
+			if (cmbBranch.getItemCount() == 0) {
+				return;
+			}
+			Controller cont = new Controller();
+			DTOBranch selBranch = (DTOBranch) cmbBranch.getSelectedItem();
+			Props.setProperty("branchIdLastUsed", String.valueOf(selBranch.getId()));
+			cmbCounter.removeAllItems();
+			try {
+				for (DTOServicePoint dtoServicePoint : cont.getServicePoints(lu,
+						String.valueOf(selBranch.getId()))) {
+					cmbCounter.addItem(dtoServicePoint);
 				}
+			} catch (UnirestException e) {
+				e.printStackTrace();
+			}
+		});
+
+		cmbCounter.addActionListener(e -> {
+			if (cmbCounter.getItemCount() == 0) {
+				return;
+			}
+			Controller cont = new Controller();
+			DTOBranch selBranch = (DTOBranch) cmbBranch.getSelectedItem();
+
+			try {
+				if (cmbWorkProfile.getItemCount() != 0) {
+					cmbWorkProfile.removeAllItems();
+				}
+				for (DTOWorkProfile dtoWp : cont.getWorkProfile(lu, String.valueOf(selBranch.getId()))) {
+					cmbWorkProfile.addItem(dtoWp);
+				}
+			} catch (UnirestException ee) {
+				// TODO Auto-generated catch block
+				ee.printStackTrace();
 			}
 		});
 	}
