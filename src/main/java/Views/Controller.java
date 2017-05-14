@@ -3,6 +3,8 @@ package Views;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -17,6 +19,8 @@ import dto.DTOServicePoint;
 import dto.DTOWorkProfile;
 
 public class Controller {
+	private final static Logger log = LogManager.getLogger(Controller.class);
+	
 	public List<DTOBranch> getBranches(LoginUser lu) throws UnirestException {
 		List<DTOBranch> ret = new ArrayList<DTOBranch>();
 		HttpResponse<JsonNode> asJson = Unirest.get(lu.getServerIPPort() + "/rest/servicepoint/branches/")
@@ -74,10 +78,10 @@ public class Controller {
 				.routeParam("branchId", branchId).routeParam("servicePointId", spId)
 				.routeParam("username", lu.getUsername()).basicAuth(lu.getUsername(), lu.getPassword()).asJson();
 
-		System.out.println(asJson.getStatus());
-		System.out.println(asJson.getStatusText());
-		System.out.println(asJson.getHeaders());
-		System.out.println(asJson.getBody());
+		log.info(asJson.getStatus());
+		log.info(asJson.getStatusText());
+		log.info(asJson.getHeaders());
+		log.info(asJson.getBody());
 		return false;
 
 	}
@@ -90,10 +94,10 @@ public class Controller {
 				.routeParam("branchId", branchId).routeParam("servicePointId", spId)
 				.routeParam("username", lu.getUsername()).basicAuth(lu.getUsername(), lu.getPassword()).asJson();
 
-		System.out.println(asJson.getStatus());
-		System.out.println(asJson.getStatusText());
-		System.out.println(asJson.getHeaders());
-		System.out.println(asJson.getBody());
+		log.info(asJson.getStatus());
+		log.info(asJson.getStatusText());
+		log.info(asJson.getHeaders());
+		log.info(asJson.getBody());
 		return false;
 
 	}
@@ -106,10 +110,10 @@ public class Controller {
 				.routeParam("branchID", branchId).routeParam("servicePointId", spId).header("Allow", "POST")
 				.basicAuth(lu.getUsername(), lu.getPassword()).asJson();
 
-		System.out.println(asJson.getStatus());
-		System.out.println(asJson.getStatusText());
-		System.out.println(asJson.getHeaders());
-		System.out.println(asJson.getBody());
+		log.info(asJson.getStatus());
+		log.info(asJson.getStatusText());
+		log.info(asJson.getHeaders());
+		log.info(asJson.getBody());
 
 		JSONObject object = new JSONObject(asJson.getBody());
 
@@ -124,10 +128,10 @@ public class Controller {
 				.routeParam("branchID", branchId).routeParam("servicePointId", spId).header("Allow", "PUT")
 				.basicAuth(lu.getUsername(), lu.getPassword()).asJson();
 
-		System.out.println(asJson.getStatus());
-		System.out.println(asJson.getStatusText());
-		System.out.println(asJson.getHeaders());
-		System.out.println(asJson.getBody());
+		log.info(asJson.getStatus());
+		log.info(asJson.getStatusText());
+		log.info(asJson.getHeaders());
+		log.info(asJson.getBody());
 
 		JSONObject object = new JSONObject(asJson.getBody());
 		return object;
@@ -140,11 +144,11 @@ public class Controller {
 				.routeParam("branchID", branchId).routeParam("userName", lu.getUsername())
 				.routeParam("workProfileId", wpId).header("Allow", "PUT").basicAuth(lu.getUsername(), lu.getPassword())
 				.asJson();
-		System.out.println("SetWP");
-		System.out.println(asJson.getStatus());
-		System.out.println(asJson.getStatusText());
-		System.out.println(asJson.getHeaders());
-		System.out.println(asJson.getBody());
+		log.info("SetWP");
+		log.info(asJson.getStatus());
+		log.info(asJson.getStatusText());
+		log.info(asJson.getHeaders());
+		log.info(asJson.getBody());
 	}
 
 	public void endVisit(LoginUser lu, String branchId, String visitId) throws UnirestException {
@@ -153,10 +157,10 @@ public class Controller {
 						+ "/rest/servicepoint/branches/{branchID}/visits/{visitId}/end/")
 				.routeParam("branchID", branchId).routeParam("visitId", visitId).header("Allow", "PUT")
 				.basicAuth(lu.getUsername(), lu.getPassword()).asJson();
-		System.out.println(asJson.getStatus());
-		System.out.println(asJson.getStatusText());
-		System.out.println(asJson.getHeaders());
-		System.out.println(asJson.getBody());
+		log.info(asJson.getStatus());
+		log.info(asJson.getStatusText());
+		log.info(asJson.getHeaders());
+		log.info(asJson.getBody());
 		
 	}
 }
