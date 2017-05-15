@@ -20,4 +20,8 @@ public class DTOWorkProfile {
 
 	int id;
 	String name;
+	public String getIdAsString() {
+		// TODO Auto-generated method stub
+		return String.valueOf(id);
+	}
 }

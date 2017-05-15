@@ -6,13 +6,14 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import dto.DTOBranch;
+import dto.DTOQueue;
 import dto.DTOServicePoint;
+import dto.DTOUserStatus;
 import dto.DTOWorkProfile;
 
 import java.awt.GridBagLayout;
@@ -32,7 +33,7 @@ public class Main extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private LoginUser lu;
-	private JSONObject visit;
+	private DTOUserStatus visit;
 
 	private final JComboBox<DTOBranch> cmbBranch = new JComboBox<DTOBranch>();
 	private final JComboBox<DTOServicePoint> cmbCounter = new JComboBox<DTOServicePoint>();
@@ -48,10 +49,7 @@ public class Main extends JFrame {
 	private final JButton btnClose = new JButton("Close");
 	private final JButton btnEnd = new JButton("End");
 	private final JButton btnInfo = new JButton("Info");
-
-	/**
-	 * Launch the application.
-	 */
+	private final JButton btnNext = new JButton("Next");
 
 	/**
 	 * Create the frame.
@@ -99,10 +97,10 @@ public class Main extends JFrame {
 			if (cmbCounter.getItemCount() != 0) {
 				cmbCounter.removeAllItems();
 			}
-			for (DTOServicePoint dtoServicePoint : cont.getServicePoints(lu, String.valueOf(selBranch.getId()))) {
+			for (DTOServicePoint dtoServicePoint : cont.getServicePoints(lu, selBranch)) {
 				cmbCounter.addItem(dtoServicePoint);
 			}
-		} catch (UnirestException e) {
+		} catch (Exception e) {
 			log.error("Failed to load combo boxes", e);
 			JOptionPane.showMessageDialog(this,
 					"Failed to load combo boxes\n Please try again and contact support with the log files", "Error",
@@ -160,23 +158,6 @@ public class Main extends JFrame {
 		gbc_cmbWorkProfile.insets = new Insets(0, 0, 5, 5);
 		gbc_cmbWorkProfile.gridx = 2;
 		gbc_cmbWorkProfile.gridy = 3;
-		cmbWorkProfile.addActionListener(e -> {
-			try {
-				if (cmbWorkProfile.getItemCount() == 0) {
-					return;
-				}
-				Controller cont = new Controller();
-				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
-
-				DTOWorkProfile wp = (DTOWorkProfile) cmbWorkProfile.getSelectedItem();
-				cont.setWorkProfile(lu, String.valueOf(branch.getId()), String.valueOf(wp.getId()));
-			} catch (Exception e1) {
-				log.error("Failed to data", e1);
-				JOptionPane.showMessageDialog(this,
-						"Failed to load data\n Please try again and contact support with the log files", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		});
 
 		GridBagConstraints gbc_lblProfile = new GridBagConstraints();
 		gbc_lblProfile.fill = GridBagConstraints.HORIZONTAL;
@@ -194,36 +175,18 @@ public class Main extends JFrame {
 		contentPane.add(lblNewLabel, gbc_lblNewLabel);
 
 		GridBagConstraints gbc_lblA = new GridBagConstraints();
-		gbc_lblA.gridwidth = 2;
+		gbc_lblA.gridwidth = 3;
 		gbc_lblA.fill = GridBagConstraints.HORIZONTAL;
 		gbc_lblA.insets = new Insets(0, 0, 5, 5);
 		gbc_lblA.gridx = 2;
 		gbc_lblA.gridy = 4;
 		contentPane.add(lblA, gbc_lblA);
 
-		JButton btnNext = new JButton("Next");
-		btnNext.addActionListener(arg0 -> {
-			Controller cont = new Controller();
-			try {
-				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
-				DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
-				JSONObject callNext = cont.callNext(lu, String.valueOf(branch.getId()), String.valueOf(sp.getId()));
-				System.out.println(callNext);
-				lblA.setText(callNext.getJSONObject("object").getJSONObject("visit").get("ticketId").toString());
-				visit = callNext;
-			} catch (Exception e) {
-				lblA.setText("ERROR - Please try Again");
-				log.error("Failed to data", e);
-				JOptionPane.showMessageDialog(this,
-						"Failed to load data\n Please try again and contact support with the log files", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		});
 		GridBagConstraints gbc_btnNext = new GridBagConstraints();
-		gbc_btnNext.gridwidth = 3;
+		gbc_btnNext.gridwidth = 2;
 		gbc_btnNext.insets = new Insets(0, 0, 5, 5);
 		gbc_btnNext.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnNext.gridx = 4;
+		gbc_btnNext.gridx = 5;
 		gbc_btnNext.gridy = 4;
 		contentPane.add(btnNext, gbc_btnNext);
 
@@ -231,97 +194,161 @@ public class Main extends JFrame {
 		gbc_btnNewButton_2.insets = new Insets(0, 0, 5, 5);
 		gbc_btnNewButton_2.gridx = 6;
 		gbc_btnNewButton_2.gridy = 5;
-		btnClose.addActionListener(arg0 -> {
-			try {
-				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
-				DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
-
-				Controller cont = new Controller();
-				cont.endSession(lu, String.valueOf(branch.getId()), String.valueOf(sp.getId()));
-			} catch (Exception e) {
-				log.error("Failed to data", e);
-				JOptionPane.showMessageDialog(this,
-						"Failed to load data\n Please try again and contact support with the log files", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		});
-
+		
 		GridBagConstraints gbc_btnNewButton2 = new GridBagConstraints();
 		gbc_btnNewButton2.insets = new Insets(0, 0, 5, 5);
 		gbc_btnNewButton2.gridx = 5;
 		gbc_btnNewButton2.gridy = 5;
-		btnEnd.addActionListener(arg0 -> {
-			try {
-				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
-				String visitId = visit.getJSONObject("object").getJSONObject("visit").get("id").toString();
-				Controller cont = new Controller();
-				visit = null;
-				lblA.setText("Not Serving");
-				cont.endVisit(lu, String.valueOf(branch.getId()), visitId);
-			} catch (Exception e) {
-				log.error("Failed to data", e);
-				JOptionPane.showMessageDialog(this,
-						"Failed to load data\n Please try again and contact support with the log files", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		});
 
 		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
 		gbc_btnNewButton_1.insets = new Insets(0, 0, 5, 5);
 		gbc_btnNewButton_1.gridx = 4;
 		gbc_btnNewButton_1.gridy = 5;
-		btnRecall.addActionListener(arg0 -> {
-			try {
-				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
-				DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
-
-				Controller cont = new Controller();
-				JSONObject recall = cont.recall(lu, String.valueOf(branch.getId()), String.valueOf(sp.getId()));
-				visit = recall;
-				lblA.setText(recall.getJSONObject("object").getJSONObject("visit").get("ticketId").toString());
-			} catch (Exception e) {
-				log.error("Failed to data", e);
-				JOptionPane.showMessageDialog(this,
-						"Failed to load data\n Please try again and contact support with the log files", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		});
+		
 
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
 		gbc_btnNewButton.insets = new Insets(0, 0, 5, 5);
 		gbc_btnNewButton.gridx = 3;
 		gbc_btnNewButton.gridy = 5;
-		btnOpenCounter.addActionListener(arg0 -> {
-			DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
-			DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
-
-			Controller cont = new Controller();
-			try {
-				cont.startSession(lu, String.valueOf(branch.getId()), String.valueOf(sp.getId()));
-			} catch (Exception e) {
-				log.error("Failed to data", e);
-				JOptionPane.showMessageDialog(this,
-						"Failed to load data\n Please try again and contact support with the log files", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		});
 
 		GridBagConstraints gbc_btnInfo = new GridBagConstraints();
 		gbc_btnInfo.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnInfo.insets = new Insets(0, 0, 5, 5);
 		gbc_btnInfo.gridx = 1;
 		gbc_btnInfo.gridy = 5;
-		btnInfo.addActionListener(arg0 -> {
-			JOptionPane.showMessageDialog(this,
-					"Adam was here", "Info",
-					JOptionPane.INFORMATION_MESSAGE);
-		});
+		
 		contentPane.add(btnInfo, gbc_btnInfo);
 		contentPane.add(btnOpenCounter, gbc_btnNewButton);
 		contentPane.add(btnRecall, gbc_btnNewButton_1);
 		contentPane.add(btnEnd, gbc_btnNewButton2);
 		contentPane.add(btnClose, gbc_btnNewButton_2);
+		
+		cmbWorkProfile.addActionListener(e -> {
+			try {
+				if (cmbWorkProfile.getItemCount() == 0) {
+					return;
+				}
+				Controller cont = new Controller();
+				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
 
+				DTOWorkProfile wp = (DTOWorkProfile) cmbWorkProfile.getSelectedItem();
+				cont.setWorkProfile(lu, branch, wp);
+			} catch (Exception e1) {
+				log.error("Failed to data", e1);
+				JOptionPane.showMessageDialog(this,
+						"Failed to load data\n Please try again and contact support with the log files", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		});
+		
+		btnNext.addActionListener(arg0 -> {
+			Controller cont = new Controller();
+			try {
+				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
+				DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
+				DTOWorkProfile wp = (DTOWorkProfile) cmbWorkProfile.getSelectedItem();
+
+				List<DTOQueue> queueInfoForWorkprofile = cont.getQueueInfoForWorkprofile(lu, branch, wp);
+				for (DTOQueue dtoQueue : queueInfoForWorkprofile) {
+					if (dtoQueue.getCustomersWaiting() == 0) {
+						JOptionPane.showMessageDialog(this, "No Customers waiting", "Info",
+								JOptionPane.INFORMATION_MESSAGE);
+						return;
+					}
+				}
+
+				DTOUserStatus callNext = cont.callNext(lu, branch, sp);
+				String ticketId = callNext.getVisit().getTicketId();
+				lblA.setText(ticketId);
+				visit = callNext;
+			} catch (Exception e) {
+				lblA.setText("ERROR - Please try Again");
+				log.error("Failed to data", e);
+				JOptionPane.showMessageDialog(this,
+						"Failed to load data\nPlease try again and contact support with the log files", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		});
+		
+		btnClose.addActionListener(arg0 -> {
+			try {
+				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
+				DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
+
+				Controller cont = new Controller();
+				cont.endSession(lu, branch, sp);
+			} catch (Exception e) {
+				log.error("Failed to data", e);
+				JOptionPane.showMessageDialog(this,
+						"Failed to load data\n Please try again and contact support with the log files", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		});
+		
+		btnEnd.addActionListener(arg0 -> {
+			try {
+				if (visit == null) {
+					JOptionPane.showMessageDialog(this, "You are not currently serving a customer", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
+				String visitId = visit.getVisit().getIdAsString();
+				Controller cont = new Controller();
+				visit = null;
+				lblA.setText("Not Serving");
+				cont.endVisit(lu, branch, visitId);
+			} catch (Exception e) {
+				log.error("Failed to data", e);
+				JOptionPane.showMessageDialog(this,
+						"Failed to load data\n Please try again and contact support with the log files", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		});
+		
+		btnRecall.addActionListener(arg0 -> {
+			try {
+				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
+				DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
+
+				if (visit == null) {
+					JOptionPane.showMessageDialog(this, "You are not currently serving a customer", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				Controller cont = new Controller();
+				DTOUserStatus recall = cont.recall(lu, branch, sp);
+				visit = recall;
+				lblA.setText(recall.getVisit().getTicketId());
+			} catch (Exception e) {
+				log.error("Failed to data", e);
+				JOptionPane.showMessageDialog(this,
+						"Failed to load data\n Please try again and contact support with the log files", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		});
+		
+		btnOpenCounter.addActionListener(arg0 -> {
+			DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
+			DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
+
+			Controller cont = new Controller();
+			try {
+				cont.startSession(lu, branch, sp);
+			} catch (Exception e) {
+				log.error("Failed to data", e);
+				JOptionPane.showMessageDialog(this,
+						"Failed to load data\n Please try again and contact support with the log files", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		});
+		
+		btnInfo.addActionListener(arg0 -> {
+			JOptionPane.showMessageDialog(this, "Adam was here", "Info", JOptionPane.INFORMATION_MESSAGE);
+		});
+		
 		cmbBranch.addActionListener(arg0 -> {
 			if (cmbBranch.getItemCount() == 0) {
 				return;
@@ -331,7 +358,7 @@ public class Main extends JFrame {
 			Props.setProperty("branchIdLastUsed", String.valueOf(selBranch.getId()));
 			cmbCounter.removeAllItems();
 			try {
-				for (DTOServicePoint dtoServicePoint : cont.getServicePoints(lu, String.valueOf(selBranch.getId()))) {
+				for (DTOServicePoint dtoServicePoint : cont.getServicePoints(lu, selBranch)) {
 					cmbCounter.addItem(dtoServicePoint);
 				}
 			} catch (UnirestException e) {
@@ -350,7 +377,7 @@ public class Main extends JFrame {
 				if (cmbWorkProfile.getItemCount() != 0) {
 					cmbWorkProfile.removeAllItems();
 				}
-				for (DTOWorkProfile dtoWp : cont.getWorkProfile(lu, String.valueOf(selBranch.getId()))) {
+				for (DTOWorkProfile dtoWp : cont.getWorkProfile(lu, selBranch)) {
 					cmbWorkProfile.addItem(dtoWp);
 				}
 			} catch (Exception ee) {
