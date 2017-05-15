@@ -68,7 +68,13 @@ public class Main extends JFrame {
 	private void populate() {
 		Controller cont = new Controller();
 		try {
-			Integer branchIdLastUser = Integer.valueOf(Props.getProperty("branchIdLastUsed"));
+			Integer branchIdLastUser = null;
+			try {
+				branchIdLastUser = Integer.valueOf(Props.getProperty("branchIdLastUsed"));
+			} catch (NumberFormatException e) {
+				log.error(e);
+			}
+
 			List<DTOBranch> branches = cont.getBranches(lu);
 			cmbBranch.removeAllItems();
 			for (DTOBranch dtoBranch : branches) {
@@ -96,7 +102,7 @@ public class Main extends JFrame {
 			for (DTOServicePoint dtoServicePoint : cont.getServicePoints(lu, String.valueOf(selBranch.getId()))) {
 				cmbCounter.addItem(dtoServicePoint);
 			}
-		} catch (Exception e) {
+		} catch (UnirestException e) {
 			log.error("Failed to load combo boxes", e);
 			JOptionPane.showMessageDialog(this,
 					"Failed to load combo boxes\n Please try again and contact support with the log files", "Error",
