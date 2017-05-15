@@ -12,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.seaglasslookandfeel.SeaGlassLookAndFeel;
 
+import Utils.Utils;
+
 import java.awt.GridBagLayout;
 import javax.swing.JTextField;
 import java.awt.GridBagConstraints;
@@ -75,17 +77,26 @@ public class LoginFrame extends JFrame {
 		jbInit();
 
 		new FileOutputStream(Props.CONFIG_PROPERTIES, true).close();
-		
+
 		txtIp.setText(Props.getProperty("ip"));
 		txtPort.setText(Props.getProperty("port"));
 		cmbProtocol.setSelectedItem(Props.getProperty("proto"));
-		
+
 		Props.setProperty("ip", txtIp.getText());
 		Props.setProperty("port", txtPort.getText());
-		Props.setProperty("proto", cmbProtocol.getSelectedItem().toString());
-		
+		Object selectedItem = cmbProtocol.getSelectedItem();
+		if (selectedItem != null) {
+			Props.setProperty("proto", selectedItem.toString());
+		} else {
+			cmbProtocol.setSelectedIndex(0);
+		}
 		txtUsername.setText(Props.getProperty("username"));
-		passwordField.setText(Props.getProperty("password"));
+		try {
+			passwordField.setText(Utils.decode(Props.getProperty("password")));
+		} catch (Throwable e) {
+			log.error(e);
+			e.printStackTrace();
+		}
 	}
 
 	private void jbInit() {
@@ -125,7 +136,6 @@ public class LoginFrame extends JFrame {
 		contentPane.add(txtIp, gbc_txtIp);
 		txtIp.setColumns(10);
 
-		
 		NumberFormat format = NumberFormat.getInstance();
 		NumberFormatter formatter = new NumberFormatter(format);
 		formatter.setValueClass(Integer.class);
@@ -186,12 +196,16 @@ public class LoginFrame extends JFrame {
 			Props.setProperty("port", txtPort.getText());
 			Props.setProperty("proto", cmbProtocol.getSelectedItem().toString());
 			Props.setProperty("username", txtUsername.getText());
-			Props.setProperty("password", passwordField.getText());
+			try {
+				Props.setProperty("password", Utils.encode(new String(passwordField.getPassword())));
+			} catch (Exception e) {
+				log.error(e);
+			}
 
 			String connectionString = cmbProtocol.getSelectedItem().toString() + txtIp.getText() + ":"
 					+ txtPort.getText();
 
-			LoginUser lu = new LoginUser(txtUsername.getText(), passwordField.getText(), connectionString);
+			LoginUser lu = new LoginUser(txtUsername.getText(), new String(passwordField.getPassword()), connectionString);
 			new Main(lu).setVisible(true);
 			setVisible(false);
 		});
