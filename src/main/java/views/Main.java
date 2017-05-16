@@ -68,12 +68,8 @@ public class Main extends JFrame {
 		String appName = Props.getGlobalProperty(GlobalProperties.APP_NAME);
 		setTitle("Orchestra Next Client | Registerd to: " + appName);
 		this.lu = lu;
-		try {
-			jbInit();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		jbInit();
+		createImagesForButtons();
 		populate();
 	}
 
@@ -122,7 +118,7 @@ public class Main extends JFrame {
 		}
 	}
 
-	private void jbInit() throws IOException {
+	private void jbInit() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 467, 215);
 		contentPane = new JPanel();
@@ -202,10 +198,6 @@ public class Main extends JFrame {
 		gbc_btnNext.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnNext.gridx = 5;
 		gbc_btnNext.gridy = 4;
-		BufferedImage read = ImageIO.read(getClass().getClassLoader().getResource("next.png"));
-		read = Scalr.resize(read, Scalr.Method.SPEED, Scalr.Mode.AUTOMATIC, 20, 20);
-		btnNext.setToolTipText("Next");
-		btnNext.setIcon(new ImageIcon(read));
 		contentPane.add(btnNext, gbc_btnNext);
 
 		GridBagConstraints gbc_btnNewButton_2 = new GridBagConstraints();
@@ -415,6 +407,17 @@ public class Main extends JFrame {
 						JOptionPane.ERROR_MESSAGE);
 			}
 		});
+	}
+	
+	private void createImagesForButtons() {
+		try {
+			BufferedImage read = ImageIO.read(getClass().getClassLoader().getResource("next.png"));
+			read = Scalr.resize(read, Scalr.Method.SPEED, Scalr.Mode.AUTOMATIC, 20, 20);
+			btnNext.setToolTipText("Next");
+			btnNext.setIcon(new ImageIcon(read));
+		} catch (IOException e) {
+			log.error(e);
+		}
 	}
 
 	public JComboBox<DTOBranch> getCmbBranch() {

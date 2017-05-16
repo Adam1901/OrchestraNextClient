@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>OrchestraNextClient</groupId>
 	<artifactId>OrchestraNextClient</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.4</version>
 	<dependencies>
 		<dependency>
 			<groupId>com.mashape.unirest</groupId>
@@ -98,4 +98,11 @@
 			</plugin>
 		</plugins>
 	</build>
+	<name>Orchestra Call Next</name>
+	<url>http://qmatic.com</url>
+	<description>Simple workstation replacement</description>
+	<organization>
+		<name>Qmatic</name>
+		<url>http://qmatic.com</url>
+	</organization>
 </project> 

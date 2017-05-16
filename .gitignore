@@ -10,3 +10,6 @@ target/classes/META-INF/maven/OrchestraNextClient/OrchestraNextClient/pom.proper
 all.log
 log.log
 global.properties
+.project
+.classpath
+*.properties
