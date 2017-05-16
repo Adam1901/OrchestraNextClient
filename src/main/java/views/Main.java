@@ -415,7 +415,7 @@ public class Main extends JFrame {
 			read = Scalr.resize(read, Scalr.Method.SPEED, Scalr.Mode.AUTOMATIC, 20, 20);
 			btnNext.setToolTipText("Next");
 			btnNext.setIcon(new ImageIcon(read));
-		} catch (IOException e) {
+		} catch (Throwable e) {
 			log.error(e);
 		}
 	}
