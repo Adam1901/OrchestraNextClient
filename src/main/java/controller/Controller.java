@@ -1,6 +1,7 @@
 package controller;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -19,10 +20,15 @@ import dto.DTOQueue;
 import dto.DTOServicePoint;
 import dto.DTOUserStatus;
 import dto.DTOWorkProfile;
+import dto.OrchestraDTO;
+import utils.Props;
 import views.LoginUser;
 
 public class Controller {
 	private final static Logger log = LogManager.getLogger(Controller.class);
+
+	private final static boolean sortByName = Boolean
+			.valueOf(Props.getProperty(Props.GlobalProperties.SORT_BY_NAME, false));
 
 	public List<DTOBranch> getBranches(LoginUser lu) throws UnirestException {
 		List<DTOBranch> ret = new ArrayList<DTOBranch>();
@@ -35,7 +41,7 @@ public class Controller {
 			DTOBranch fromJson = new Gson().fromJson(object.toString(), DTOBranch.class);
 			ret.add(fromJson);
 		}
-
+		sortAndRemove(ret, sortByName);
 		return ret;
 	}
 
@@ -52,7 +58,7 @@ public class Controller {
 			DTOWorkProfile fromJson = new Gson().fromJson(object.toString(), DTOWorkProfile.class);
 			ret.add(fromJson);
 		}
-
+		sortAndRemove(ret, sortByName);
 		return ret;
 	}
 
@@ -70,7 +76,7 @@ public class Controller {
 			DTOServicePoint fromJson = new Gson().fromJson(object.toString(), DTOServicePoint.class);
 			ret.add(fromJson);
 		}
-
+		sortAndRemove(ret, sortByName);
 		return ret;
 
 	}
@@ -118,12 +124,13 @@ public class Controller {
 		log.info(asJson.getBody());
 
 		JSONObject object = new JSONObject(asJson.getBody());
-		
+
 		DTOUserStatus userStat = new Gson().fromJson(object.getJSONObject("object").toString(), DTOUserStatus.class);
-		DTOUserStatus.Visit visi = new Gson().fromJson(object.getJSONObject("object").getJSONObject("visit").toString(), DTOUserStatus.Visit.class);
-		
+		DTOUserStatus.Visit visi = new Gson().fromJson(object.getJSONObject("object").getJSONObject("visit").toString(),
+				DTOUserStatus.Visit.class);
+
 		userStat.setVisit(visi);
-		
+
 		return userStat;
 	}
 
@@ -139,12 +146,13 @@ public class Controller {
 		log.info(asJson.getStatusText());
 		log.info(asJson.getHeaders());
 		log.info(asJson.getBody());
-		
-		JSONObject object = new JSONObject(asJson.getBody());	
-		
+
+		JSONObject object = new JSONObject(asJson.getBody());
+
 		DTOUserStatus userStat = new Gson().fromJson(object.getJSONObject("object").toString(), DTOUserStatus.class);
-		DTOUserStatus.Visit visi = new Gson().fromJson(object.getJSONObject("object").getJSONObject("visit").toString(), DTOUserStatus.Visit.class);
-		
+		DTOUserStatus.Visit visi = new Gson().fromJson(object.getJSONObject("object").getJSONObject("visit").toString(),
+				DTOUserStatus.Visit.class);
+
 		userStat.setVisit(visi);
 
 		return userStat;
@@ -191,18 +199,16 @@ public class Controller {
 			DTOQueue fromJson = new Gson().fromJson(object.toString(), DTOQueue.class);
 			ret.add(fromJson);
 		}
+		sortAndRemove(ret, sortByName);
 
 		return ret;
 	}
-	
-	public List<DTOQueue> getQueueInfo(LoginUser lu, DTOBranch branch)
-			throws UnirestException {
+
+	public List<DTOQueue> getQueueInfo(LoginUser lu, DTOBranch branch) throws UnirestException {
 		List<DTOQueue> ret = new ArrayList<DTOQueue>();
 		HttpResponse<JsonNode> asJson = Unirest
-				.get(lu.getServerIPPort()
-						+ "/rest/servicepoint/branches/{branchID}/queues/")
-				.routeParam("branchID", branch.getIdAsString())
-				.basicAuth(lu.getUsername(), lu.getPassword()).asJson();
+				.get(lu.getServerIPPort() + "/rest/servicepoint/branches/{branchID}/queues/")
+				.routeParam("branchID", branch.getIdAsString()).basicAuth(lu.getUsername(), lu.getPassword()).asJson();
 
 		JSONArray json = new JSONArray(asJson.getBody().toString());
 		for (int i = 0; i < json.length(); i++) {
@@ -211,6 +217,31 @@ public class Controller {
 			ret.add(fromJson);
 		}
 
+		sortAndRemove(ret, sortByName);
+
 		return ret;
+	}
+
+	private <T extends OrchestraDTO> void sortAndRemove(List<T> ret, boolean sortByName) {
+		if (sortByName) {
+			ret.sort(new Comparator<T>() {
+				@Override
+				public int compare(T arg0, T arg1) {
+					return arg0.getName().compareTo(arg1.getName());
+				}
+			});
+		} else {
+			ret.sort(new Comparator<T>() {
+				@Override
+				public int compare(T arg0, T arg1) {
+					Integer i1 = arg0.getId();
+					Integer i2 = arg1.getId();
+					return i1.compareTo(i2);
+				}
+			});
+		}
+
+		// Remove casual called (J8 FTW)
+		ret.removeIf(p -> p.getName().toLowerCase().equals("casual caller"));
 	}
 }

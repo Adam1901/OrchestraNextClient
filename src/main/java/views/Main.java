@@ -58,6 +58,7 @@ public class Main extends JFrame {
 	 * @param lu
 	 */
 	public Main(LoginUser lu) {
+		setTitle("Orchestra - Next Client");
 		this.lu = lu;
 		jbInit();
 		populate();
@@ -68,7 +69,7 @@ public class Main extends JFrame {
 		try {
 			Integer branchIdLastUser = null;
 			try {
-				branchIdLastUser = Integer.valueOf(Props.getProperty("branchIdLastUsed"));
+				branchIdLastUser = Integer.valueOf(Props.getProperty("branchIdLastUsed", true));
 			} catch (NumberFormatException e) {
 				log.error(e);
 			}
@@ -350,7 +351,7 @@ public class Main extends JFrame {
 		});
 
 		btnInfo.addActionListener(arg0 -> {
-			QueueInfoFrame qf = new QueueInfoFrame(lu, this);
+			new QueueInfoFrame(lu, this);
 			//JOptionPane.showMessageDialog(this, "Adam was here", "Info", JOptionPane.INFORMATION_MESSAGE);
 		});
 
@@ -360,7 +361,7 @@ public class Main extends JFrame {
 			}
 			Controller cont = new Controller();
 			DTOBranch selBranch = (DTOBranch) getCmbBranch().getSelectedItem();
-			Props.setProperty("branchIdLastUsed", String.valueOf(selBranch.getId()));
+			Props.setProperty("branchIdLastUsed", String.valueOf(selBranch.getId()), true);
 			cmbCounter.removeAllItems();
 			try {
 				for (DTOServicePoint dtoServicePoint : cont.getServicePoints(lu, selBranch)) {

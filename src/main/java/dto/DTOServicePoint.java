@@ -3,7 +3,7 @@ package dto;
 import java.util.List;
 import java.util.Map;
 
-public class DTOServicePoint {
+public class DTOServicePoint implements OrchestraDTO{
 	int id;
 	String name;
 	String unitId;

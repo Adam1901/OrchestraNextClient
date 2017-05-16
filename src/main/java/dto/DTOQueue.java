@@ -1,6 +1,6 @@
 package dto;
 
-public class DTOQueue {
+public class DTOQueue implements OrchestraDTO{
 	private int id;
 	private String name;
 	private int customersWaiting;
@@ -23,7 +23,7 @@ public class DTOQueue {
 	}
 
 	public void setName(String name) {
-		name = name;
+		this.name = name;
 	}
 
 	public int getCustomersWaiting() {

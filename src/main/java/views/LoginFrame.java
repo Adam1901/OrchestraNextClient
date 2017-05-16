@@ -77,23 +77,21 @@ public class LoginFrame extends JFrame {
 		setResizable(false);
 		jbInit();
 
-		new FileOutputStream(Props.CONFIG_PROPERTIES, true).close();
+		txtIp.setText(Props.getProperty("ip", true));
+		txtPort.setText(Props.getProperty("port", true));
+		cmbProtocol.setSelectedItem(Props.getProperty("proto", true));
 
-		txtIp.setText(Props.getProperty("ip"));
-		txtPort.setText(Props.getProperty("port"));
-		cmbProtocol.setSelectedItem(Props.getProperty("proto"));
-
-		Props.setProperty("ip", txtIp.getText());
-		Props.setProperty("port", txtPort.getText());
+		Props.setProperty("ip", txtIp.getText(), true);
+		Props.setProperty("port", txtPort.getText(), true);
 		Object selectedItem = cmbProtocol.getSelectedItem();
 		if (selectedItem != null) {
-			Props.setProperty("proto", selectedItem.toString());
+			Props.setProperty("proto", selectedItem.toString(), true);
 		} else {
 			cmbProtocol.setSelectedIndex(0);
 		}
-		txtUsername.setText(Props.getProperty("username"));
+		txtUsername.setText(Props.getProperty("username", true));
 		try {
-			passwordField.setText(Utils.decode(Props.getProperty("password")));
+			passwordField.setText(Utils.decode(Props.getProperty("password", true)));
 		} catch (Throwable e) {
 			log.error(e);
 			e.printStackTrace();
@@ -193,12 +191,12 @@ public class LoginFrame extends JFrame {
 		JButton btnLogin = new JButton("Login");
 		btnLogin.addActionListener(arg0 -> {
 
-			Props.setProperty("ip", txtIp.getText());
-			Props.setProperty("port", txtPort.getText());
-			Props.setProperty("proto", cmbProtocol.getSelectedItem().toString());
-			Props.setProperty("username", txtUsername.getText());
+			Props.setProperty("ip", txtIp.getText(), true);
+			Props.setProperty("port", txtPort.getText(), true);
+			Props.setProperty("proto", cmbProtocol.getSelectedItem().toString(), true);
+			Props.setProperty("username", txtUsername.getText(), true);
 			try {
-				Props.setProperty("password", Utils.encode(new String(passwordField.getPassword())));
+				Props.setProperty("password", Utils.encode(new String(passwordField.getPassword())), true);
 			} catch (Exception e) {
 				log.error(e);
 			}

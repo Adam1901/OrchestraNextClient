@@ -2,7 +2,6 @@ package views;
 
 import javax.swing.JFrame;
 import java.awt.GridBagLayout;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -114,15 +113,6 @@ public class QueueInfoFrame extends JFrame implements Runnable {
 	}
 
 	private void drawEverything(List<DTOQueue> queueInfo, boolean showWP) throws InterruptedException {
-		queueInfo.sort(new Comparator<DTOQueue>() {
-			@Override
-			public int compare(DTOQueue arg0, DTOQueue arg1) {
-				return arg0.getName().compareTo(arg1.getName());
-			}
-		});
-
-		// Remove casual called (J8 FTW)
-		queueInfo.removeIf(p -> p.getName().toLowerCase().equals("casual caller"));
 
 		String txt = "";
 		for (DTOQueue dtoQueue : queueInfo) {

@@ -1,6 +1,6 @@
 package dto;
 
-public class DTOWorkProfile {
+public class DTOWorkProfile implements OrchestraDTO {
 	public int getId() {
 		return id;
 	}
