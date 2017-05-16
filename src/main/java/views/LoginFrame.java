@@ -1,4 +1,4 @@
-package Views;
+package views;
 
 import java.awt.EventQueue;
 
@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.seaglasslookandfeel.SeaGlassLookAndFeel;
 
-import Utils.Utils;
+import utils.Utils;
 
 import java.awt.GridBagLayout;
 import javax.swing.JTextField;

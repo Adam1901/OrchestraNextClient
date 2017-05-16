@@ -1,4 +1,4 @@
-package Views;
+package views;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
 
+import controller.Controller;
 import dto.DTOBranch;
 import dto.DTOQueue;
 import dto.DTOServicePoint;
@@ -193,7 +194,7 @@ public class Main extends JFrame {
 		gbc_btnNewButton_2.insets = new Insets(0, 0, 5, 5);
 		gbc_btnNewButton_2.gridx = 6;
 		gbc_btnNewButton_2.gridy = 5;
-		
+
 		GridBagConstraints gbc_btnNewButton2 = new GridBagConstraints();
 		gbc_btnNewButton2.insets = new Insets(0, 0, 5, 5);
 		gbc_btnNewButton2.gridx = 5;
@@ -203,7 +204,6 @@ public class Main extends JFrame {
 		gbc_btnNewButton_1.insets = new Insets(0, 0, 5, 5);
 		gbc_btnNewButton_1.gridx = 4;
 		gbc_btnNewButton_1.gridy = 5;
-		
 
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
 		gbc_btnNewButton.insets = new Insets(0, 0, 5, 5);
@@ -215,13 +215,13 @@ public class Main extends JFrame {
 		gbc_btnInfo.insets = new Insets(0, 0, 5, 5);
 		gbc_btnInfo.gridx = 1;
 		gbc_btnInfo.gridy = 5;
-		
+
 		contentPane.add(btnInfo, gbc_btnInfo);
 		contentPane.add(btnOpenCounter, gbc_btnNewButton);
 		contentPane.add(btnRecall, gbc_btnNewButton_1);
 		contentPane.add(btnEnd, gbc_btnNewButton2);
 		contentPane.add(btnClose, gbc_btnNewButton_2);
-		
+
 		cmbWorkProfile.addActionListener(e -> {
 			try {
 				if (cmbWorkProfile.getItemCount() == 0) {
@@ -239,7 +239,7 @@ public class Main extends JFrame {
 						JOptionPane.ERROR_MESSAGE);
 			}
 		});
-		
+
 		btnNext.addActionListener(arg0 -> {
 			Controller cont = new Controller();
 			try {
@@ -247,13 +247,18 @@ public class Main extends JFrame {
 				DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
 				DTOWorkProfile wp = (DTOWorkProfile) cmbWorkProfile.getSelectedItem();
 
+				boolean custWaiting = false;
 				List<DTOQueue> queueInfoForWorkprofile = cont.getQueueInfoForWorkprofile(lu, branch, wp);
 				for (DTOQueue dtoQueue : queueInfoForWorkprofile) {
-					if (dtoQueue.getCustomersWaiting() == 0) {
-						JOptionPane.showMessageDialog(this, "No Customers waiting", "Info",
-								JOptionPane.INFORMATION_MESSAGE);
-						return;
+					if (dtoQueue.getCustomersWaiting() != 0) {
+						custWaiting = true;
 					}
+				}
+
+				if (custWaiting) {
+					JOptionPane.showMessageDialog(this, "No Customers waiting", "Info",
+							JOptionPane.INFORMATION_MESSAGE);
+					return;
 				}
 
 				DTOUserStatus callNext = cont.callNext(lu, branch, sp);
@@ -268,7 +273,7 @@ public class Main extends JFrame {
 						JOptionPane.ERROR_MESSAGE);
 			}
 		});
-		
+
 		btnClose.addActionListener(arg0 -> {
 			try {
 				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
@@ -283,7 +288,7 @@ public class Main extends JFrame {
 						JOptionPane.ERROR_MESSAGE);
 			}
 		});
-		
+
 		btnEnd.addActionListener(arg0 -> {
 			try {
 				if (visit == null) {
@@ -305,7 +310,7 @@ public class Main extends JFrame {
 						JOptionPane.ERROR_MESSAGE);
 			}
 		});
-		
+
 		btnRecall.addActionListener(arg0 -> {
 			try {
 				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
@@ -328,7 +333,7 @@ public class Main extends JFrame {
 						JOptionPane.ERROR_MESSAGE);
 			}
 		});
-		
+
 		btnOpenCounter.addActionListener(arg0 -> {
 			DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
 			DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
@@ -343,11 +348,11 @@ public class Main extends JFrame {
 						JOptionPane.ERROR_MESSAGE);
 			}
 		});
-		
+
 		btnInfo.addActionListener(arg0 -> {
 			JOptionPane.showMessageDialog(this, "Adam was here", "Info", JOptionPane.INFORMATION_MESSAGE);
 		});
-		
+
 		cmbBranch.addActionListener(arg0 -> {
 			if (cmbBranch.getItemCount() == 0) {
 				return;

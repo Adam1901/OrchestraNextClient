@@ -1,4 +1,4 @@
-package Views;
+package controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,7 @@ import dto.DTOQueue;
 import dto.DTOServicePoint;
 import dto.DTOUserStatus;
 import dto.DTOWorkProfile;
+import views.LoginUser;
 
 public class Controller {
 	private final static Logger log = LogManager.getLogger(Controller.class);
