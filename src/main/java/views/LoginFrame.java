@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.seaglasslookandfeel.SeaGlassLookAndFeel;
 
+import utils.Props;
 import utils.Utils;
 
 import java.awt.GridBagLayout;

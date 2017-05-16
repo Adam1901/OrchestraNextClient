@@ -2,7 +2,7 @@ package dto;
 
 public class DTOQueue {
 	private int id;
-	private String Name;
+	private String name;
 	private int customersWaiting;
 	private int waitingTime;
 
@@ -19,11 +19,11 @@ public class DTOQueue {
 	}
 
 	public String getName() {
-		return Name;
+		return name;
 	}
 
 	public void setName(String name) {
-		Name = name;
+		name = name;
 	}
 
 	public int getCustomersWaiting() {
@@ -44,7 +44,7 @@ public class DTOQueue {
 	
 	@Override
 	public String toString() {
-		return "DTOQueue [id=" + id + ", Name=" + Name + ", customersWaiting=" + customersWaiting + ", waitingTime="
+		return "DTOQueue [id=" + id + ", Name=" + name + ", customersWaiting=" + customersWaiting + ", waitingTime="
 				+ waitingTime + "]";
 	}
 
@@ -52,7 +52,7 @@ public class DTOQueue {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((Name == null) ? 0 : Name.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + customersWaiting;
 		result = prime * result + id;
 		result = prime * result + waitingTime;
@@ -68,10 +68,10 @@ public class DTOQueue {
 		if (getClass() != obj.getClass())
 			return false;
 		DTOQueue other = (DTOQueue) obj;
-		if (Name == null) {
-			if (other.Name != null)
+		if (name == null) {
+			if (other.name != null)
 				return false;
-		} else if (!Name.equals(other.Name))
+		} else if (!name.equals(other.name))
 			return false;
 		if (customersWaiting != other.customersWaiting)
 			return false;

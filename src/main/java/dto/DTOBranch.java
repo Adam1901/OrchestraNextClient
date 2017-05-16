@@ -1,14 +1,15 @@
 package dto;
 
 public class DTOBranch {
+	
+	String name;
+	int id;
+
 	@Override
 	public String toString() {
 		return name;
 	}
-
-	String name;
-	int id;
-
+	
 	public String getName() {
 		return name;
 	}

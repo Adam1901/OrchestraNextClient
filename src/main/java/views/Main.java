@@ -15,6 +15,7 @@ import dto.DTOQueue;
 import dto.DTOServicePoint;
 import dto.DTOUserStatus;
 import dto.DTOWorkProfile;
+import utils.Props;
 
 import java.awt.GridBagLayout;
 import javax.swing.JButton;
@@ -48,7 +49,7 @@ public class Main extends JFrame {
 	private final JButton btnRecall = new JButton("Recall");
 	private final JButton btnClose = new JButton("Close");
 	private final JButton btnEnd = new JButton("End");
-	private final JButton btnInfo = new JButton("Info");
+	private final JButton btnInfo = new JButton("Queue Info");
 	private final JButton btnNext = new JButton("Next");
 
 	/**
@@ -57,7 +58,6 @@ public class Main extends JFrame {
 	 * @param lu
 	 */
 	public Main(LoginUser lu) {
-		setResizable(false);
 		this.lu = lu;
 		jbInit();
 		populate();
@@ -74,9 +74,9 @@ public class Main extends JFrame {
 			}
 
 			List<DTOBranch> branches = cont.getBranches(lu);
-			cmbBranch.removeAllItems();
+			getCmbBranch().removeAllItems();
 			for (DTOBranch dtoBranch : branches) {
-				cmbBranch.addItem(dtoBranch);
+				getCmbBranch().addItem(dtoBranch);
 			}
 
 			if (branchIdLastUser == null) {
@@ -91,9 +91,9 @@ public class Main extends JFrame {
 			}
 
 			if (branchLastUsed != null) {
-				cmbBranch.setSelectedItem(branchLastUsed);
+				getCmbBranch().setSelectedItem(branchLastUsed);
 			}
-			DTOBranch selBranch = (DTOBranch) cmbBranch.getSelectedItem();
+			DTOBranch selBranch = (DTOBranch) getCmbBranch().getSelectedItem();
 			if (cmbCounter.getItemCount() != 0) {
 				cmbCounter.removeAllItems();
 			}
@@ -134,7 +134,7 @@ public class Main extends JFrame {
 		gbc_cmbBranch.insets = new Insets(0, 0, 5, 5);
 		gbc_cmbBranch.gridx = 2;
 		gbc_cmbBranch.gridy = 1;
-		contentPane.add(cmbBranch, gbc_cmbBranch);
+		contentPane.add(getCmbBranch(), gbc_cmbBranch);
 
 		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
 		gbc_lblNewLabel_1.fill = GridBagConstraints.HORIZONTAL;
@@ -165,7 +165,7 @@ public class Main extends JFrame {
 		gbc_lblProfile.gridx = 1;
 		gbc_lblProfile.gridy = 3;
 		contentPane.add(lblProfile, gbc_lblProfile);
-		contentPane.add(cmbWorkProfile, gbc_cmbWorkProfile);
+		contentPane.add(getCmbWorkProfile(), gbc_cmbWorkProfile);
 
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.fill = GridBagConstraints.HORIZONTAL;
@@ -222,15 +222,15 @@ public class Main extends JFrame {
 		contentPane.add(btnEnd, gbc_btnNewButton2);
 		contentPane.add(btnClose, gbc_btnNewButton_2);
 
-		cmbWorkProfile.addActionListener(e -> {
+		getCmbWorkProfile().addActionListener(e -> {
 			try {
-				if (cmbWorkProfile.getItemCount() == 0) {
+				if (getCmbWorkProfile().getItemCount() == 0) {
 					return;
 				}
 				Controller cont = new Controller();
-				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
+				DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
 
-				DTOWorkProfile wp = (DTOWorkProfile) cmbWorkProfile.getSelectedItem();
+				DTOWorkProfile wp = (DTOWorkProfile) getCmbWorkProfile().getSelectedItem();
 				cont.setWorkProfile(lu, branch, wp);
 			} catch (Exception e1) {
 				log.error("Failed to data", e1);
@@ -243,9 +243,9 @@ public class Main extends JFrame {
 		btnNext.addActionListener(arg0 -> {
 			Controller cont = new Controller();
 			try {
-				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
+				DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
 				DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
-				DTOWorkProfile wp = (DTOWorkProfile) cmbWorkProfile.getSelectedItem();
+				DTOWorkProfile wp = (DTOWorkProfile) getCmbWorkProfile().getSelectedItem();
 
 				boolean custWaiting = false;
 				List<DTOQueue> queueInfoForWorkprofile = cont.getQueueInfoForWorkprofile(lu, branch, wp);
@@ -276,7 +276,7 @@ public class Main extends JFrame {
 
 		btnClose.addActionListener(arg0 -> {
 			try {
-				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
+				DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
 				DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
 
 				Controller cont = new Controller();
@@ -297,7 +297,7 @@ public class Main extends JFrame {
 					return;
 				}
 
-				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
+				DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
 				String visitId = visit.getVisit().getIdAsString();
 				Controller cont = new Controller();
 				visit = null;
@@ -313,7 +313,7 @@ public class Main extends JFrame {
 
 		btnRecall.addActionListener(arg0 -> {
 			try {
-				DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
+				DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
 				DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
 
 				if (visit == null) {
@@ -335,7 +335,7 @@ public class Main extends JFrame {
 		});
 
 		btnOpenCounter.addActionListener(arg0 -> {
-			DTOBranch branch = (DTOBranch) cmbBranch.getSelectedItem();
+			DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
 			DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
 
 			Controller cont = new Controller();
@@ -350,15 +350,16 @@ public class Main extends JFrame {
 		});
 
 		btnInfo.addActionListener(arg0 -> {
-			JOptionPane.showMessageDialog(this, "Adam was here", "Info", JOptionPane.INFORMATION_MESSAGE);
+			QueueInfoFrame qf = new QueueInfoFrame(lu, this);
+			//JOptionPane.showMessageDialog(this, "Adam was here", "Info", JOptionPane.INFORMATION_MESSAGE);
 		});
 
-		cmbBranch.addActionListener(arg0 -> {
-			if (cmbBranch.getItemCount() == 0) {
+		getCmbBranch().addActionListener(arg0 -> {
+			if (getCmbBranch().getItemCount() == 0) {
 				return;
 			}
 			Controller cont = new Controller();
-			DTOBranch selBranch = (DTOBranch) cmbBranch.getSelectedItem();
+			DTOBranch selBranch = (DTOBranch) getCmbBranch().getSelectedItem();
 			Props.setProperty("branchIdLastUsed", String.valueOf(selBranch.getId()));
 			cmbCounter.removeAllItems();
 			try {
@@ -376,13 +377,13 @@ public class Main extends JFrame {
 					return;
 				}
 				Controller cont = new Controller();
-				DTOBranch selBranch = (DTOBranch) cmbBranch.getSelectedItem();
+				DTOBranch selBranch = (DTOBranch) getCmbBranch().getSelectedItem();
 
-				if (cmbWorkProfile.getItemCount() != 0) {
-					cmbWorkProfile.removeAllItems();
+				if (getCmbWorkProfile().getItemCount() != 0) {
+					getCmbWorkProfile().removeAllItems();
 				}
 				for (DTOWorkProfile dtoWp : cont.getWorkProfile(lu, selBranch)) {
-					cmbWorkProfile.addItem(dtoWp);
+					getCmbWorkProfile().addItem(dtoWp);
 				}
 			} catch (Exception ee) {
 				log.error("Failed to data", ee);
@@ -391,6 +392,14 @@ public class Main extends JFrame {
 						JOptionPane.ERROR_MESSAGE);
 			}
 		});
+	}
+
+	public JComboBox<DTOBranch> getCmbBranch() {
+		return cmbBranch;
+	}
+
+	public JComboBox<DTOWorkProfile> getCmbWorkProfile() {
+		return cmbWorkProfile;
 	}
 
 }

@@ -194,4 +194,23 @@ public class Controller {
 
 		return ret;
 	}
+	
+	public List<DTOQueue> getQueueInfo(LoginUser lu, DTOBranch branch)
+			throws UnirestException {
+		List<DTOQueue> ret = new ArrayList<DTOQueue>();
+		HttpResponse<JsonNode> asJson = Unirest
+				.get(lu.getServerIPPort()
+						+ "/rest/servicepoint/branches/{branchID}/queues/")
+				.routeParam("branchID", branch.getIdAsString())
+				.basicAuth(lu.getUsername(), lu.getPassword()).asJson();
+
+		JSONArray json = new JSONArray(asJson.getBody().toString());
+		for (int i = 0; i < json.length(); i++) {
+			JSONObject object = json.getJSONObject(i);
+			DTOQueue fromJson = new Gson().fromJson(object.toString(), DTOQueue.class);
+			ret.add(fromJson);
+		}
+
+		return ret;
+	}
 }
