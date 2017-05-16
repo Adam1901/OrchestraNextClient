@@ -9,3 +9,4 @@ src/main/java/dto/test.java
 target/classes/META-INF/maven/OrchestraNextClient/OrchestraNextClient/pom.properties
 all.log
 log.log
+global.properties

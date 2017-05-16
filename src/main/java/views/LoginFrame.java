@@ -22,7 +22,6 @@ import java.awt.Insets;
 import javax.swing.JButton;
 import javax.swing.JPasswordField;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
 
@@ -77,24 +76,23 @@ public class LoginFrame extends JFrame {
 		setResizable(false);
 		jbInit();
 
-		txtIp.setText(Props.getProperty("ip", true));
-		txtPort.setText(Props.getProperty("port", true));
-		cmbProtocol.setSelectedItem(Props.getProperty("proto", true));
+		txtIp.setText(Props.getUserProperty("ip"));
+		txtPort.setText(Props.getUserProperty("port"));
+		cmbProtocol.setSelectedItem(Props.getUserProperty("proto"));
 
-		Props.setProperty("ip", txtIp.getText(), true);
-		Props.setProperty("port", txtPort.getText(), true);
+		Props.setUserProperty("ip", txtIp.getText());
+		Props.setUserProperty("port", txtPort.getText());
 		Object selectedItem = cmbProtocol.getSelectedItem();
 		if (selectedItem != null) {
-			Props.setProperty("proto", selectedItem.toString(), true);
+			Props.setUserProperty("proto", selectedItem.toString());
 		} else {
 			cmbProtocol.setSelectedIndex(0);
 		}
-		txtUsername.setText(Props.getProperty("username", true));
+		txtUsername.setText(Props.getUserProperty("username"));
 		try {
-			passwordField.setText(Utils.decode(Props.getProperty("password", true)));
+			passwordField.setText(Utils.decode(Props.getUserProperty("password")));
 		} catch (Throwable e) {
 			log.error(e);
-			e.printStackTrace();
 		}
 	}
 
@@ -191,12 +189,12 @@ public class LoginFrame extends JFrame {
 		JButton btnLogin = new JButton("Login");
 		btnLogin.addActionListener(arg0 -> {
 
-			Props.setProperty("ip", txtIp.getText(), true);
-			Props.setProperty("port", txtPort.getText(), true);
-			Props.setProperty("proto", cmbProtocol.getSelectedItem().toString(), true);
-			Props.setProperty("username", txtUsername.getText(), true);
+			Props.setUserProperty("ip", txtIp.getText());
+			Props.setUserProperty("port", txtPort.getText());
+			Props.setUserProperty("proto", cmbProtocol.getSelectedItem().toString());
+			Props.setUserProperty("username", txtUsername.getText());
 			try {
-				Props.setProperty("password", Utils.encode(new String(passwordField.getPassword())), true);
+				Props.setUserProperty("password", Utils.encode(new String(passwordField.getPassword())));
 			} catch (Exception e) {
 				log.error(e);
 			}
@@ -204,7 +202,8 @@ public class LoginFrame extends JFrame {
 			String connectionString = cmbProtocol.getSelectedItem().toString() + txtIp.getText() + ":"
 					+ txtPort.getText();
 
-			LoginUser lu = new LoginUser(txtUsername.getText(), new String(passwordField.getPassword()), connectionString);
+			LoginUser lu = new LoginUser(txtUsername.getText(), new String(passwordField.getPassword()),
+					connectionString);
 			new Main(lu).setVisible(true);
 			setVisible(false);
 		});

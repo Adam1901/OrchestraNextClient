@@ -28,7 +28,7 @@ public class Controller {
 	private final static Logger log = LogManager.getLogger(Controller.class);
 
 	private final static boolean sortByName = Boolean
-			.valueOf(Props.getProperty(Props.GlobalProperties.SORT_BY_NAME, false));
+			.valueOf(Props.getGlobalProperty(Props.GlobalProperties.SORT_BY_NAME));
 
 	public List<DTOBranch> getBranches(LoginUser lu) throws UnirestException {
 		List<DTOBranch> ret = new ArrayList<DTOBranch>();

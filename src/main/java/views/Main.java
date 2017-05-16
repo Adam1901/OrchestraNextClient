@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.imgscalr.Scalr;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -16,16 +17,21 @@ import dto.DTOServicePoint;
 import dto.DTOUserStatus;
 import dto.DTOWorkProfile;
 import utils.Props;
+import utils.Props.GlobalProperties;
 
 import java.awt.GridBagLayout;
 import javax.swing.JButton;
 import java.awt.GridBagConstraints;
 import javax.swing.JComboBox;
 import java.awt.Insets;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 public class Main extends JFrame {
 
@@ -56,11 +62,18 @@ public class Main extends JFrame {
 	 * Create the frame.
 	 * 
 	 * @param lu
+	 * @throws IOException
 	 */
 	public Main(LoginUser lu) {
-		setTitle("Orchestra - Next Client");
+		String appName = Props.getGlobalProperty(GlobalProperties.APP_NAME);
+		setTitle("Orchestra Next Client | Registerd to: " + appName);
 		this.lu = lu;
-		jbInit();
+		try {
+			jbInit();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		populate();
 	}
 
@@ -69,7 +82,7 @@ public class Main extends JFrame {
 		try {
 			Integer branchIdLastUser = null;
 			try {
-				branchIdLastUser = Integer.valueOf(Props.getProperty("branchIdLastUsed", true));
+				branchIdLastUser = Integer.valueOf(Props.getUserProperty("branchIdLastUsed"));
 			} catch (NumberFormatException e) {
 				log.error(e);
 			}
@@ -109,15 +122,15 @@ public class Main extends JFrame {
 		}
 	}
 
-	private void jbInit() {
+	private void jbInit() throws IOException {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 467, 200);
+		setBounds(100, 100, 467, 215);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[] { 5, 0, 50, 0, 0, 0, 0, 5, 0 };
-		gbl_contentPane.rowHeights = new int[] { 5, 0, 0, 0, 0, 0, 5, 0 };
+		gbl_contentPane.rowHeights = new int[] { 5, 0, 0, 0, 0, 30, 5, 0 };
 		gbl_contentPane.columnWeights = new double[] { 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		contentPane.setLayout(gbl_contentPane);
@@ -189,30 +202,38 @@ public class Main extends JFrame {
 		gbc_btnNext.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnNext.gridx = 5;
 		gbc_btnNext.gridy = 4;
+		BufferedImage read = ImageIO.read(getClass().getClassLoader().getResource("next.png"));
+		read = Scalr.resize(read, Scalr.Method.SPEED, Scalr.Mode.AUTOMATIC, 20, 20);
+		btnNext.setToolTipText("Next");
+		btnNext.setIcon(new ImageIcon(read));
 		contentPane.add(btnNext, gbc_btnNext);
 
 		GridBagConstraints gbc_btnNewButton_2 = new GridBagConstraints();
+		gbc_btnNewButton_2.fill = GridBagConstraints.VERTICAL;
 		gbc_btnNewButton_2.insets = new Insets(0, 0, 5, 5);
 		gbc_btnNewButton_2.gridx = 6;
 		gbc_btnNewButton_2.gridy = 5;
 
 		GridBagConstraints gbc_btnNewButton2 = new GridBagConstraints();
+		gbc_btnNewButton2.fill = GridBagConstraints.VERTICAL;
 		gbc_btnNewButton2.insets = new Insets(0, 0, 5, 5);
 		gbc_btnNewButton2.gridx = 5;
 		gbc_btnNewButton2.gridy = 5;
 
 		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
+		gbc_btnNewButton_1.fill = GridBagConstraints.VERTICAL;
 		gbc_btnNewButton_1.insets = new Insets(0, 0, 5, 5);
 		gbc_btnNewButton_1.gridx = 4;
 		gbc_btnNewButton_1.gridy = 5;
 
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
+		gbc_btnNewButton.fill = GridBagConstraints.VERTICAL;
 		gbc_btnNewButton.insets = new Insets(0, 0, 5, 5);
 		gbc_btnNewButton.gridx = 3;
 		gbc_btnNewButton.gridy = 5;
 
 		GridBagConstraints gbc_btnInfo = new GridBagConstraints();
-		gbc_btnInfo.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnInfo.fill = GridBagConstraints.BOTH;
 		gbc_btnInfo.insets = new Insets(0, 0, 5, 5);
 		gbc_btnInfo.gridx = 1;
 		gbc_btnInfo.gridy = 5;
@@ -352,7 +373,8 @@ public class Main extends JFrame {
 
 		btnInfo.addActionListener(arg0 -> {
 			new QueueInfoFrame(lu, this);
-			//JOptionPane.showMessageDialog(this, "Adam was here", "Info", JOptionPane.INFORMATION_MESSAGE);
+			// JOptionPane.showMessageDialog(this, "Adam was here", "Info",
+			// JOptionPane.INFORMATION_MESSAGE);
 		});
 
 		getCmbBranch().addActionListener(arg0 -> {
@@ -361,7 +383,7 @@ public class Main extends JFrame {
 			}
 			Controller cont = new Controller();
 			DTOBranch selBranch = (DTOBranch) getCmbBranch().getSelectedItem();
-			Props.setProperty("branchIdLastUsed", String.valueOf(selBranch.getId()), true);
+			Props.setUserProperty("branchIdLastUsed", String.valueOf(selBranch.getId()));
 			cmbCounter.removeAllItems();
 			try {
 				for (DTOServicePoint dtoServicePoint : cont.getServicePoints(lu, selBranch)) {

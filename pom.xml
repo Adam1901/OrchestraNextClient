@@ -50,7 +50,11 @@
 			<artifactId>seaglasslookandfeel</artifactId>
 			<version>0.2.1</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.imgscalr</groupId>
+			<artifactId>imgscalr-lib</artifactId>
+			<version>4.2</version>
+		</dependency>
 
 	</dependencies>
 	<build>
@@ -68,7 +72,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>Views.LoginFrame</mainClass>
+							<mainClass>views.LoginFrame</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

@@ -116,16 +116,16 @@ public class QueueInfoFrame extends JFrame implements Runnable {
 
 		String txt = "";
 		for (DTOQueue dtoQueue : queueInfo) {
-			txt += dtoQueue.getName() + " - " + dtoQueue.getCustomersWaiting() + System.lineSeparator();
+
+			String name = dtoQueue.getName();
+			int customersWaiting = dtoQueue.getCustomersWaiting();
+
+			txt += customersWaiting + " - " + name + System.lineSeparator();
 		}
 		if (showWP) {
 			txtQueueInfo.setText("All queue information" + System.lineSeparator() + txt);
 		} else {
 			txtWPQueueInfo.setText("Related queue information" + System.lineSeparator() + txt);
 		}
-
-		System.out.println("Loop");
-
 	}
-
 }

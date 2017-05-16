@@ -15,3 +15,4 @@
         </Root>
     </Loggers>
 </Configuration>
+<!-- http://stackoverflow.com/questions/28574905/specifying-log4j2-configuration-file-when-using-executable-jar -->
