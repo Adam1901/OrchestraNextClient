@@ -204,7 +204,7 @@ public class LoginFrame extends JFrame {
 
 			LoginUser lu = new LoginUser(txtUsername.getText(), new String(passwordField.getPassword()),
 					connectionString);
-			new Main(lu).setVisible(true);
+			new Main(lu);
 			setVisible(false);
 		});
 		GridBagConstraints gbc_btnLogin = new GridBagConstraints();

@@ -6,7 +6,6 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.imgscalr.Scalr;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -32,13 +31,16 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.Color;
+import java.awt.Dimension;
+
 import javax.swing.border.EtchedBorder;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Font;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 
 public class Main extends JFrame {
 
@@ -71,7 +73,7 @@ public class Main extends JFrame {
 	private BufferedImage nextImage;
 	private BufferedImage nextImageClicked;
 	private final JPanel panel = new JPanel();
-	private final JPanel panel_1 = new JPanel();
+	private final JPanel pnlSelection = new JPanel();
 
 	/**
 	 * Create the frame.
@@ -81,18 +83,31 @@ public class Main extends JFrame {
 	 */
 	public Main(LoginUser lu) {
 		setResizable(false);
-		String appName = Props.getGlobalProperty(GlobalProperties.APP_NAME);
-		setTitle("Orchestra Next Client | Registerd to: " + appName);
 		this.lu = lu;
 		jbInit();
 		createImagesForButtons();
 		readFromProperties();
 		populate();
+		setVisible(true);
+		postVisible();
+	}
+
+	private void postVisible() {
+		Boolean showCounter = Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.SHOW_COUNTER_OPTIONS));
+		Dimension sizeCurrent = getSize();
+		if (!showCounter) {
+			Dimension newDim = new Dimension((int) sizeCurrent.getWidth(), (int) sizeCurrent.getHeight() - 60);
+			setPreferredSize(newDim);
+			setSize(newDim);
+		}
 	}
 
 	private void readFromProperties() {
 		try {
-			pblCounter.setVisible(Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.SHOW_COUNTER_OPTIONS)));
+			Boolean showCounter = Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.SHOW_COUNTER_OPTIONS));
+			pblCounter.setVisible(showCounter);
+			String appName = Props.getGlobalProperty(GlobalProperties.APP_NAME);
+			setTitle("Orchestra Next | Registered to: " + appName);
 		} catch (Exception ex) {
 			log.error(ex);
 		}
@@ -115,17 +130,17 @@ public class Main extends JFrame {
 			gbc_cmbBranch.insets = new Insets(0, 0, 5, 0);
 			gbc_cmbBranch.gridx = 1;
 			gbc_cmbBranch.gridy = 0;
-			panel_1.add(cmbBranch, gbc_cmbBranch);
+			pnlSelection.add(cmbBranch, gbc_cmbBranch);
 			GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
 			gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 5);
 			gbc_lblNewLabel_1.gridx = 0;
 			gbc_lblNewLabel_1.gridy = 1;
-			panel_1.add(lblNewLabel_1, gbc_lblNewLabel_1);
+			pnlSelection.add(lblNewLabel_1, gbc_lblNewLabel_1);
 			GridBagConstraints gbc_lblProfile = new GridBagConstraints();
 			gbc_lblProfile.insets = new Insets(0, 0, 0, 5);
 			gbc_lblProfile.gridx = 0;
 			gbc_lblProfile.gridy = 2;
-			panel_1.add(lblProfile, gbc_lblProfile);
+			pnlSelection.add(lblProfile, gbc_lblProfile);
 			getCmbBranch().removeAllItems();
 			for (DTOBranch dtoBranch : branches) {
 				getCmbBranch().addItem(dtoBranch);
@@ -160,35 +175,35 @@ public class Main extends JFrame {
 
 	private void jbInit() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 355, 353);
+		setBounds(100, 100, 374, 356);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[] { 5, 0, 50, 0, 0, 5, 0 };
-		gbl_contentPane.rowHeights = new int[] { 5, 0, 0, 0, 0, 0, 0, 5, 0 };
-		gbl_contentPane.columnWeights = new double[] { 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, Double.MIN_VALUE };
-		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_contentPane.columnWidths = new int[] { 5, 0, 50, 0, 5, 0, 0 };
+		gbl_contentPane.rowHeights = new int[] { 5, 0, 0, 0, 10, 30, 0, 0, 0, 0, 5, 0 };
+		gbl_contentPane.columnWeights = new double[] { 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE };
+		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		contentPane.setLayout(gbl_contentPane);
 
-		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
-		gbc_panel_1.gridwidth = 4;
-		gbc_panel_1.insets = new Insets(0, 0, 5, 5);
-		gbc_panel_1.fill = GridBagConstraints.BOTH;
-		gbc_panel_1.gridx = 1;
-		gbc_panel_1.gridy = 1;
-		contentPane.add(panel_1, gbc_panel_1);
-		GridBagLayout gbl_panel_1 = new GridBagLayout();
-		gbl_panel_1.columnWidths = new int[] { 0, 0, 0 };
-		gbl_panel_1.rowHeights = new int[] { 0, 0, 0, 0 };
-		gbl_panel_1.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
-		gbl_panel_1.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
-		panel_1.setLayout(gbl_panel_1);
+		GridBagConstraints gbc_pnlSelection = new GridBagConstraints();
+		gbc_pnlSelection.gridwidth = 4;
+		gbc_pnlSelection.insets = new Insets(0, 0, 5, 5);
+		gbc_pnlSelection.fill = GridBagConstraints.BOTH;
+		gbc_pnlSelection.gridx = 1;
+		gbc_pnlSelection.gridy = 1;
+		contentPane.add(pnlSelection, gbc_pnlSelection);
+		GridBagLayout gbl_pnlSelection = new GridBagLayout();
+		gbl_pnlSelection.columnWidths = new int[] { 0, 0, 0 };
+		gbl_pnlSelection.rowHeights = new int[] { 0, 0, 0, 0 };
+		gbl_pnlSelection.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
+		gbl_pnlSelection.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		pnlSelection.setLayout(gbl_pnlSelection);
 		GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
 		gbc_lblNewLabel_2.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel_2.gridx = 0;
 		gbc_lblNewLabel_2.gridy = 0;
-		panel_1.add(lblNewLabel_2, gbc_lblNewLabel_2);
+		pnlSelection.add(lblNewLabel_2, gbc_lblNewLabel_2);
 
 		getCmbBranch().addActionListener(arg0 -> {
 			if (getCmbBranch().getItemCount() == 0) {
@@ -212,7 +227,7 @@ public class Main extends JFrame {
 		gbc_pblCoutner.insets = new Insets(0, 0, 5, 5);
 		gbc_pblCoutner.fill = GridBagConstraints.BOTH;
 		gbc_pblCoutner.gridx = 1;
-		gbc_pblCoutner.gridy = 2;
+		gbc_pblCoutner.gridy = 3;
 		pblCounter.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Counter",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		contentPane.add(pblCounter, gbc_pblCoutner);
@@ -260,12 +275,20 @@ public class Main extends JFrame {
 				showMessageDialog();
 			}
 		});
+		
+				GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+				gbc_lblNewLabel.fill = GridBagConstraints.HORIZONTAL;
+				gbc_lblNewLabel.anchor = GridBagConstraints.SOUTH;
+				gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
+				gbc_lblNewLabel.gridx = 1;
+				gbc_lblNewLabel.gridy = 5;
+				contentPane.add(lblNewLabel, gbc_lblNewLabel);
 		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridheight = 2;
-		gbc.gridwidth = 4;
+		gbc.gridwidth = 2;
+		gbc.gridheight = 4;
 		gbc.insets = new Insets(0, 0, 5, 5);
-		gbc.gridx = 1;
-		gbc.gridy = 3;
+		gbc.gridx = 3;
+		gbc.gridy = 5;
 		contentPane.add(lblImageNext, gbc);
 
 		lblImageNext.addMouseListener(new MouseAdapter() {
@@ -312,104 +335,95 @@ public class Main extends JFrame {
 				lblImageNext.setIcon(new ImageIcon(nextImage));
 			}
 		});
+		
+				GridBagConstraints gbc_lblA = new GridBagConstraints();
+				gbc_lblA.anchor = GridBagConstraints.SOUTHWEST;
+				gbc_lblA.insets = new Insets(0, 0, 5, 5);
+				gbc_lblA.gridx = 1;
+				gbc_lblA.gridy = 6;
+				lblA.setFont(new Font("Tahoma", Font.BOLD, 17));
+				contentPane.add(lblA, gbc_lblA);
+		GridBagConstraints gbc_btnInfo = new GridBagConstraints();
+		gbc_btnInfo.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnInfo.insets = new Insets(0, 0, 5, 5);
+		gbc_btnInfo.gridx = 1;
+		gbc_btnInfo.gridy = 9;
+		contentPane.add(btnInfo, gbc_btnInfo);
+		
+				btnInfo.addActionListener(arg0 -> {
+					new QueueInfoFrame(lu, this);
+				});
 
 		GridBagConstraints gbc_panel = new GridBagConstraints();
-		gbc_panel.gridwidth = 4;
+		gbc_panel.gridwidth = 2;
 		gbc_panel.insets = new Insets(0, 0, 5, 5);
 		gbc_panel.fill = GridBagConstraints.BOTH;
-		gbc_panel.gridx = 1;
-		gbc_panel.gridy = 5;
+		gbc_panel.gridx = 3;
+		gbc_panel.gridy = 9;
 		contentPane.add(panel, gbc_panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[] { 0, 0, 0, 0 };
+		gbl_panel.columnWidths = new int[] { 0, 0, 0 };
 		gbl_panel.rowHeights = new int[] { 0, 0 };
-		gbl_panel.columnWeights = new double[] { 1.0, 0.0, 1.0, Double.MIN_VALUE };
+		gbl_panel.columnWeights = new double[] { 1.0, 1.0, Double.MIN_VALUE };
 		gbl_panel.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 		panel.setLayout(gbl_panel);
-		GridBagConstraints gbc_btnEnd = new GridBagConstraints();
-		gbc_btnEnd.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnEnd.insets = new Insets(0, 0, 0, 5);
-		gbc_btnEnd.gridx = 0;
-		gbc_btnEnd.gridy = 0;
-		panel.add(btnEnd, gbc_btnEnd);
-		GridBagConstraints gbc_btnInfo = new GridBagConstraints();
-		gbc_btnInfo.insets = new Insets(0, 0, 0, 5);
-		gbc_btnInfo.gridx = 1;
-		gbc_btnInfo.gridy = 0;
-		panel.add(btnInfo, gbc_btnInfo);
-
-		btnInfo.addActionListener(arg0 -> {
-			new QueueInfoFrame(lu, this);
-		});
 		GridBagConstraints gbc_btnRecall = new GridBagConstraints();
+		gbc_btnRecall.insets = new Insets(0, 0, 0, 5);
 		gbc_btnRecall.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnRecall.gridx = 2;
+		gbc_btnRecall.gridx = 0;
 		gbc_btnRecall.gridy = 0;
 		panel.add(btnRecall, gbc_btnRecall);
-
-		btnRecall.addActionListener(arg0 -> {
-			try {
-				DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
-				DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
-
-				if (visit == null) {
-					JOptionPane.showMessageDialog(this, "You are not currently serving a customer", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-
-				Controller cont = new Controller();
-				DTOUserStatus recall = cont.recall(lu, branch, sp);
-				visit = recall;
-				lblA.setText(recall.getVisit().getTicketId());
-			} catch (Exception e) {
-				log.error("Failed to data", e);
-				showMessageDialog();
-			}
-		});
-
-		btnEnd.addActionListener(arg0 -> {
-			try {
-				if (visit == null) {
-					JOptionPane.showMessageDialog(this, "You are not currently serving a customer", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-
-				DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
-				String visitId = visit.getVisit().getIdAsString();
-				Controller cont = new Controller();
-				visit = null;
-				lblA.setText("Not Serving");
-				cont.endVisit(lu, branch, visitId);
-			} catch (Exception e) {
-				log.error("Failed to data", e);
-				showMessageDialog();
-			}
-		});
-
-		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-		gbc_lblNewLabel.fill = GridBagConstraints.HORIZONTAL;
-		gbc_lblNewLabel.anchor = GridBagConstraints.SOUTH;
-		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel.gridx = 1;
-		gbc_lblNewLabel.gridy = 6;
-		contentPane.add(lblNewLabel, gbc_lblNewLabel);
-
-		GridBagConstraints gbc_lblA = new GridBagConstraints();
-		gbc_lblA.gridwidth = 3;
-		gbc_lblA.anchor = GridBagConstraints.SOUTH;
-		gbc_lblA.fill = GridBagConstraints.HORIZONTAL;
-		gbc_lblA.insets = new Insets(0, 0, 5, 5);
-		gbc_lblA.gridx = 2;
-		gbc_lblA.gridy = 6;
-		lblA.setFont(new Font("Tahoma", Font.BOLD, 17));
-		contentPane.add(lblA, gbc_lblA);
+		
+				btnRecall.addActionListener(arg0 -> {
+					try {
+						DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
+						DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
+		
+						if (visit == null) {
+							JOptionPane.showMessageDialog(this, "You are not currently serving a customer", "Error",
+									JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+		
+						Controller cont = new Controller();
+						DTOUserStatus recall = cont.recall(lu, branch, sp);
+						visit = recall;
+						lblA.setText(recall.getVisit().getTicketId());
+					} catch (Exception e) {
+						log.error("Failed to data", e);
+						showMessageDialog();
+					}
+				});
+		GridBagConstraints gbc_btnEnd = new GridBagConstraints();
+		gbc_btnEnd.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnEnd.gridx = 1;
+		gbc_btnEnd.gridy = 0;
+		panel.add(btnEnd, gbc_btnEnd);
+		
+				btnEnd.addActionListener(arg0 -> {
+					try {
+						if (visit == null) {
+							JOptionPane.showMessageDialog(this, "You are not currently serving a customer", "Error",
+									JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+		
+						DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
+						String visitId = visit.getVisit().getIdAsString();
+						Controller cont = new Controller();
+						visit = null;
+						lblA.setText("Not Serving");
+						cont.endVisit(lu, branch, visitId);
+					} catch (Exception e) {
+						log.error("Failed to data", e);
+						showMessageDialog();
+					}
+				});
 		GridBagConstraints gbc_cmbWorkProfile = new GridBagConstraints();
 		gbc_cmbWorkProfile.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cmbWorkProfile.gridx = 1;
 		gbc_cmbWorkProfile.gridy = 2;
-		panel_1.add(cmbWorkProfile, gbc_cmbWorkProfile);
+		pnlSelection.add(cmbWorkProfile, gbc_cmbWorkProfile);
 
 		getCmbWorkProfile().addActionListener(e -> {
 			try {
@@ -431,7 +445,7 @@ public class Main extends JFrame {
 		gbc_cmbCounter.insets = new Insets(0, 0, 5, 0);
 		gbc_cmbCounter.gridx = 1;
 		gbc_cmbCounter.gridy = 1;
-		panel_1.add(cmbCounter, gbc_cmbCounter);
+		pnlSelection.add(cmbCounter, gbc_cmbCounter);
 
 		cmbCounter.addActionListener(e -> {
 			try {
