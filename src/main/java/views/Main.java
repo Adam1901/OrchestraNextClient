@@ -39,7 +39,6 @@ import javax.swing.border.EtchedBorder;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Font;
-import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
 public class Main extends JFrame {
@@ -111,7 +110,6 @@ public class Main extends JFrame {
 		} catch (Exception ex) {
 			log.error(ex);
 		}
-
 	}
 
 	private void populate() {
@@ -183,7 +181,8 @@ public class Main extends JFrame {
 		gbl_contentPane.columnWidths = new int[] { 5, 0, 50, 0, 5, 0, 0 };
 		gbl_contentPane.rowHeights = new int[] { 5, 0, 0, 0, 10, 30, 0, 0, 0, 0, 5, 0 };
 		gbl_contentPane.columnWeights = new double[] { 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE };
-		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+				Double.MIN_VALUE };
 		contentPane.setLayout(gbl_contentPane);
 
 		GridBagConstraints gbc_pnlSelection = new GridBagConstraints();
@@ -275,14 +274,14 @@ public class Main extends JFrame {
 				showMessageDialog();
 			}
 		});
-		
-				GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-				gbc_lblNewLabel.fill = GridBagConstraints.HORIZONTAL;
-				gbc_lblNewLabel.anchor = GridBagConstraints.SOUTH;
-				gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
-				gbc_lblNewLabel.gridx = 1;
-				gbc_lblNewLabel.gridy = 5;
-				contentPane.add(lblNewLabel, gbc_lblNewLabel);
+
+		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+		gbc_lblNewLabel.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblNewLabel.anchor = GridBagConstraints.SOUTH;
+		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel.gridx = 1;
+		gbc_lblNewLabel.gridy = 5;
+		contentPane.add(lblNewLabel, gbc_lblNewLabel);
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridwidth = 2;
 		gbc.gridheight = 4;
@@ -293,7 +292,17 @@ public class Main extends JFrame {
 
 		lblImageNext.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mouseReleased(MouseEvent e) {
+				lblImageNext.setIcon(new ImageIcon(nextImage));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				lblImageNext.setIcon(new ImageIcon(nextImage));
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {
 				lblImageNext.setIcon(new ImageIcon(nextImageClicked));
 				Controller cont = new Controller();
 				try {
@@ -310,7 +319,7 @@ public class Main extends JFrame {
 					}
 
 					if (!custWaiting) {
-						showMessageDialog();
+						showMessageDialog("No Waiting Cusomers", JOptionPane.INFORMATION_MESSAGE);
 						return;
 					}
 
@@ -319,40 +328,32 @@ public class Main extends JFrame {
 					lblA.setText(ticketId);
 					visit = callNext;
 				} catch (Exception ee) {
-					lblA.setText("ERROR - Please try Again");
-					log.error("Failed to data", e);
-					showMessageDialog();
+					lblA.setText("ERROR");
+					log.error("Failed to data", ee);
+					showMessageDialog("No Waiting Cusomers", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				lblImageNext.setIcon(new ImageIcon(nextImage));
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				lblImageNext.setIcon(new ImageIcon(nextImage));
-			}
 		});
-		
-				GridBagConstraints gbc_lblA = new GridBagConstraints();
-				gbc_lblA.anchor = GridBagConstraints.SOUTHWEST;
-				gbc_lblA.insets = new Insets(0, 0, 5, 5);
-				gbc_lblA.gridx = 1;
-				gbc_lblA.gridy = 6;
-				lblA.setFont(new Font("Tahoma", Font.BOLD, 17));
-				contentPane.add(lblA, gbc_lblA);
+
+		GridBagConstraints gbc_lblA = new GridBagConstraints();
+		gbc_lblA.gridwidth = 2;
+		gbc_lblA.anchor = GridBagConstraints.SOUTH;
+		gbc_lblA.insets = new Insets(0, 0, 5, 5);
+		gbc_lblA.gridx = 1;
+		gbc_lblA.gridy = 6;
+		lblA.setHorizontalAlignment(SwingConstants.CENTER);
+		lblA.setFont(new Font("Tahoma", Font.BOLD, 24));
+		contentPane.add(lblA, gbc_lblA);
 		GridBagConstraints gbc_btnInfo = new GridBagConstraints();
 		gbc_btnInfo.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnInfo.insets = new Insets(0, 0, 5, 5);
 		gbc_btnInfo.gridx = 1;
 		gbc_btnInfo.gridy = 9;
 		contentPane.add(btnInfo, gbc_btnInfo);
-		
-				btnInfo.addActionListener(arg0 -> {
-					new QueueInfoFrame(lu, this);
-				});
+
+		btnInfo.addActionListener(arg0 -> {
+			new QueueInfoFrame(lu, this);
+		});
 
 		GridBagConstraints gbc_panel = new GridBagConstraints();
 		gbc_panel.gridwidth = 2;
@@ -373,52 +374,52 @@ public class Main extends JFrame {
 		gbc_btnRecall.gridx = 0;
 		gbc_btnRecall.gridy = 0;
 		panel.add(btnRecall, gbc_btnRecall);
-		
-				btnRecall.addActionListener(arg0 -> {
-					try {
-						DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
-						DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
-		
-						if (visit == null) {
-							JOptionPane.showMessageDialog(this, "You are not currently serving a customer", "Error",
-									JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-		
-						Controller cont = new Controller();
-						DTOUserStatus recall = cont.recall(lu, branch, sp);
-						visit = recall;
-						lblA.setText(recall.getVisit().getTicketId());
-					} catch (Exception e) {
-						log.error("Failed to data", e);
-						showMessageDialog();
-					}
-				});
+
+		btnRecall.addActionListener(arg0 -> {
+			try {
+				DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
+				DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
+
+				if (visit == null) {
+					JOptionPane.showMessageDialog(this, "You are not currently serving a customer", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				Controller cont = new Controller();
+				DTOUserStatus recall = cont.recall(lu, branch, sp);
+				visit = recall;
+				lblA.setText(recall.getVisit().getTicketId());
+			} catch (Exception e) {
+				log.error("Failed to data", e);
+				showMessageDialog();
+			}
+		});
 		GridBagConstraints gbc_btnEnd = new GridBagConstraints();
 		gbc_btnEnd.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnEnd.gridx = 1;
 		gbc_btnEnd.gridy = 0;
 		panel.add(btnEnd, gbc_btnEnd);
-		
-				btnEnd.addActionListener(arg0 -> {
-					try {
-						if (visit == null) {
-							JOptionPane.showMessageDialog(this, "You are not currently serving a customer", "Error",
-									JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-		
-						DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
-						String visitId = visit.getVisit().getIdAsString();
-						Controller cont = new Controller();
-						visit = null;
-						lblA.setText("Not Serving");
-						cont.endVisit(lu, branch, visitId);
-					} catch (Exception e) {
-						log.error("Failed to data", e);
-						showMessageDialog();
-					}
-				});
+
+		btnEnd.addActionListener(arg0 -> {
+			try {
+				if (visit == null) {
+					JOptionPane.showMessageDialog(this, "You are not currently serving a customer", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
+				String visitId = visit.getVisit().getIdAsString();
+				Controller cont = new Controller();
+				visit = null;
+				lblA.setText("Not Serving");
+				cont.endVisit(lu, branch, visitId);
+			} catch (Exception e) {
+				log.error("Failed to data", e);
+				showMessageDialog();
+			}
+		});
 		GridBagConstraints gbc_cmbWorkProfile = new GridBagConstraints();
 		gbc_cmbWorkProfile.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cmbWorkProfile.gridx = 1;
@@ -474,11 +475,17 @@ public class Main extends JFrame {
 		JOptionPane.showMessageDialog(this, ERROR_MESSAGE, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
+	private void showMessageDialog(String message, int type) {
+		JOptionPane.showMessageDialog(this, message, "Error", type);
+	}
+
 	private void createImagesForButtons() {
 		try {
 			nextImage = ImageIO.read(getClass().getClassLoader().getResource("button-1.png"));
 			nextImageClicked = ImageIO.read(getClass().getClassLoader().getResource("button-2.png"));
 			lblImageNext.setIcon(new ImageIcon(nextImage));
+			
+			setIconImage(ImageIO.read(getClass().getClassLoader().getResource("qmaticBigTransparent.png")));
 		} catch (Throwable e) {
 			log.error(e);
 		}

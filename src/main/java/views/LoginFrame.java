@@ -28,9 +28,11 @@ import java.text.NumberFormat;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.JComboBox;
+import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import java.awt.Toolkit;
 
 public class LoginFrame extends JFrame {
 
@@ -72,6 +74,7 @@ public class LoginFrame extends JFrame {
 	 * @throws IOException
 	 */
 	public LoginFrame() throws IOException {
+		setIconImage(ImageIO.read(getClass().getClassLoader().getResource("qmaticBigTransparent.png")));
 		setTitle("Orchestra Next Client");
 		setResizable(false);
 		jbInit();
@@ -196,7 +199,7 @@ public class LoginFrame extends JFrame {
 			try {
 				Props.setUserProperty("password", Utils.encode(new String(passwordField.getPassword())));
 			} catch (Exception e) {
-				log.error(e);
+				log.error("Password failed to decrypt", e);
 			}
 
 			String connectionString = cmbProtocol.getSelectedItem().toString() + txtIp.getText() + ":"
