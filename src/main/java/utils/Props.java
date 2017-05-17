@@ -33,6 +33,7 @@ public class Props {
 			if (!exists) {
 				Props.setGlobalProperty(GlobalProperties.SORT_BY_NAME, GlobalProperties.SORT_BY_NAME_DEFAULT_VALUE);
 				Props.setGlobalProperty(GlobalProperties.APP_NAME, GlobalProperties.APP_NAME_DEFAULT);
+				Props.setGlobalProperty(GlobalProperties.SHOW_COUNTER_OPTIONS, GlobalProperties.SHOW_COUNTER_OPTIONS_DEFAULT);
 			}
 
 		} catch (IOException e) {
@@ -123,5 +124,9 @@ public class Props {
 
 		public static String APP_NAME = "appName";
 		public static String APP_NAME_DEFAULT = "Test";
+		
+		
+		public static String SHOW_COUNTER_OPTIONS = "showCounterOptions";
+		public static String SHOW_COUNTER_OPTIONS_DEFAULT = "true";
 	}
 }
