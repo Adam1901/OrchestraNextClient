@@ -36,6 +36,9 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.Color;
 import javax.swing.border.EtchedBorder;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.Font;
 
 public class Main extends JFrame {
 
@@ -60,12 +63,15 @@ public class Main extends JFrame {
 	private final JButton btnClose = new JButton("Close");
 	private final JButton btnEnd = new JButton("End");
 	private final JButton btnInfo = new JButton("Queue Info");
-	private final JButton btnNext = new JButton("Next");
 
 	private final String ERROR_MESSAGE = "Failed to load data\nPlease try again and contact support with the log files";
 	private final JPanel pblCounter = new JPanel();
-	private final JPanel pnlVisit = new JPanel();
-	private final JPanel pngQueue = new JPanel();
+	private final JLabel lblImageNext = new JLabel("");
+
+	private BufferedImage nextImage;
+	private BufferedImage nextImageClicked;
+	private final JPanel panel = new JPanel();
+	private final JPanel panel_1 = new JPanel();
 
 	/**
 	 * Create the frame.
@@ -74,6 +80,7 @@ public class Main extends JFrame {
 	 * @throws IOException
 	 */
 	public Main(LoginUser lu) {
+		setResizable(false);
 		String appName = Props.getGlobalProperty(GlobalProperties.APP_NAME);
 		setTitle("Orchestra Next Client | Registerd to: " + appName);
 		this.lu = lu;
@@ -89,7 +96,7 @@ public class Main extends JFrame {
 		} catch (Exception ex) {
 			log.error(ex);
 		}
-		
+
 	}
 
 	private void populate() {
@@ -103,6 +110,22 @@ public class Main extends JFrame {
 			}
 
 			List<DTOBranch> branches = cont.getBranches(lu);
+			GridBagConstraints gbc_cmbBranch = new GridBagConstraints();
+			gbc_cmbBranch.fill = GridBagConstraints.HORIZONTAL;
+			gbc_cmbBranch.insets = new Insets(0, 0, 5, 0);
+			gbc_cmbBranch.gridx = 1;
+			gbc_cmbBranch.gridy = 0;
+			panel_1.add(cmbBranch, gbc_cmbBranch);
+			GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
+			gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 5);
+			gbc_lblNewLabel_1.gridx = 0;
+			gbc_lblNewLabel_1.gridy = 1;
+			panel_1.add(lblNewLabel_1, gbc_lblNewLabel_1);
+			GridBagConstraints gbc_lblProfile = new GridBagConstraints();
+			gbc_lblProfile.insets = new Insets(0, 0, 0, 5);
+			gbc_lblProfile.gridx = 0;
+			gbc_lblProfile.gridy = 2;
+			panel_1.add(lblProfile, gbc_lblProfile);
 			getCmbBranch().removeAllItems();
 			for (DTOBranch dtoBranch : branches) {
 				getCmbBranch().addItem(dtoBranch);
@@ -131,128 +154,82 @@ public class Main extends JFrame {
 			}
 		} catch (Exception e) {
 			log.error("Failed to load combo boxes", e);
-			JOptionPane.showMessageDialog(this, ERROR_MESSAGE, "Error", JOptionPane.ERROR_MESSAGE);
+			showMessageDialog();
 		}
 	}
 
 	private void jbInit() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 496, 228);
+		setBounds(100, 100, 355, 353);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[] { 5, 0, 50, 0, 0, 5, 0 };
-		gbl_contentPane.rowHeights = new int[] { 5, 0, 0, 0, 0, 30, 5, 0 };
-		gbl_contentPane.columnWeights = new double[] { 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
-		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_contentPane.rowHeights = new int[] { 5, 0, 0, 0, 0, 0, 0, 5, 0 };
+		gbl_contentPane.columnWeights = new double[] { 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		contentPane.setLayout(gbl_contentPane);
 
+		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
+		gbc_panel_1.gridwidth = 4;
+		gbc_panel_1.insets = new Insets(0, 0, 5, 5);
+		gbc_panel_1.fill = GridBagConstraints.BOTH;
+		gbc_panel_1.gridx = 1;
+		gbc_panel_1.gridy = 1;
+		contentPane.add(panel_1, gbc_panel_1);
+		GridBagLayout gbl_panel_1 = new GridBagLayout();
+		gbl_panel_1.columnWidths = new int[] { 0, 0, 0 };
+		gbl_panel_1.rowHeights = new int[] { 0, 0, 0, 0 };
+		gbl_panel_1.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
+		gbl_panel_1.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		panel_1.setLayout(gbl_panel_1);
 		GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
-		gbc_lblNewLabel_2.fill = GridBagConstraints.HORIZONTAL;
 		gbc_lblNewLabel_2.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel_2.gridx = 1;
-		gbc_lblNewLabel_2.gridy = 1;
-		contentPane.add(lblNewLabel_2, gbc_lblNewLabel_2);
+		gbc_lblNewLabel_2.gridx = 0;
+		gbc_lblNewLabel_2.gridy = 0;
+		panel_1.add(lblNewLabel_2, gbc_lblNewLabel_2);
 
-		GridBagConstraints gbc_cmbBranch = new GridBagConstraints();
-		gbc_cmbBranch.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cmbBranch.gridwidth = 3;
-		gbc_cmbBranch.insets = new Insets(0, 0, 5, 5);
-		gbc_cmbBranch.gridx = 2;
-		gbc_cmbBranch.gridy = 1;
-		contentPane.add(getCmbBranch(), gbc_cmbBranch);
-
-		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
-		gbc_lblNewLabel_1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel_1.gridx = 1;
-		gbc_lblNewLabel_1.gridy = 2;
-		contentPane.add(lblNewLabel_1, gbc_lblNewLabel_1);
-
-		GridBagConstraints gbc_cmbCounter = new GridBagConstraints();
-		gbc_cmbCounter.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cmbCounter.gridwidth = 3;
-		gbc_cmbCounter.insets = new Insets(0, 0, 5, 5);
-		gbc_cmbCounter.gridx = 2;
-		gbc_cmbCounter.gridy = 2;
-
-		contentPane.add(cmbCounter, gbc_cmbCounter);
-
-		GridBagConstraints gbc_cmbWorkProfile = new GridBagConstraints();
-		gbc_cmbWorkProfile.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cmbWorkProfile.gridwidth = 3;
-		gbc_cmbWorkProfile.insets = new Insets(0, 0, 5, 5);
-		gbc_cmbWorkProfile.gridx = 2;
-		gbc_cmbWorkProfile.gridy = 3;
-
-		GridBagConstraints gbc_lblProfile = new GridBagConstraints();
-		gbc_lblProfile.fill = GridBagConstraints.HORIZONTAL;
-		gbc_lblProfile.insets = new Insets(0, 0, 5, 5);
-		gbc_lblProfile.gridx = 1;
-		gbc_lblProfile.gridy = 3;
-		contentPane.add(lblProfile, gbc_lblProfile);
-		contentPane.add(getCmbWorkProfile(), gbc_cmbWorkProfile);
-
-		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-		gbc_lblNewLabel.fill = GridBagConstraints.HORIZONTAL;
-		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel.gridx = 1;
-		gbc_lblNewLabel.gridy = 4;
-		contentPane.add(lblNewLabel, gbc_lblNewLabel);
-
-		GridBagConstraints gbc_lblA = new GridBagConstraints();
-		gbc_lblA.gridwidth = 2;
-		gbc_lblA.fill = GridBagConstraints.HORIZONTAL;
-		gbc_lblA.insets = new Insets(0, 0, 5, 5);
-		gbc_lblA.gridx = 2;
-		gbc_lblA.gridy = 4;
-		contentPane.add(lblA, gbc_lblA);
-
-		GridBagConstraints gbc_pngQueue = new GridBagConstraints();
-		gbc_pngQueue.fill = GridBagConstraints.BOTH;
-		gbc_pngQueue.insets = new Insets(0, 0, 5, 5);
-		gbc_pngQueue.gridx = 1;
-		gbc_pngQueue.gridy = 5;
-		pngQueue.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Queue Info",
-				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		contentPane.add(pngQueue, gbc_pngQueue);
-		GridBagLayout gbl_pngQueue = new GridBagLayout();
-		gbl_pngQueue.columnWidths = new int[] { 0, 0 };
-		gbl_pngQueue.rowHeights = new int[] { 30, 0 };
-		gbl_pngQueue.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
-		gbl_pngQueue.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-		pngQueue.setLayout(gbl_pngQueue);
-		GridBagConstraints gbc_btnInfo = new GridBagConstraints();
-		gbc_btnInfo.fill = GridBagConstraints.BOTH;
-		gbc_btnInfo.gridx = 0;
-		gbc_btnInfo.gridy = 0;
-		pngQueue.add(btnInfo, gbc_btnInfo);
-
-		btnInfo.addActionListener(arg0 -> {
-			new QueueInfoFrame(lu, this);
+		getCmbBranch().addActionListener(arg0 -> {
+			if (getCmbBranch().getItemCount() == 0) {
+				return;
+			}
+			Controller cont = new Controller();
+			DTOBranch selBranch = (DTOBranch) getCmbBranch().getSelectedItem();
+			Props.setUserProperty("branchIdLastUsed", String.valueOf(selBranch.getId()));
+			cmbCounter.removeAllItems();
+			try {
+				for (DTOServicePoint dtoServicePoint : cont.getServicePoints(lu, selBranch)) {
+					cmbCounter.addItem(dtoServicePoint);
+				}
+			} catch (UnirestException e) {
+				e.printStackTrace();
+			}
 		});
 
 		GridBagConstraints gbc_pblCoutner = new GridBagConstraints();
+		gbc_pblCoutner.gridwidth = 4;
 		gbc_pblCoutner.insets = new Insets(0, 0, 5, 5);
 		gbc_pblCoutner.fill = GridBagConstraints.BOTH;
-		gbc_pblCoutner.gridx = 3;
-		gbc_pblCoutner.gridy = 5;
+		gbc_pblCoutner.gridx = 1;
+		gbc_pblCoutner.gridy = 2;
 		pblCounter.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Counter",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		contentPane.add(pblCounter, gbc_pblCoutner);
 		GridBagLayout gbl_pblCoutner = new GridBagLayout();
 		gbl_pblCoutner.columnWidths = new int[] { 0, 0, 0 };
 		gbl_pblCoutner.rowHeights = new int[] { 0, 0 };
-		gbl_pblCoutner.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
+		gbl_pblCoutner.columnWeights = new double[] { 1.0, 1.0, Double.MIN_VALUE };
 		gbl_pblCoutner.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 		pblCounter.setLayout(gbl_pblCoutner);
 		GridBagConstraints gbc_btnOpenCounter = new GridBagConstraints();
+		gbc_btnOpenCounter.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnOpenCounter.insets = new Insets(0, 0, 0, 5);
 		gbc_btnOpenCounter.gridx = 0;
 		gbc_btnOpenCounter.gridy = 0;
 		pblCounter.add(btnOpenCounter, gbc_btnOpenCounter);
 		GridBagConstraints gbc_btnClose = new GridBagConstraints();
+		gbc_btnClose.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnClose.gridx = 1;
 		gbc_btnClose.gridy = 0;
 		pblCounter.add(btnClose, gbc_btnClose);
@@ -267,7 +244,7 @@ public class Main extends JFrame {
 				visit = null;
 			} catch (Exception e) {
 				log.error("Failed to data", e);
-				JOptionPane.showMessageDialog(this, ERROR_MESSAGE, "Error", JOptionPane.ERROR_MESSAGE);
+				showMessageDialog();
 			}
 		});
 
@@ -280,73 +257,95 @@ public class Main extends JFrame {
 				cont.startSession(lu, branch, sp);
 			} catch (Exception e) {
 				log.error("Failed to data", e);
-				JOptionPane.showMessageDialog(this, ERROR_MESSAGE, "Error", JOptionPane.ERROR_MESSAGE);
+				showMessageDialog();
 			}
 		});
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridheight = 2;
+		gbc.gridwidth = 4;
+		gbc.insets = new Insets(0, 0, 5, 5);
+		gbc.gridx = 1;
+		gbc.gridy = 3;
+		contentPane.add(lblImageNext, gbc);
 
-		GridBagConstraints gbc_pnlVisit = new GridBagConstraints();
-		gbc_pnlVisit.gridheight = 2;
-		gbc_pnlVisit.insets = new Insets(0, 0, 5, 5);
-		gbc_pnlVisit.fill = GridBagConstraints.BOTH;
-		gbc_pnlVisit.gridx = 4;
-		gbc_pnlVisit.gridy = 4;
-		pnlVisit.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Visit",
-				TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		contentPane.add(pnlVisit, gbc_pnlVisit);
-		GridBagLayout gbl_pnlVisit = new GridBagLayout();
-		gbl_pnlVisit.columnWidths = new int[] { 0, 0, 0 };
-		gbl_pnlVisit.rowHeights = new int[] { 0, 0, 0 };
-		gbl_pnlVisit.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
-		gbl_pnlVisit.rowWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
-		pnlVisit.setLayout(gbl_pnlVisit);
-		GridBagConstraints gbc_btnNext = new GridBagConstraints();
-		gbc_btnNext.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnNext.gridwidth = 2;
-		gbc_btnNext.insets = new Insets(0, 0, 5, 5);
-		gbc_btnNext.gridx = 0;
-		gbc_btnNext.gridy = 0;
-		pnlVisit.add(btnNext, gbc_btnNext);
+		lblImageNext.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				lblImageNext.setIcon(new ImageIcon(nextImageClicked));
+				Controller cont = new Controller();
+				try {
+					DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
+					DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
+					DTOWorkProfile wp = (DTOWorkProfile) getCmbWorkProfile().getSelectedItem();
 
-		btnNext.addActionListener(arg0 -> {
-			Controller cont = new Controller();
-			try {
-				DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
-				DTOServicePoint sp = (DTOServicePoint) cmbCounter.getSelectedItem();
-				DTOWorkProfile wp = (DTOWorkProfile) getCmbWorkProfile().getSelectedItem();
-
-				boolean custWaiting = false;
-				List<DTOQueue> queueInfoForWorkprofile = cont.getQueueInfoForWorkprofile(lu, branch, wp);
-				for (DTOQueue dtoQueue : queueInfoForWorkprofile) {
-					if (dtoQueue.getCustomersWaiting() != 0) {
-						custWaiting = true;
+					boolean custWaiting = false;
+					List<DTOQueue> queueInfoForWorkprofile = cont.getQueueInfoForWorkprofile(lu, branch, wp);
+					for (DTOQueue dtoQueue : queueInfoForWorkprofile) {
+						if (dtoQueue.getCustomersWaiting() != 0) {
+							custWaiting = true;
+						}
 					}
-				}
 
-				if (!custWaiting) {
-					JOptionPane.showMessageDialog(this, "No Customers waiting", "Info",
-							JOptionPane.INFORMATION_MESSAGE);
-					return;
-				}
+					if (!custWaiting) {
+						showMessageDialog();
+						return;
+					}
 
-				DTOUserStatus callNext = cont.callNext(lu, branch, sp);
-				String ticketId = callNext.getVisit().getTicketId();
-				lblA.setText(ticketId);
-				visit = callNext;
-			} catch (Exception e) {
-				lblA.setText("ERROR - Please try Again");
-				log.error("Failed to data", e);
-				JOptionPane.showMessageDialog(this, ERROR_MESSAGE, "Error", JOptionPane.ERROR_MESSAGE);
+					DTOUserStatus callNext = cont.callNext(lu, branch, sp);
+					String ticketId = callNext.getVisit().getTicketId();
+					lblA.setText(ticketId);
+					visit = callNext;
+				} catch (Exception ee) {
+					lblA.setText("ERROR - Please try Again");
+					log.error("Failed to data", e);
+					showMessageDialog();
+				}
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				lblImageNext.setIcon(new ImageIcon(nextImage));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				lblImageNext.setIcon(new ImageIcon(nextImage));
 			}
 		});
+
+		GridBagConstraints gbc_panel = new GridBagConstraints();
+		gbc_panel.gridwidth = 4;
+		gbc_panel.insets = new Insets(0, 0, 5, 5);
+		gbc_panel.fill = GridBagConstraints.BOTH;
+		gbc_panel.gridx = 1;
+		gbc_panel.gridy = 5;
+		contentPane.add(panel, gbc_panel);
+		GridBagLayout gbl_panel = new GridBagLayout();
+		gbl_panel.columnWidths = new int[] { 0, 0, 0, 0 };
+		gbl_panel.rowHeights = new int[] { 0, 0 };
+		gbl_panel.columnWeights = new double[] { 1.0, 0.0, 1.0, Double.MIN_VALUE };
+		gbl_panel.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
+		panel.setLayout(gbl_panel);
 		GridBagConstraints gbc_btnEnd = new GridBagConstraints();
+		gbc_btnEnd.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnEnd.insets = new Insets(0, 0, 0, 5);
 		gbc_btnEnd.gridx = 0;
-		gbc_btnEnd.gridy = 1;
-		pnlVisit.add(btnEnd, gbc_btnEnd);
+		gbc_btnEnd.gridy = 0;
+		panel.add(btnEnd, gbc_btnEnd);
+		GridBagConstraints gbc_btnInfo = new GridBagConstraints();
+		gbc_btnInfo.insets = new Insets(0, 0, 0, 5);
+		gbc_btnInfo.gridx = 1;
+		gbc_btnInfo.gridy = 0;
+		panel.add(btnInfo, gbc_btnInfo);
+
+		btnInfo.addActionListener(arg0 -> {
+			new QueueInfoFrame(lu, this);
+		});
 		GridBagConstraints gbc_btnRecall = new GridBagConstraints();
-		gbc_btnRecall.gridx = 1;
-		gbc_btnRecall.gridy = 1;
-		pnlVisit.add(btnRecall, gbc_btnRecall);
+		gbc_btnRecall.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnRecall.gridx = 2;
+		gbc_btnRecall.gridy = 0;
+		panel.add(btnRecall, gbc_btnRecall);
 
 		btnRecall.addActionListener(arg0 -> {
 			try {
@@ -365,7 +364,7 @@ public class Main extends JFrame {
 				lblA.setText(recall.getVisit().getTicketId());
 			} catch (Exception e) {
 				log.error("Failed to data", e);
-				JOptionPane.showMessageDialog(this, ERROR_MESSAGE, "Error", JOptionPane.ERROR_MESSAGE);
+				showMessageDialog();
 			}
 		});
 
@@ -385,9 +384,32 @@ public class Main extends JFrame {
 				cont.endVisit(lu, branch, visitId);
 			} catch (Exception e) {
 				log.error("Failed to data", e);
-				JOptionPane.showMessageDialog(this, ERROR_MESSAGE, "Error", JOptionPane.ERROR_MESSAGE);
+				showMessageDialog();
 			}
 		});
+
+		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+		gbc_lblNewLabel.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblNewLabel.anchor = GridBagConstraints.SOUTH;
+		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel.gridx = 1;
+		gbc_lblNewLabel.gridy = 6;
+		contentPane.add(lblNewLabel, gbc_lblNewLabel);
+
+		GridBagConstraints gbc_lblA = new GridBagConstraints();
+		gbc_lblA.gridwidth = 3;
+		gbc_lblA.anchor = GridBagConstraints.SOUTH;
+		gbc_lblA.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblA.insets = new Insets(0, 0, 5, 5);
+		gbc_lblA.gridx = 2;
+		gbc_lblA.gridy = 6;
+		lblA.setFont(new Font("Tahoma", Font.BOLD, 17));
+		contentPane.add(lblA, gbc_lblA);
+		GridBagConstraints gbc_cmbWorkProfile = new GridBagConstraints();
+		gbc_cmbWorkProfile.fill = GridBagConstraints.HORIZONTAL;
+		gbc_cmbWorkProfile.gridx = 1;
+		gbc_cmbWorkProfile.gridy = 2;
+		panel_1.add(cmbWorkProfile, gbc_cmbWorkProfile);
 
 		getCmbWorkProfile().addActionListener(e -> {
 			try {
@@ -401,26 +423,15 @@ public class Main extends JFrame {
 				cont.setWorkProfile(lu, branch, wp);
 			} catch (Exception e1) {
 				log.error("Failed to data", e1);
-				JOptionPane.showMessageDialog(this, ERROR_MESSAGE, "Error", JOptionPane.ERROR_MESSAGE);
+				showMessageDialog();
 			}
 		});
-
-		getCmbBranch().addActionListener(arg0 -> {
-			if (getCmbBranch().getItemCount() == 0) {
-				return;
-			}
-			Controller cont = new Controller();
-			DTOBranch selBranch = (DTOBranch) getCmbBranch().getSelectedItem();
-			Props.setUserProperty("branchIdLastUsed", String.valueOf(selBranch.getId()));
-			cmbCounter.removeAllItems();
-			try {
-				for (DTOServicePoint dtoServicePoint : cont.getServicePoints(lu, selBranch)) {
-					cmbCounter.addItem(dtoServicePoint);
-				}
-			} catch (UnirestException e) {
-				e.printStackTrace();
-			}
-		});
+		GridBagConstraints gbc_cmbCounter = new GridBagConstraints();
+		gbc_cmbCounter.fill = GridBagConstraints.HORIZONTAL;
+		gbc_cmbCounter.insets = new Insets(0, 0, 5, 0);
+		gbc_cmbCounter.gridx = 1;
+		gbc_cmbCounter.gridy = 1;
+		panel_1.add(cmbCounter, gbc_cmbCounter);
 
 		cmbCounter.addActionListener(e -> {
 			try {
@@ -439,17 +450,21 @@ public class Main extends JFrame {
 			} catch (Exception ee) {
 				log.error("Failed to data", ee);
 
-				JOptionPane.showMessageDialog(this, ERROR_MESSAGE, "Error", JOptionPane.ERROR_MESSAGE);
+				showMessageDialog();
 			}
 		});
+
+	}
+
+	private void showMessageDialog() {
+		JOptionPane.showMessageDialog(this, ERROR_MESSAGE, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
 	private void createImagesForButtons() {
 		try {
-			BufferedImage read = ImageIO.read(getClass().getClassLoader().getResource("next.png"));
-			read = Scalr.resize(read, Scalr.Method.SPEED, Scalr.Mode.AUTOMATIC, 20, 20);
-			btnNext.setToolTipText("Next");
-			btnNext.setIcon(new ImageIcon(read));
+			nextImage = ImageIO.read(getClass().getClassLoader().getResource("button-1.png"));
+			nextImageClicked = ImageIO.read(getClass().getClassLoader().getResource("button-2.png"));
+			lblImageNext.setIcon(new ImageIcon(nextImage));
 		} catch (Throwable e) {
 			log.error(e);
 		}
