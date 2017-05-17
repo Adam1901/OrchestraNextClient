@@ -330,7 +330,7 @@ public class Main extends JFrame {
 				} catch (Exception ee) {
 					lblA.setText("ERROR");
 					log.error("Failed to data", ee);
-					showMessageDialog("No Waiting Cusomers", JOptionPane.INFORMATION_MESSAGE);
+					showMessageDialog("No Waiting Customers", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		});
