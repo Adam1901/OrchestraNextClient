@@ -41,6 +41,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Font;
 import javax.swing.SwingConstants;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class Main extends JFrame {
 
@@ -390,6 +392,19 @@ public class Main extends JFrame {
 
 		btnInfo.addActionListener(arg0 -> {
 			new QueueInfoFrame(lu, this);
+		});
+		
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				Controller cont = new Controller();
+				try {
+					cont.logout(lu);
+					log.info("Logged out and killed unirest");
+				} catch (UnirestException | IOException e) {
+					log.error(e);
+				}
+			}
 		});
 
 	}
