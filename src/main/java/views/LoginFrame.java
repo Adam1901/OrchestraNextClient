@@ -55,16 +55,14 @@ public class LoginFrame extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					UIManager.setLookAndFeel(new SeaGlassLookAndFeel());
-					LoginFrame frame = new LoginFrame();
-					frame.setVisible(true);
+		EventQueue.invokeLater(() -> {
+			try {
+				UIManager.setLookAndFeel(new SeaGlassLookAndFeel());
+				LoginFrame frame = new LoginFrame();
+				frame.setVisible(true);
 
-				} catch (Exception e) {
-					log.error("failed to load screen", e);
-				}
+			} catch (Exception e) {
+				log.error("failed to load screen", e);
 			}
 		});
 	}
