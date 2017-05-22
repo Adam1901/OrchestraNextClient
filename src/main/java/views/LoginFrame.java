@@ -10,8 +10,11 @@ import javax.swing.text.NumberFormatter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.seaglasslookandfeel.SeaGlassLookAndFeel;
 
+import controller.Controller;
+import dto.DTOBranch;
 import utils.Props;
 import utils.Utils;
 
@@ -24,6 +27,7 @@ import javax.swing.JPasswordField;
 
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.List;
 
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
@@ -32,6 +36,8 @@ import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Toolkit;
 
 public class LoginFrame extends JFrame {
@@ -207,6 +213,17 @@ public class LoginFrame extends JFrame {
 
 			LoginUser lu = new LoginUser(txtUsername.getText(), new String(passwordField.getPassword()),
 					connectionString);
+			try {
+				List<DTOBranch> branches = new Controller().getBranches(lu);
+				if(branches.isEmpty()){
+					failToLoginMessage();
+					return;
+				}
+			} catch (Throwable e) {
+				log.error("failed to log in", e);
+				failToLoginMessage();
+				return;
+			}
 			new Main(lu);
 			setVisible(false);
 		});
@@ -217,5 +234,9 @@ public class LoginFrame extends JFrame {
 		gbc_btnLogin.gridx = 1;
 		gbc_btnLogin.gridy = 4;
 		contentPane.add(btnLogin, gbc_btnLogin);
+	}
+	
+	private void failToLoginMessage(){
+		JOptionPane.showMessageDialog(this, Messages.getString("LoginFrame.failedToLogin"), "Error", JOptionPane.ERROR_MESSAGE); 
 	}
 }
