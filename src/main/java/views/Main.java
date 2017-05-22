@@ -8,8 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.imgscalr.Scalr;
 
-import com.mashape.unirest.http.exceptions.UnirestException;
-
 import controller.Controller;
 import dto.DTOBranch;
 import dto.DTOQueue;
@@ -43,6 +41,9 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 
 public class Main extends JFrame {
+	
+	//TODO externalise
+	//TODO add update thinggy for version
 
 	private final static Logger log = LogManager.getLogger(Main.class);
 
@@ -223,6 +224,10 @@ public class Main extends JFrame {
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
+				
+				if(checkIfDSNeeded()) {
+					return;
+				}
 
 				DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
 				String visitId = visit.getVisit().getIdAsString();
@@ -372,7 +377,11 @@ public class Main extends JFrame {
 					}
 
 					if (!custWaiting) {
-						showMessageDialog("No Waiting Cusomers", JOptionPane.INFORMATION_MESSAGE);
+						showMessageDialog("No Waiting Customers", JOptionPane.INFORMATION_MESSAGE);
+						return;
+					}
+
+					if (checkIfDSNeeded()) {
 						return;
 					}
 
@@ -425,6 +434,20 @@ public class Main extends JFrame {
 
 	public JComboBox<DTOWorkProfile> getCmbWorkProfile() {
 		return frm.getCmbWorkProfile();
+	}
+
+	private boolean checkIfDSNeeded() {
+		String[] arrays = { "OUTCOME_FOR_DELIVERED_SERVICE_NEEDED", "OUTCOME_OR_DELIVERED_SERVICE_NEEDED",
+				"DELIVERED_SERVICE_NEEDED", "OUTCOME_NEEDED" };
+		String visitState = visit.getVisitState();
+		for (String state : arrays) {
+			if (visitState.equals(state)) {
+				showMessageDialog("Delievered service, outcome or enquiry type needed. Not yet supported",
+						JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
