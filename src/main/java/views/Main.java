@@ -8,8 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.imgscalr.Scalr;
 
-import com.mashape.unirest.http.exceptions.UnirestException;
-
 import controller.Controller;
 import dto.DTOBranch;
 import dto.DTOQueue;
@@ -33,18 +31,26 @@ import javax.swing.JOptionPane;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.border.TitledBorder;
+import javax.swing.plaf.synth.SynthSeparatorUI;
+
 import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.border.EtchedBorder;
+
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.Timer;
 
 public class Main extends JFrame {
+
+	// TODO add update thinggy for version
+	// TODO flash serving
 
 	private final static Logger log = LogManager.getLogger(Main.class);
 
@@ -53,15 +59,15 @@ public class Main extends JFrame {
 	private LoginUser lu;
 	private DTOUserStatus visit;
 
-	private final JLabel lblNewLabel = new JLabel("Currently Serving:");
-	private final JLabel lblA = new JLabel("Not Serving");
-	private final JButton btnOpenCounter = new JButton("Open");
-	private final JButton btnRecall = new JButton("Recall");
-	private final JButton btnClose = new JButton("Close");
-	private final JButton btnEnd = new JButton("End");
-	private final JButton btnInfo = new JButton("Queue Info");
+	private final JLabel lblNewLabel = new JLabel(Messages.getString("MainFrame.CurrentlyServing"));
+	private final JLabel lblA = new JLabel(Messages.getString("MainFrame.CurrentlyServingInit"));
+	private final JButton btnOpenCounter = new JButton(Messages.getString("MainFrame.OpenBtn"));
+	private final JButton btnRecall = new JButton(Messages.getString("MainFrame.RecallBtn"));
+	private final JButton btnClose = new JButton(Messages.getString("MainFrame.CloseBtn"));
+	private final JButton btnEnd = new JButton(Messages.getString("MainFrame.endBtn"));
+	private final JButton btnInfo = new JButton(Messages.getString("MainFrame.QueuInfoBtn"));
 
-	private final String ERROR_MESSAGE = "Failed to load data\nPlease try again and contact support with the log files";
+	private final String ERROR_MESSAGE = Messages.getString("MainFrame.ErrorMessage");
 	private final JPanel pblCounter = new JPanel();
 	private final JLabel lblImageNext = new JLabel("");
 
@@ -76,6 +82,7 @@ public class Main extends JFrame {
 	private final JLabel lblCounter = new JLabel("AAAAAAA");
 	private final JLabel lblWorkProfile = new JLabel("A");
 	private final JPanel panel_2 = new JPanel();
+	private boolean flash = false;
 
 	public JLabel getLblWorkProfile() {
 		return lblWorkProfile;
@@ -104,6 +111,9 @@ public class Main extends JFrame {
 		setVisible(true);
 		postVisible();
 		frm = new SelectionFrame(lu, this);
+
+		Thread t = new Thread(new Flash());
+		t.start();
 	}
 
 	private void postVisible() {
@@ -121,7 +131,7 @@ public class Main extends JFrame {
 			Boolean showCounter = Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.SHOW_COUNTER_OPTIONS));
 			pblCounter.setVisible(showCounter);
 			String appName = Props.getGlobalProperty(GlobalProperties.APP_NAME);
-			setTitle("Orchestra Next | Registered to: " + appName);
+			setTitle(Messages.getString("MainFrame.title") + appName);
 		} catch (Exception ex) {
 			log.error(ex);
 		}
@@ -164,8 +174,9 @@ public class Main extends JFrame {
 		gbc_panel_1.fill = GridBagConstraints.BOTH;
 		gbc_panel_1.gridx = 1;
 		gbc_panel_1.gridy = 2;
-		panel_1.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Visit",
-				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel_1.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
+				Messages.getString("MainFrame.VisitBorderText"), TitledBorder.LEADING, TitledBorder.TOP, null,
+				new Color(0, 0, 0)));
 		contentPane.add(panel_1, gbc_panel_1);
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
 		gbl_panel_1.columnWidths = new int[] { 0, 0, 0 };
@@ -197,7 +208,7 @@ public class Main extends JFrame {
 				DTOServicePoint sp = (DTOServicePoint) frm.getCmbServicePoint().getSelectedItem();
 
 				if (visit == null) {
-					JOptionPane.showMessageDialog(this, "You are not currently serving a customer", "Error",
+					JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.notservingMessage"), "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -206,6 +217,7 @@ public class Main extends JFrame {
 				DTOUserStatus recall = cont.recall(lu, branch, sp);
 				visit = recall;
 				lblA.setText(recall.getVisit().getTicketId());
+				flash = true;
 			} catch (Exception e) {
 				log.error("Failed to data", e);
 				showMessageDialog();
@@ -221,8 +233,12 @@ public class Main extends JFrame {
 		btnEnd.addActionListener(arg0 -> {
 			try {
 				if (visit == null) {
-					JOptionPane.showMessageDialog(this, "You are not currently serving a customer", "Error",
+					JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.notCurrentlyServing"), "Error",
 							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				if (checkIfDSNeeded()) {
 					return;
 				}
 
@@ -230,7 +246,7 @@ public class Main extends JFrame {
 				String visitId = visit.getVisit().getIdAsString();
 				Controller cont = new Controller();
 				visit = null;
-				lblA.setText("Not Serving");
+				lblA.setText(Messages.getString("MainFrame.notServingText"));
 				cont.endVisit(lu, branch, visitId);
 			} catch (Exception e) {
 				log.error("Failed to data", e);
@@ -254,8 +270,9 @@ public class Main extends JFrame {
 		gbc_panel_2.fill = GridBagConstraints.BOTH;
 		gbc_panel_2.gridx = 0;
 		gbc_panel_2.gridy = 1;
-		panel_2.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Settings",
-				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel_2.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
+				Messages.getString("MainFrame.SettingBorderText"), TitledBorder.LEADING, TitledBorder.TOP, null,
+				new Color(0, 0, 0)));
 		panel_1.add(panel_2, gbc_panel_2);
 		GridBagLayout gbl_panel_2 = new GridBagLayout();
 		gbl_panel_2.columnWidths = new int[] { 0, 0, 0 };
@@ -291,8 +308,9 @@ public class Main extends JFrame {
 		gbc_pblCoutner.fill = GridBagConstraints.BOTH;
 		gbc_pblCoutner.gridx = 1;
 		gbc_pblCoutner.gridy = 3;
-		pblCounter.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Counter",
-				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		pblCounter.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
+				Messages.getString("MainFrame.CounterBorderText"), TitledBorder.LEADING, TitledBorder.TOP, null,
+				new Color(0, 0, 0)));
 		contentPane.add(pblCounter, gbc_pblCoutner);
 		GridBagLayout gbl_pblCoutner = new GridBagLayout();
 		gbl_pblCoutner.columnWidths = new int[] { 0, 0, 0 };
@@ -374,7 +392,12 @@ public class Main extends JFrame {
 					}
 
 					if (!custWaiting) {
-						showMessageDialog("No Waiting Cusomers", JOptionPane.INFORMATION_MESSAGE);
+						showMessageDialog(Messages.getString("MainFrame.NoWatingCustomers"),
+								JOptionPane.INFORMATION_MESSAGE);
+						return;
+					}
+
+					if (checkIfDSNeeded()) {
 						return;
 					}
 
@@ -382,10 +405,12 @@ public class Main extends JFrame {
 					String ticketId = callNext.getVisit().getTicketId();
 					lblA.setText(ticketId);
 					visit = callNext;
+					flash = true;
 				} catch (Exception ee) {
-					lblA.setText("ERROR");
+					lblA.setText(Messages.getString("MainFrame.ErrorCurretServing"));
 					log.error("Failed to data", ee);
-					showMessageDialog("No Waiting Customers", JOptionPane.INFORMATION_MESSAGE);
+					showMessageDialog(Messages.getString("MainFrame.noWaitingCustText"),
+							JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		});
@@ -442,4 +467,62 @@ public class Main extends JFrame {
 		return frm.getCmbWorkProfile();
 	}
 
+	private boolean checkIfDSNeeded() {
+		if (visit == null) {
+			return false;
+		}
+		String[] arrays = { "OUTCOME_FOR_DELIVERED_SERVICE_NEEDED", "OUTCOME_OR_DELIVERED_SERVICE_NEEDED",
+				"DELIVERED_SERVICE_NEEDED", "OUTCOME_NEEDED" };
+		String visitState = visit.getVisitState();
+		for (String state : arrays) {
+			if (visitState.equals(state)) {
+				showMessageDialog(Messages.getString("MainFrame.DsOutEtNeeded"), JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	int amount = 0;
+	boolean started = false;
+	Timer timer = new Timer(500, evt -> {
+		Color foreground2 = lblA.getForeground();
+		if (foreground2 == Color.BLACK) {
+			lblA.setForeground(Color.GRAY);
+		} else {
+			lblA.setForeground(Color.BLACK);
+		}
+		revalidate();
+		repaint();
+		System.out.println("coloring");
+		amount++;
+
+	});
+
+	private class Flash implements Runnable {
+		public void run() {
+			while (true) {
+				if (flash) {
+					if (!started) {
+						timer.start();
+						started = true;
+					}
+
+				}
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					log.error(e);
+				}
+				if (amount >= 10) {
+					timer.stop();
+					lblA.setForeground(Color.BLACK);
+					amount = 0;
+					flash = false;
+					started = false;
+					// return;
+				}
+			}
+		}
+	}
 }
