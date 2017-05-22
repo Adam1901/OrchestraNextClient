@@ -8,6 +8,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.imgscalr.Scalr;
 
+import com.mashape.unirest.http.exceptions.UnirestException;
+
 import controller.Controller;
 import dto.DTOBranch;
 import dto.DTOQueue;
@@ -15,6 +17,7 @@ import dto.DTOServicePoint;
 import dto.DTOUserStatus;
 import dto.DTOWorkProfile;
 import utils.Props;
+import utils.UpdateThread;
 import utils.Props.GlobalProperties;
 
 import java.awt.GridBagLayout;
@@ -31,14 +34,12 @@ import javax.swing.JOptionPane;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.border.TitledBorder;
-import javax.swing.plaf.synth.SynthSeparatorUI;
 
 import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.border.EtchedBorder;
 
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Font;
@@ -114,6 +115,9 @@ public class Main extends JFrame {
 
 		Thread t = new Thread(new Flash());
 		t.start();
+		
+		UpdateThread updateThread = new UpdateThread(lu, this);
+		new Thread(updateThread).start();
 	}
 
 	private void postVisible() {
