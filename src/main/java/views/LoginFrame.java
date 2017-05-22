@@ -47,9 +47,9 @@ public class LoginFrame extends JFrame {
 	private JTextField txtIp = new JTextField();
 	private final JComboBox<String> cmbProtocol = new JComboBox<String>();
 	private JFormattedTextField txtPort;
-	private final JLabel lblUrl = new JLabel("URL:");
-	private final JLabel lblNewLabel = new JLabel("Username:");
-	private final JLabel lblNewLabel_1 = new JLabel("Password:");;
+	private final JLabel lblUrl = new JLabel(Messages.getString("LoginFrame.URL"));
+	private final JLabel lblNewLabel = new JLabel(Messages.getString("LoginFrame.Username"));
+	private final JLabel lblNewLabel_1 = new JLabel(Messages.getString("LoginFrame.password"));;
 
 	/**
 	 * Launch the application.
@@ -189,7 +189,7 @@ public class LoginFrame extends JFrame {
 		gbc_passwordField.gridy = 3;
 		contentPane.add(passwordField, gbc_passwordField);
 
-		JButton btnLogin = new JButton("Login");
+		JButton btnLogin = new JButton(Messages.getString("LoginFrame.LoginBtn"));
 		btnLogin.addActionListener(arg0 -> {
 
 			Props.setUserProperty("ip", txtIp.getText());
