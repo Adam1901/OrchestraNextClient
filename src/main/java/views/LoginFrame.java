@@ -10,8 +10,11 @@ import javax.swing.text.NumberFormatter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.seaglasslookandfeel.SeaGlassLookAndFeel;
 
+import controller.Controller;
+import dto.DTOBranch;
 import utils.Props;
 import utils.Utils;
 
@@ -24,6 +27,7 @@ import javax.swing.JPasswordField;
 
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.List;
 
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
@@ -32,6 +36,8 @@ import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Toolkit;
 
 public class LoginFrame extends JFrame {
@@ -47,23 +53,22 @@ public class LoginFrame extends JFrame {
 	private JTextField txtIp = new JTextField();
 	private final JComboBox<String> cmbProtocol = new JComboBox<String>();
 	private JFormattedTextField txtPort;
-	private final JLabel lblUrl = new JLabel("URL:");
-	private final JLabel lblNewLabel = new JLabel("Username:");
-	private final JLabel lblNewLabel_1 = new JLabel("Password:");;
+	private final JLabel lblUrl = new JLabel(Messages.getString("LoginFrame.URL"));
+	private final JLabel lblNewLabel = new JLabel(Messages.getString("LoginFrame.Username"));
+	private final JLabel lblNewLabel_1 = new JLabel(Messages.getString("LoginFrame.password"));;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					UIManager.setLookAndFeel(new SeaGlassLookAndFeel());
-					LoginFrame frame = new LoginFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					log.error("failed to load screen", e);
-				}
+		EventQueue.invokeLater(() -> {
+			try {
+				UIManager.setLookAndFeel(new SeaGlassLookAndFeel());
+				LoginFrame frame = new LoginFrame();
+				frame.setVisible(true);
+
+			} catch (Exception e) {
+				log.error("failed to load screen", e);
 			}
 		});
 	}
@@ -189,7 +194,7 @@ public class LoginFrame extends JFrame {
 		gbc_passwordField.gridy = 3;
 		contentPane.add(passwordField, gbc_passwordField);
 
-		JButton btnLogin = new JButton("Login");
+		JButton btnLogin = new JButton(Messages.getString("LoginFrame.LoginBtn"));
 		btnLogin.addActionListener(arg0 -> {
 
 			Props.setUserProperty("ip", txtIp.getText());
@@ -207,6 +212,17 @@ public class LoginFrame extends JFrame {
 
 			LoginUser lu = new LoginUser(txtUsername.getText(), new String(passwordField.getPassword()),
 					connectionString);
+			try {
+				List<DTOBranch> branches = new Controller().getBranches(lu);
+				if(branches.isEmpty()){
+					failToLoginMessage();
+					return;
+				}
+			} catch (Throwable e) {
+				log.error("failed to log in", e);
+				failToLoginMessage();
+				return;
+			}
 			new Main(lu);
 			setVisible(false);
 		});
@@ -217,5 +233,9 @@ public class LoginFrame extends JFrame {
 		gbc_btnLogin.gridx = 1;
 		gbc_btnLogin.gridy = 4;
 		contentPane.add(btnLogin, gbc_btnLogin);
+	}
+	
+	private void failToLoginMessage(){
+		JOptionPane.showMessageDialog(this, Messages.getString("LoginFrame.failedToLogin"), "Error", JOptionPane.ERROR_MESSAGE); 
 	}
 }

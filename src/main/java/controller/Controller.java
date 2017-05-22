@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -33,7 +34,8 @@ public class Controller {
 	public List<DTOBranch> getBranches(LoginUser lu) throws UnirestException {
 		List<DTOBranch> ret = new ArrayList<DTOBranch>();
 		HttpResponse<JsonNode> asJson = Unirest.get(lu.getServerIPPort() + "/rest/servicepoint/branches/")
-				.basicAuth(lu.getUsername(), lu.getPassword()).asJson();
+				.basicAuth(lu.getUsername(), lu.getPassword())
+				.asJson();
 
 		JSONArray json = new JSONArray(asJson.getBody().toString());
 		for (int i = 0; i < json.length(); i++) {
@@ -49,7 +51,8 @@ public class Controller {
 		List<DTOWorkProfile> ret = new ArrayList<DTOWorkProfile>();
 		HttpResponse<JsonNode> asJson = Unirest
 				.get(lu.getServerIPPort() + "/rest/servicepoint/branches/{branchId}/workProfiles/")
-				.routeParam("branchId", branchId.getIdAsString()).basicAuth(lu.getUsername(), lu.getPassword())
+				.routeParam("branchId", branchId.getIdAsString())
+				.basicAuth(lu.getUsername(), lu.getPassword())
 				.asJson();
 
 		JSONArray json = new JSONArray(asJson.getBody().toString());
@@ -67,7 +70,8 @@ public class Controller {
 		HttpResponse<JsonNode> asJson = Unirest
 				.get(lu.getServerIPPort()
 						+ "/rest/servicepoint/branches/{branchID}/servicePoints/deviceTypes/SW_SERVICE_POINT")
-				.routeParam("branchID", branchId.getIdAsString()).basicAuth(lu.getUsername(), lu.getPassword())
+				.routeParam("branchID", branchId.getIdAsString())
+				.basicAuth(lu.getUsername(), lu.getPassword())
 				.asJson();
 
 		JSONArray json = new JSONArray(asJson.getBody().toString());
@@ -86,8 +90,11 @@ public class Controller {
 		HttpResponse<JsonNode> asJson = Unirest
 				.put(lu.getServerIPPort()
 						+ "/rest/servicepoint/branches/{branchId}/servicePoints/{servicePointId}/users/{username}/")
-				.routeParam("branchId", branchId.getIdAsString()).routeParam("servicePointId", spId.getIdAsString())
-				.routeParam("username", lu.getUsername()).basicAuth(lu.getUsername(), lu.getPassword()).asJson();
+				.routeParam("branchId", branchId.getIdAsString())
+				.routeParam("servicePointId", spId.getIdAsString())
+				.routeParam("username", lu.getUsername())
+				.basicAuth(lu.getUsername(), lu.getPassword())
+				.asJson();
 
 		log.info(asJson.getStatus());
 		log.info(asJson.getStatusText());
@@ -101,8 +108,11 @@ public class Controller {
 		HttpResponse<JsonNode> asJson = Unirest
 				.delete(lu.getServerIPPort()
 						+ "/rest/servicepoint/branches/{branchId}/servicePoints/{servicePointId}/users/{username}/")
-				.routeParam("branchId", branchId.getIdAsString()).routeParam("servicePointId", spId.getIdAsString())
-				.routeParam("username", lu.getUsername()).basicAuth(lu.getUsername(), lu.getPassword()).asJson();
+				.routeParam("branchId", branchId.getIdAsString()).
+				routeParam("servicePointId", spId.getIdAsString())
+				.routeParam("username", lu.getUsername())
+				.basicAuth(lu.getUsername(), lu.getPassword())
+				.asJson();
 
 		log.info(asJson.getStatus());
 		log.info(asJson.getStatusText());
@@ -115,8 +125,11 @@ public class Controller {
 		HttpResponse<JsonNode> asJson = Unirest
 				.post(lu.getServerIPPort()
 						+ "/rest/servicepoint/branches/{branchID}/servicePoints/{servicePointId}/visits/next/")
-				.routeParam("branchID", branch.getIdAsString()).routeParam("servicePointId", spId.getIdAsString())
-				.header("Allow", "POST").basicAuth(lu.getUsername(), lu.getPassword()).asJson();
+				.routeParam("branchID", branch.getIdAsString())
+				.routeParam("servicePointId", spId.getIdAsString())
+				.header("Allow", "POST")
+				.basicAuth(lu.getUsername(), lu.getPassword())
+				.asJson();
 
 		log.info(asJson.getStatus());
 		log.info(asJson.getStatusText());
@@ -139,8 +152,11 @@ public class Controller {
 		HttpResponse<JsonNode> asJson = Unirest
 				.put(lu.getServerIPPort()
 						+ "/rest/servicepoint/branches/{branchID}/servicePoints/{servicePointId}/visit/recall/")
-				.routeParam("branchID", branchId.getIdAsString()).routeParam("servicePointId", spId.getIdAsString())
-				.header("Allow", "PUT").basicAuth(lu.getUsername(), lu.getPassword()).asJson();
+				.routeParam("branchID", branchId.getIdAsString())
+				.routeParam("servicePointId", spId.getIdAsString())
+				.header("Allow", "PUT")
+				.basicAuth(lu.getUsername(), lu.getPassword())
+				.asJson();
 
 		log.info(asJson.getStatus());
 		log.info(asJson.getStatusText());
@@ -162,9 +178,13 @@ public class Controller {
 		HttpResponse<JsonNode> asJson = Unirest
 				.put(lu.getServerIPPort()
 						+ "/rest/servicepoint/branches/{branchID}/users/{userName}/workProfile/{workProfileId}/")
-				.routeParam("branchID", branchId.getIdAsString()).routeParam("userName", lu.getUsername())
-				.routeParam("workProfileId", wpId.getIdAsString()).header("Allow", "PUT")
-				.basicAuth(lu.getUsername(), lu.getPassword()).asJson();
+				.routeParam("branchID", branchId.getIdAsString())
+				.routeParam("userName", lu.getUsername())
+				.routeParam("workProfileId", wpId.getIdAsString())
+				.header("Allow", "PUT")
+				.basicAuth(lu.getUsername(), lu.getPassword())
+				.asJson();
+		
 		log.info("SetWP");
 		log.info(asJson.getStatus());
 		log.info(asJson.getStatusText());
@@ -175,8 +195,11 @@ public class Controller {
 	public void endVisit(LoginUser lu, DTOBranch branchId, String visitId) throws UnirestException {
 		HttpResponse<JsonNode> asJson = Unirest
 				.put(lu.getServerIPPort() + "/rest/servicepoint/branches/{branchID}/visits/{visitId}/end/")
-				.routeParam("branchID", branchId.getIdAsString()).routeParam("visitId", visitId).header("Allow", "PUT")
-				.basicAuth(lu.getUsername(), lu.getPassword()).asJson();
+				.routeParam("branchID", branchId.getIdAsString())
+				.routeParam("visitId", visitId)
+				.header("Allow", "PUT")
+				.basicAuth(lu.getUsername(), lu.getPassword())
+				.asJson();
 		log.info(asJson.getStatus());
 		log.info(asJson.getStatusText());
 		log.info(asJson.getHeaders());
@@ -190,8 +213,10 @@ public class Controller {
 		HttpResponse<JsonNode> asJson = Unirest
 				.get(lu.getServerIPPort()
 						+ "/rest/servicepoint/branches/{branchID}/workProfiles/{workProfileId}/queues/")
-				.routeParam("branchID", branch.getIdAsString()).routeParam("workProfileId", wp.getIdAsString())
-				.basicAuth(lu.getUsername(), lu.getPassword()).asJson();
+				.routeParam("branchID", branch.getIdAsString())
+				.routeParam("workProfileId", wp.getIdAsString())
+				.basicAuth(lu.getUsername(), lu.getPassword())
+				.asJson();
 
 		JSONArray json = new JSONArray(asJson.getBody().toString());
 		for (int i = 0; i < json.length(); i++) {
@@ -208,7 +233,9 @@ public class Controller {
 		List<DTOQueue> ret = new ArrayList<DTOQueue>();
 		HttpResponse<JsonNode> asJson = Unirest
 				.get(lu.getServerIPPort() + "/rest/servicepoint/branches/{branchID}/queues/")
-				.routeParam("branchID", branch.getIdAsString()).basicAuth(lu.getUsername(), lu.getPassword()).asJson();
+				.routeParam("branchID", branch.getIdAsString())
+				.basicAuth(lu.getUsername(), lu.getPassword())
+				.asJson();
 
 		JSONArray json = new JSONArray(asJson.getBody().toString());
 		for (int i = 0; i < json.length(); i++) {
@@ -221,6 +248,14 @@ public class Controller {
 
 		return ret;
 	}
+	
+	public void logout(LoginUser lu) throws UnirestException, IOException {
+		Unirest.put(lu.getServerIPPort() + "/rest/servicepoint/logout")
+				.basicAuth(lu.getUsername(), lu.getPassword())
+				.asJson();
+		Unirest.shutdown();
+	}
+	
 
 	private <T extends OrchestraDTO> void sortAndRemove(List<T> ret, boolean sortByName) {
 		if (sortByName) {
