@@ -109,7 +109,7 @@ public class Main extends JFrame {
 		setVisible(true);
 		postVisible();
 		frm = new SelectionFrame(lu, this);
-		
+
 		Thread t = new Thread(new Flash());
 		t.start();
 	}
@@ -468,8 +468,8 @@ public class Main extends JFrame {
 		return false;
 	}
 
-
 	int amount = 0;
+	boolean started = false;
 	Timer timer = new Timer(500, evt -> {
 		Color foreground2 = lblA.getForeground();
 		if (foreground2 == Color.BLACK) {
@@ -487,16 +487,25 @@ public class Main extends JFrame {
 	private class Flash implements Runnable {
 		public void run() {
 			while (true) {
-				if(flash) {
-					timer.start();
+				if (flash) {
+					if (!started) {
+						timer.start();
+						started = true;
+					}
+
 				}
-				if (amount >= 5) {
-					System.out.println("stop flash" + amount);
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					log.error(e);
+				}
+				if (amount >= 10) {
 					timer.stop();
 					lblA.setForeground(Color.BLACK);
 					amount = 0;
 					flash = false;
-					//return;
+					started = false;
+					// return;
 				}
 			}
 		}
