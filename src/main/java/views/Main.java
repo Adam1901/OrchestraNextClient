@@ -16,6 +16,7 @@ import dto.DTOQueue;
 import dto.DTOServicePoint;
 import dto.DTOUserStatus;
 import dto.DTOWorkProfile;
+import dto.LoginUser;
 import utils.Props;
 import utils.UpdateThread;
 import utils.Props.GlobalProperties;
@@ -83,6 +84,7 @@ public class Main extends JFrame {
 	private final JLabel lblWorkProfile = new JLabel("A");
 	private final JPanel panel_2 = new JPanel();
 	private boolean flash = false;
+	private QueueInfoFrame queueInfoFrame = null;
 
 	public JLabel getLblWorkProfile() {
 		return lblWorkProfile;
@@ -109,17 +111,15 @@ public class Main extends JFrame {
 		createImagesForButtons();
 		readFromProperties();
 		setVisible(true);
+		setLocationRelativeTo(null);
 		frm = new SelectionFrame(lu, this);
-		postVisible();
+		queueInfoFrame = new QueueInfoFrame(lu, this);
+		postJbInit();
 
-		Thread t = new Thread(new Flash());
-		t.start();
 		
-		UpdateThread updateThread = new UpdateThread(lu, this);
-		new Thread(updateThread).start();
 	}
 
-	private void postVisible() {
+	private void postJbInit() {
 		Boolean showCounter = Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.SHOW_COUNTER_OPTIONS));
 		Dimension sizeCurrent = getSize();
 		if (!showCounter) {
@@ -127,12 +127,17 @@ public class Main extends JFrame {
 			setPreferredSize(newDim);
 			setSize(newDim);
 		}
-		
 
-		if(Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.SHOW_COUTER_POPUP_EACH_START))){
+		if (Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.SHOW_COUTER_POPUP_EACH_START))) {
 			frm.setVisible(true);
 		}
 		
+		Thread t = new Thread(new Flash());
+		t.start();
+
+		UpdateThread updateThread = new UpdateThread(lu, this);
+		new Thread(updateThread).start();
+
 	}
 
 	private void readFromProperties() {
@@ -425,9 +430,10 @@ public class Main extends JFrame {
 		});
 
 		btnInfo.addActionListener(arg0 -> {
-			new QueueInfoFrame(lu, this);
+			queueInfoFrame.setVisible(true);
+
 		});
-		
+
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent arg0) {

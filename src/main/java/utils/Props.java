@@ -43,7 +43,7 @@ public class Props {
 
 	}
 
-	public static void setGlobalProperty(String propKey, String propVal) {
+	private static void setGlobalProperty(String propKey, String propVal) {
 		setProperty(propKey, propVal, false);
 	}
 
@@ -54,26 +54,23 @@ public class Props {
 	public static String getGlobalProperty(String propKey) {
 		return getProperty(propKey, false);
 	}
-	
+
 	public static String getLangProperty(String propKey) {
 		String propFile = "messages.properties";
-		try (InputStream input = new FileInputStream(propFile);) {
-			Properties prop = new Properties();
-			// load a properties file
-			prop.load(input);
-			return prop.getProperty(propKey);
-		} catch (IOException ex) {
-			log.error(ex);
-			throw new RuntimeException("value not found for key: " + propKey);
-		}
+		return getPropertyInternal(propKey, propFile);
 	}
 
 	public static String getUserProperty(String propKey) {
 		return getProperty(propKey, true);
 	}
 
+	private static String getProperty(String propKey, boolean userProps) {
+		String propFile = userProps ? CONFIG_PROPERTIES : GLOBAL_PROPERTIES;
+		return getPropertyInternal(propKey, propFile);
+	}
+
 	private static void setProperty(String propKey, String propVal, boolean userProps) {
-		
+
 		String propFile = userProps ? CONFIG_PROPERTIES : GLOBAL_PROPERTIES;
 		File f = new File(propFile);
 		if (!f.exists() && !f.isDirectory()) {
@@ -100,8 +97,7 @@ public class Props {
 		}
 	}
 
-	private static String getProperty(String propKey, boolean userProps) {
-		String propFile = userProps ? CONFIG_PROPERTIES : GLOBAL_PROPERTIES;
+	private static String getPropertyInternal(String propKey, String propFile) {
 		try (InputStream input = new FileInputStream(propFile);) {
 			Properties prop = new Properties();
 			// load a properties file
@@ -111,7 +107,6 @@ public class Props {
 			log.error(ex);
 			throw new RuntimeException("value not found for key: " + propKey);
 		}
-
 	}
 
 	public static void deleteProperty(String string, boolean userProps) {
@@ -137,12 +132,11 @@ public class Props {
 		public static String SORT_BY_NAME_DEFAULT_VALUE = "true";
 
 		public static String APP_NAME = "appName";
-		public static String APP_NAME_DEFAULT = "Test";
-		
-		
+		public static String APP_NAME_DEFAULT = "Build";
+
 		public static String SHOW_COUNTER_OPTIONS = "showCounterOptions";
 		public static String SHOW_COUNTER_OPTIONS_DEFAULT = "true";
-		
+
 		public static String SHOW_COUTER_POPUP_EACH_START = "showCounterPopUPOnEachStart";
 		public static String SHOW_COUTER_POPUP_EACH_START_DEFAULT = "false";
 	}

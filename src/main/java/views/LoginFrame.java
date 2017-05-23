@@ -14,6 +14,7 @@ import com.seaglasslookandfeel.SeaGlassLookAndFeel;
 
 import controller.Controller;
 import dto.DTOBranch;
+import dto.LoginUser;
 import utils.Props;
 import utils.Utils;
 
@@ -80,7 +81,8 @@ public class LoginFrame extends JFrame {
 		setTitle("Orchestra Next Client");
 		setResizable(false);
 		jbInit();
-
+		setLocationRelativeTo(null);
+				
 		txtIp.setText(Props.getUserProperty("ip"));
 		txtPort.setText(Props.getUserProperty("port"));
 		cmbProtocol.setSelectedItem(Props.getUserProperty("proto"));
@@ -99,6 +101,7 @@ public class LoginFrame extends JFrame {
 		} catch (Throwable e) {
 			log.error(e);
 		}
+		
 	}
 
 	private void jbInit() {

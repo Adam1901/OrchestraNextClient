@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import views.LoginUser;
+import dto.LoginUser;
 import views.Main;
 
 public class UpdateThread implements Runnable {

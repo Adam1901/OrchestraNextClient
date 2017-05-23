@@ -1,4 +1,4 @@
-package views;
+package dto;
 
 public class LoginUser {
 	private String username;

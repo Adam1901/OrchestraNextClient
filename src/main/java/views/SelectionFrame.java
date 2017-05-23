@@ -19,9 +19,11 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 
 import dto.DTOWorkProfile;
+import dto.LoginUser;
 import utils.Props;
 import dto.DTOServicePoint;
 import dto.DTOBranch;
+import javax.swing.JButton;
 
 public class SelectionFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -54,6 +56,7 @@ public class SelectionFrame extends JFrame {
 		this.lu = lu;
 		this.main = main;
 		jbInit();
+		setLocationRelativeTo(null);
 		populate();
 	}
 
@@ -99,37 +102,37 @@ public class SelectionFrame extends JFrame {
 
 			if (branchLastUsed != null) {
 				getCmbBranch().setSelectedItem(branchLastUsed);
-			}
-			if (getCmbServicePoint().getItemCount() != 0) {
-				getCmbServicePoint().removeAllItems();
-			}
-			List<DTOServicePoint> servicePoints = cont.getServicePoints(lu, branchLastUsed);
-			for (DTOServicePoint dtoServicePoint : servicePoints) {
-				getCmbServicePoint().addItem(dtoServicePoint);
-			}
 
-			// Now try and set SP
-			if (lastCounter != null) {
+				if (getCmbServicePoint().getItemCount() != 0) {
+					getCmbServicePoint().removeAllItems();
+				}
+				List<DTOServicePoint> servicePoints = cont.getServicePoints(lu, branchLastUsed);
 				for (DTOServicePoint dtoServicePoint : servicePoints) {
-					if (lastCounter == dtoServicePoint.getId()) {
-						getCmbServicePoint().setSelectedItem(dtoServicePoint);
-						break;
+					getCmbServicePoint().addItem(dtoServicePoint);
+				}
+
+				// Now try and set SP
+				if (lastCounter != null) {
+					for (DTOServicePoint dtoServicePoint : servicePoints) {
+						if (lastCounter == dtoServicePoint.getId()) {
+							getCmbServicePoint().setSelectedItem(dtoServicePoint);
+							break;
+						}
+					}
+				}
+
+				// and WP
+				if (lastWorkProfile != null) {
+					DTOBranch selBranch = (DTOBranch) getCmbBranch().getSelectedItem();
+					List<DTOWorkProfile> workProfile = cont.getWorkProfile(lu, selBranch);
+					for (DTOWorkProfile dtoWorkProfile : workProfile) {
+						if (lastWorkProfile == dtoWorkProfile.getId()) {
+							getCmbWorkProfile().setSelectedItem(dtoWorkProfile);
+							break;
+						}
 					}
 				}
 			}
-
-			// and WP
-			if (lastWorkProfile != null) {
-				DTOBranch selBranch = (DTOBranch) getCmbBranch().getSelectedItem();
-				List<DTOWorkProfile> workProfile = cont.getWorkProfile(lu, selBranch);
-				for (DTOWorkProfile dtoWorkProfile : workProfile) {
-					if(lastWorkProfile == dtoWorkProfile.getId()) {
-						getCmbWorkProfile().setSelectedItem(dtoWorkProfile);
-						break;
-					}
-				}
-			}
-
 		} catch (Exception e) {
 			log.error("Failed to load combo boxes", e);
 			main.showMessageDialog();
@@ -137,12 +140,12 @@ public class SelectionFrame extends JFrame {
 	}
 
 	private void jbInit() {
-		setBounds(100, 100, 373, 145);
+		setBounds(100, 100, 373, 175);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0 };
 		gridBagLayout.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-		gridBagLayout.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
 		getContentPane().setLayout(gridBagLayout);
 
 		JPanel panel = new JPanel();
@@ -152,10 +155,10 @@ public class SelectionFrame extends JFrame {
 		gbc_panel.gridy = 0;
 		getContentPane().add(panel, gbc_panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[] { 0, 0, 0, 0, 0 };
-		gbl_panel.rowHeights = new int[] { 0, 0, 0, 0, 0, 0 };
+		gbl_panel.columnWidths = new int[] { 5, 0, 0, 5, 0 };
+		gbl_panel.rowHeights = new int[] { 5, 0, 0, 0, 0, 5, 0 };
 		gbl_panel.columnWeights = new double[] { 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
-		gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		panel.setLayout(gbl_panel);
 
 		JLabel label = new JLabel("Branch");
@@ -200,18 +203,30 @@ public class SelectionFrame extends JFrame {
 		gbc_comboBox.gridy = 3;
 		panel.add(cmbWorkProfile, gbc_comboBox);
 
+		JButton btnClose = new JButton("Close");
+		btnClose.addActionListener(arg0 -> {
+			setVisible(false);
+		});
+		GridBagConstraints gbc_btnClose = new GridBagConstraints();
+		gbc_btnClose.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnClose.gridwidth = 2;
+		gbc_btnClose.insets = new Insets(0, 0, 5, 5);
+		gbc_btnClose.gridx = 1;
+		gbc_btnClose.gridy = 4;
+		panel.add(btnClose, gbc_btnClose);
+
 		getCmbWorkProfile().addActionListener(e -> {
 			try {
 				if (getCmbWorkProfile().getItemCount() == 0) {
 					main.getLblWorkProfile().setText("Workprofile: None");
 					return;
 				}
-				
+
 				Controller cont = new Controller();
 				DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
 
 				DTOWorkProfile wp = (DTOWorkProfile) getCmbWorkProfile().getSelectedItem();
-				if(selectedWp != null && selectedWp.getId() == wp.getId()) {
+				if (selectedWp != null && selectedWp.getId() == wp.getId()) {
 					main.getLblWorkProfile().setText("Workprofile: " + wp.getName());
 					Props.setUserProperty("lastWorkProfile", wp.getIdAsString());
 					return;

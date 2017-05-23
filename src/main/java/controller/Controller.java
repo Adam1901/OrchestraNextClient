@@ -21,9 +21,9 @@ import dto.DTOQueue;
 import dto.DTOServicePoint;
 import dto.DTOUserStatus;
 import dto.DTOWorkProfile;
+import dto.LoginUser;
 import dto.OrchestraDTO;
 import utils.Props;
-import views.LoginUser;
 
 public class Controller {
 	private final static Logger log = LogManager.getLogger(Controller.class);
