@@ -53,6 +53,19 @@ public class Props {
 	public static String getGlobalProperty(String propKey) {
 		return getProperty(propKey, false);
 	}
+	
+	public static String getLangProperty(String propKey) {
+		String propFile = "messages.properties";
+		try (InputStream input = new FileInputStream(propFile);) {
+			Properties prop = new Properties();
+			// load a properties file
+			prop.load(input);
+			return prop.getProperty(propKey);
+		} catch (IOException ex) {
+			log.error(ex);
+			throw new RuntimeException("value not found for key: " + propKey);
+		}
+	}
 
 	public static String getUserProperty(String propKey) {
 		return getProperty(propKey, true);

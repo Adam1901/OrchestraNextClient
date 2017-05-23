@@ -50,8 +50,7 @@ import javax.swing.Timer;
 
 public class Main extends JFrame {
 
-	// TODO add update thinggy for version
-	// TODO flash serving
+	// TODO add remember sp and wp
 
 	private final static Logger log = LogManager.getLogger(Main.class);
 
@@ -60,15 +59,15 @@ public class Main extends JFrame {
 	private LoginUser lu;
 	private DTOUserStatus visit;
 
-	private final JLabel lblNewLabel = new JLabel(Messages.getString("MainFrame.CurrentlyServing"));
-	private final JLabel lblA = new JLabel(Messages.getString("MainFrame.CurrentlyServingInit"));
-	private final JButton btnOpenCounter = new JButton(Messages.getString("MainFrame.OpenBtn"));
-	private final JButton btnRecall = new JButton(Messages.getString("MainFrame.RecallBtn"));
-	private final JButton btnClose = new JButton(Messages.getString("MainFrame.CloseBtn"));
-	private final JButton btnEnd = new JButton(Messages.getString("MainFrame.endBtn"));
-	private final JButton btnInfo = new JButton(Messages.getString("MainFrame.QueuInfoBtn"));
+	private final JLabel lblNewLabel = new JLabel(Props.getLangProperty("MainFrame.CurrentlyServing"));
+	private final JLabel lblA = new JLabel(Props.getLangProperty("MainFrame.CurrentlyServingInit"));
+	private final JButton btnOpenCounter = new JButton(Props.getLangProperty("MainFrame.OpenBtn"));
+	private final JButton btnRecall = new JButton(Props.getLangProperty("MainFrame.RecallBtn"));
+	private final JButton btnClose = new JButton(Props.getLangProperty("MainFrame.CloseBtn"));
+	private final JButton btnEnd = new JButton(Props.getLangProperty("MainFrame.endBtn"));
+	private final JButton btnInfo = new JButton(Props.getLangProperty("MainFrame.QueuInfoBtn"));
 
-	private final String ERROR_MESSAGE = Messages.getString("MainFrame.ErrorMessage");
+	private final String ERROR_MESSAGE = Props.getLangProperty("MainFrame.ErrorMessage");
 	private final JPanel pblCounter = new JPanel();
 	private final JLabel lblImageNext = new JLabel("");
 
@@ -135,7 +134,7 @@ public class Main extends JFrame {
 			Boolean showCounter = Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.SHOW_COUNTER_OPTIONS));
 			pblCounter.setVisible(showCounter);
 			String appName = Props.getGlobalProperty(GlobalProperties.APP_NAME);
-			setTitle(Messages.getString("MainFrame.title") + appName);
+			setTitle(Props.getLangProperty("MainFrame.title") + appName);
 		} catch (Exception ex) {
 			log.error(ex);
 		}
@@ -179,7 +178,7 @@ public class Main extends JFrame {
 		gbc_panel_1.gridx = 1;
 		gbc_panel_1.gridy = 2;
 		panel_1.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
-				Messages.getString("MainFrame.VisitBorderText"), TitledBorder.LEADING, TitledBorder.TOP, null,
+				Props.getLangProperty("MainFrame.VisitBorderText"), TitledBorder.LEADING, TitledBorder.TOP, null,
 				new Color(0, 0, 0)));
 		contentPane.add(panel_1, gbc_panel_1);
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
@@ -212,7 +211,7 @@ public class Main extends JFrame {
 				DTOServicePoint sp = (DTOServicePoint) frm.getCmbServicePoint().getSelectedItem();
 
 				if (visit == null) {
-					JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.notservingMessage"), "Error",
+					JOptionPane.showMessageDialog(this, Props.getLangProperty("MainFrame.notservingMessage"), "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -237,7 +236,7 @@ public class Main extends JFrame {
 		btnEnd.addActionListener(arg0 -> {
 			try {
 				if (visit == null) {
-					JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.notCurrentlyServing"), "Error",
+					JOptionPane.showMessageDialog(this, Props.getLangProperty("MainFrame.notCurrentlyServing"), "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -250,7 +249,7 @@ public class Main extends JFrame {
 				String visitId = visit.getVisit().getIdAsString();
 				Controller cont = new Controller();
 				visit = null;
-				lblA.setText(Messages.getString("MainFrame.notServingText"));
+				lblA.setText(Props.getLangProperty("MainFrame.notServingText"));
 				cont.endVisit(lu, branch, visitId);
 			} catch (Exception e) {
 				log.error("Failed to data", e);
@@ -275,7 +274,7 @@ public class Main extends JFrame {
 		gbc_panel_2.gridx = 0;
 		gbc_panel_2.gridy = 1;
 		panel_2.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
-				Messages.getString("MainFrame.SettingBorderText"), TitledBorder.LEADING, TitledBorder.TOP, null,
+				Props.getLangProperty("MainFrame.SettingBorderText"), TitledBorder.LEADING, TitledBorder.TOP, null,
 				new Color(0, 0, 0)));
 		panel_1.add(panel_2, gbc_panel_2);
 		GridBagLayout gbl_panel_2 = new GridBagLayout();
@@ -313,7 +312,7 @@ public class Main extends JFrame {
 		gbc_pblCoutner.gridx = 1;
 		gbc_pblCoutner.gridy = 3;
 		pblCounter.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
-				Messages.getString("MainFrame.CounterBorderText"), TitledBorder.LEADING, TitledBorder.TOP, null,
+				Props.getLangProperty("MainFrame.CounterBorderText"), TitledBorder.LEADING, TitledBorder.TOP, null,
 				new Color(0, 0, 0)));
 		contentPane.add(pblCounter, gbc_pblCoutner);
 		GridBagLayout gbl_pblCoutner = new GridBagLayout();
@@ -396,7 +395,7 @@ public class Main extends JFrame {
 					}
 
 					if (!custWaiting) {
-						showMessageDialog(Messages.getString("MainFrame.NoWatingCustomers"),
+						showMessageDialog(Props.getLangProperty("MainFrame.NoWatingCustomers"),
 								JOptionPane.INFORMATION_MESSAGE);
 						return;
 					}
@@ -411,9 +410,9 @@ public class Main extends JFrame {
 					visit = callNext;
 					flash = true;
 				} catch (Exception ee) {
-					lblA.setText(Messages.getString("MainFrame.ErrorCurretServing"));
+					lblA.setText(Props.getLangProperty("MainFrame.ErrorCurretServing"));
 					log.error("Failed to data", ee);
-					showMessageDialog(Messages.getString("MainFrame.noWaitingCustText"),
+					showMessageDialog(Props.getLangProperty("MainFrame.noWaitingCustText"),
 							JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
@@ -442,7 +441,7 @@ public class Main extends JFrame {
 		JOptionPane.showMessageDialog(this, ERROR_MESSAGE, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
-	private void showMessageDialog(String message, int type) {
+	public void showMessageDialog(String message, int type) {
 		JOptionPane.showMessageDialog(this, message, "Error", type);
 	}
 
@@ -480,7 +479,7 @@ public class Main extends JFrame {
 		String visitState = visit.getVisitState();
 		for (String state : arrays) {
 			if (visitState.equals(state)) {
-				showMessageDialog(Messages.getString("MainFrame.DsOutEtNeeded"), JOptionPane.ERROR_MESSAGE);
+				showMessageDialog(Props.getLangProperty("MainFrame.DsOutEtNeeded"), JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 		}
@@ -511,7 +510,6 @@ public class Main extends JFrame {
 						timer.start();
 						started = true;
 					}
-
 				}
 				try {
 					Thread.sleep(100);
@@ -524,7 +522,6 @@ public class Main extends JFrame {
 					amount = 0;
 					flash = false;
 					started = false;
-					// return;
 				}
 			}
 		}

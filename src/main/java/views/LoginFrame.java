@@ -53,9 +53,9 @@ public class LoginFrame extends JFrame {
 	private JTextField txtIp = new JTextField();
 	private final JComboBox<String> cmbProtocol = new JComboBox<String>();
 	private JFormattedTextField txtPort;
-	private final JLabel lblUrl = new JLabel(Messages.getString("LoginFrame.URL"));
-	private final JLabel lblNewLabel = new JLabel(Messages.getString("LoginFrame.Username"));
-	private final JLabel lblNewLabel_1 = new JLabel(Messages.getString("LoginFrame.password"));;
+	private final JLabel lblUrl = new JLabel(Props.getLangProperty("LoginFrame.URL"));
+	private final JLabel lblNewLabel = new JLabel(Props.getLangProperty("LoginFrame.Username"));
+	private final JLabel lblNewLabel_1 = new JLabel(Props.getLangProperty("LoginFrame.password"));;
 
 	/**
 	 * Launch the application.
@@ -194,7 +194,7 @@ public class LoginFrame extends JFrame {
 		gbc_passwordField.gridy = 3;
 		contentPane.add(passwordField, gbc_passwordField);
 
-		JButton btnLogin = new JButton(Messages.getString("LoginFrame.LoginBtn"));
+		JButton btnLogin = new JButton(Props.getLangProperty("LoginFrame.LoginBtn"));
 		btnLogin.addActionListener(arg0 -> {
 
 			Props.setUserProperty("ip", txtIp.getText());
@@ -236,6 +236,6 @@ public class LoginFrame extends JFrame {
 	}
 	
 	private void failToLoginMessage(){
-		JOptionPane.showMessageDialog(this, Messages.getString("LoginFrame.failedToLogin"), "Error", JOptionPane.ERROR_MESSAGE); 
+		JOptionPane.showMessageDialog(this, Props.getLangProperty("LoginFrame.failedToLogin"), "Error", JOptionPane.ERROR_MESSAGE); 
 	}
 }
