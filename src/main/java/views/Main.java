@@ -109,8 +109,8 @@ public class Main extends JFrame {
 		createImagesForButtons();
 		readFromProperties();
 		setVisible(true);
-		postVisible();
 		frm = new SelectionFrame(lu, this);
+		postVisible();
 
 		Thread t = new Thread(new Flash());
 		t.start();
@@ -127,6 +127,12 @@ public class Main extends JFrame {
 			setPreferredSize(newDim);
 			setSize(newDim);
 		}
+		
+
+		if(Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.SHOW_COUTER_POPUP_EACH_START))){
+			frm.setVisible(true);
+		}
+		
 	}
 
 	private void readFromProperties() {

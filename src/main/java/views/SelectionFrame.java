@@ -22,8 +22,6 @@ import dto.DTOWorkProfile;
 import utils.Props;
 import dto.DTOServicePoint;
 import dto.DTOBranch;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class SelectionFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -33,6 +31,7 @@ public class SelectionFrame extends JFrame {
 	private JComboBox<DTOBranch> cmbBranch = new JComboBox<DTOBranch>();
 	private Main main;
 	private LoginUser lu;
+	private DTOWorkProfile selectedWp = null;
 
 	public JComboBox<DTOWorkProfile> getCmbWorkProfile() {
 		return cmbWorkProfile;
@@ -68,6 +67,20 @@ public class SelectionFrame extends JFrame {
 				log.error(e);
 			}
 
+			Integer lastCounter = null;
+			try {
+				lastCounter = Integer.valueOf(Props.getUserProperty("lastCounter"));
+			} catch (NumberFormatException e) {
+				log.error(e);
+			}
+
+			Integer lastWorkProfile = null;
+			try {
+				lastWorkProfile = Integer.valueOf(Props.getUserProperty("lastWorkProfile"));
+			} catch (NumberFormatException e) {
+				log.error(e);
+			}
+
 			List<DTOBranch> branches = cont.getBranches(lu);
 			for (DTOBranch dtoBranch : branches) {
 				getCmbBranch().addItem(dtoBranch);
@@ -90,9 +103,33 @@ public class SelectionFrame extends JFrame {
 			if (getCmbServicePoint().getItemCount() != 0) {
 				getCmbServicePoint().removeAllItems();
 			}
-			for (DTOServicePoint dtoServicePoint : cont.getServicePoints(lu, branchLastUsed)) {
+			List<DTOServicePoint> servicePoints = cont.getServicePoints(lu, branchLastUsed);
+			for (DTOServicePoint dtoServicePoint : servicePoints) {
 				getCmbServicePoint().addItem(dtoServicePoint);
 			}
+
+			// Now try and set SP
+			if (lastCounter != null) {
+				for (DTOServicePoint dtoServicePoint : servicePoints) {
+					if (lastCounter == dtoServicePoint.getId()) {
+						getCmbServicePoint().setSelectedItem(dtoServicePoint);
+						break;
+					}
+				}
+			}
+
+			// and WP
+			if (lastWorkProfile != null) {
+				DTOBranch selBranch = (DTOBranch) getCmbBranch().getSelectedItem();
+				List<DTOWorkProfile> workProfile = cont.getWorkProfile(lu, selBranch);
+				for (DTOWorkProfile dtoWorkProfile : workProfile) {
+					if(lastWorkProfile == dtoWorkProfile.getId()) {
+						getCmbWorkProfile().setSelectedItem(dtoWorkProfile);
+						break;
+					}
+				}
+			}
+
 		} catch (Exception e) {
 			log.error("Failed to load combo boxes", e);
 			main.showMessageDialog();
@@ -169,12 +206,20 @@ public class SelectionFrame extends JFrame {
 					main.getLblWorkProfile().setText("Workprofile: None");
 					return;
 				}
+				
 				Controller cont = new Controller();
 				DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
 
 				DTOWorkProfile wp = (DTOWorkProfile) getCmbWorkProfile().getSelectedItem();
+				if(selectedWp != null && selectedWp.getId() == wp.getId()) {
+					main.getLblWorkProfile().setText("Workprofile: " + wp.getName());
+					Props.setUserProperty("lastWorkProfile", wp.getIdAsString());
+					return;
+				}
+				selectedWp = wp;
 				cont.setWorkProfile(lu, branch, wp);
 				main.getLblWorkProfile().setText("Workprofile: " + wp.getName());
+				Props.setUserProperty("lastWorkProfile", wp.getIdAsString());
 			} catch (Exception e1) {
 				log.error("Failed to data", e1);
 				main.showMessageDialog();
@@ -202,29 +247,27 @@ public class SelectionFrame extends JFrame {
 			}
 		});
 
-		getCmbServicePoint().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				try {
-					if (getCmbServicePoint().getItemCount() == 0) {
-						main.getLblCounter().setText("Counter: None");
-						return;
-					}
-					Controller cont = new Controller();
-					DTOBranch selBranch = (DTOBranch) getCmbBranch().getSelectedItem();
-
-					if (getCmbWorkProfile().getItemCount() != 0) {
-						getCmbWorkProfile().removeAllItems();
-					}
-					for (DTOWorkProfile dtoWp : cont.getWorkProfile(lu, selBranch)) {
-						getCmbWorkProfile().addItem(dtoWp);
-					}
-					main.getLblCounter().setText(
-							"Counter: " + ((DTOServicePoint) getCmbServicePoint().getSelectedItem()).getName());
-				} catch (Exception ee) {
-					log.error("Failed to data", ee);
-					main.showMessageDialog();
+		getCmbServicePoint().addActionListener(e -> {
+			try {
+				if (getCmbServicePoint().getItemCount() == 0) {
+					main.getLblCounter().setText("Counter: None");
+					return;
 				}
+				Controller cont = new Controller();
+				DTOBranch selBranch = (DTOBranch) getCmbBranch().getSelectedItem();
+
+				if (getCmbWorkProfile().getItemCount() != 0) {
+					getCmbWorkProfile().removeAllItems();
+				}
+				for (DTOWorkProfile dtoWp : cont.getWorkProfile(lu, selBranch)) {
+					getCmbWorkProfile().addItem(dtoWp);
+				}
+				DTOServicePoint selectedSp = (DTOServicePoint) getCmbServicePoint().getSelectedItem();
+				main.getLblCounter().setText("Counter: " + selectedSp.getName());
+				Props.setUserProperty("lastCounter", selectedSp.getIdAsString());
+			} catch (Exception ee) {
+				log.error("Failed to data", ee);
+				main.showMessageDialog();
 			}
 		});
 	}

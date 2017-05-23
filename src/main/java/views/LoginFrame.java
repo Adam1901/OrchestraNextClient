@@ -10,7 +10,6 @@ import javax.swing.text.NumberFormatter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mashape.unirest.http.exceptions.UnirestException;
 import com.seaglasslookandfeel.SeaGlassLookAndFeel;
 
 import controller.Controller;
@@ -37,8 +36,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
-import java.awt.Toolkit;
 
 public class LoginFrame extends JFrame {
 
