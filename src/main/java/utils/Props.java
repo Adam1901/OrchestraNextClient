@@ -35,6 +35,7 @@ public class Props {
 				Props.setGlobalProperty(GlobalProperties.APP_NAME, GlobalProperties.APP_NAME_DEFAULT);
 				Props.setGlobalProperty(GlobalProperties.SHOW_COUNTER_OPTIONS, GlobalProperties.SHOW_COUNTER_OPTIONS_DEFAULT);
 				Props.setGlobalProperty(GlobalProperties.SHOW_COUTER_POPUP_EACH_START, GlobalProperties.SHOW_COUTER_POPUP_EACH_START_DEFAULT);
+				Props.setGlobalProperty(GlobalProperties.VERSION, GlobalProperties.VERSION_DEFAULT);
 			}
 
 		} catch (IOException e) {
@@ -139,5 +140,8 @@ public class Props {
 
 		public static String SHOW_COUTER_POPUP_EACH_START = "showCounterPopUPOnEachStart";
 		public static String SHOW_COUTER_POPUP_EACH_START_DEFAULT = "false";
+		
+		public static String VERSION = "Version";
+		public static String VERSION_DEFAULT = "1.0.0.2";
 	}
 }

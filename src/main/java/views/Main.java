@@ -51,8 +51,6 @@ import javax.swing.Timer;
 
 public class Main extends JFrame {
 
-	// TODO add remember sp and wp
-
 	private final static Logger log = LogManager.getLogger(Main.class);
 
 	private static final long serialVersionUID = 1L;

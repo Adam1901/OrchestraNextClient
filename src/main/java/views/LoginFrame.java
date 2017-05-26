@@ -16,6 +16,7 @@ import controller.Controller;
 import dto.DTOBranch;
 import dto.LoginUser;
 import utils.Props;
+import utils.Props.GlobalProperties;
 import utils.Utils;
 
 import java.awt.GridBagLayout;
@@ -53,7 +54,8 @@ public class LoginFrame extends JFrame {
 	private JFormattedTextField txtPort;
 	private final JLabel lblUrl = new JLabel(Props.getLangProperty("LoginFrame.URL"));
 	private final JLabel lblNewLabel = new JLabel(Props.getLangProperty("LoginFrame.Username"));
-	private final JLabel lblNewLabel_1 = new JLabel(Props.getLangProperty("LoginFrame.password"));;
+	private final JLabel lblNewLabel_1 = new JLabel(Props.getLangProperty("LoginFrame.password"));
+	private final JLabel lblVersion = new JLabel("ver");
 
 	/**
 	 * Launch the application.
@@ -233,6 +235,15 @@ public class LoginFrame extends JFrame {
 		gbc_btnLogin.gridx = 1;
 		gbc_btnLogin.gridy = 4;
 		contentPane.add(btnLogin, gbc_btnLogin);
+		
+		GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
+		gbc_lblNewLabel_2.anchor = GridBagConstraints.WEST;
+		gbc_lblNewLabel_2.gridwidth = 5;
+		gbc_lblNewLabel_2.insets = new Insets(0, 0, 0, 5);
+		gbc_lblNewLabel_2.gridx = 0;
+		gbc_lblNewLabel_2.gridy = 5;
+		lblVersion.setText("Version: " + GlobalProperties.VERSION_DEFAULT);
+		contentPane.add(lblVersion, gbc_lblNewLabel_2);
 	}
 	
 	private void failToLoginMessage(){

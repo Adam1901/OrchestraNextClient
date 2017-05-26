@@ -163,6 +163,7 @@ public class SelectionFrame extends JFrame {
 
 		JLabel label = new JLabel("Branch");
 		GridBagConstraints gbc_label = new GridBagConstraints();
+		gbc_label.anchor = GridBagConstraints.EAST;
 		gbc_label.insets = new Insets(0, 0, 5, 5);
 		gbc_label.gridx = 1;
 		gbc_label.gridy = 1;
@@ -177,6 +178,7 @@ public class SelectionFrame extends JFrame {
 
 		JLabel label_1 = new JLabel("Counter");
 		GridBagConstraints gbc_label_1 = new GridBagConstraints();
+		gbc_label_1.anchor = GridBagConstraints.EAST;
 		gbc_label_1.insets = new Insets(0, 0, 5, 5);
 		gbc_label_1.gridx = 1;
 		gbc_label_1.gridy = 2;
@@ -191,6 +193,7 @@ public class SelectionFrame extends JFrame {
 
 		JLabel label_2 = new JLabel("Profile");
 		GridBagConstraints gbc_label_2 = new GridBagConstraints();
+		gbc_label_2.anchor = GridBagConstraints.EAST;
 		gbc_label_2.insets = new Insets(0, 0, 5, 5);
 		gbc_label_2.gridx = 1;
 		gbc_label_2.gridy = 3;
