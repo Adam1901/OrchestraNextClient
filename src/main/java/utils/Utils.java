@@ -5,8 +5,7 @@ import java.util.Base64;
 public class Utils {
 
 	public static String encode(String valueToEnc) throws Exception {
-		String encryptedValue = Base64.getEncoder().encodeToString(valueToEnc.getBytes());
-		return encryptedValue;
+		return Base64.getEncoder().encodeToString(valueToEnc.getBytes());
 	}
 
 	public static String decode(String encryptedValue) throws Exception {

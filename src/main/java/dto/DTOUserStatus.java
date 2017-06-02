@@ -336,10 +336,8 @@ public class DTOUserStatus {
 					return false;
 			} else if (!visitMarks.equals(other.visitMarks))
 				return false;
-			if (waitingTime != other.waitingTime)
-				return false;
-			return true;
-		}
+            return waitingTime == other.waitingTime;
+        }
 
 		@Override
 		public String toString() {

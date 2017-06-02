@@ -77,8 +77,6 @@ public class DTOQueue implements OrchestraDTO{
 			return false;
 		if (id != other.id)
 			return false;
-		if (waitingTime != other.waitingTime)
-			return false;
-		return true;
-	}
+        return waitingTime == other.waitingTime;
+    }
 }

@@ -427,10 +427,7 @@ public class Main extends JFrame {
 			}
 		});
 
-		btnInfo.addActionListener(arg0 -> {
-			queueInfoFrame.setVisible(true);
-
-		});
+		btnInfo.addActionListener(arg0 -> queueInfoFrame.setVisible(true));
 
 		addWindowListener(new WindowAdapter() {
 			@Override

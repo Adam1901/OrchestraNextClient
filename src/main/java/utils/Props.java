@@ -82,13 +82,13 @@ public class Props {
 				log.error(e);
 			}
 		}
-		try (InputStream input = new FileInputStream(propFile);) {
+		try (InputStream input = new FileInputStream(propFile)) {
 			Properties prop = new Properties();
 			prop.load(input);
 			// set the properties value
 			prop.put(propKey, propVal);
 			// save properties to project root folder
-			try (OutputStream output = new FileOutputStream(propFile);) {
+			try (OutputStream output = new FileOutputStream(propFile)) {
 				prop.store(output, null);
 			}
 
@@ -99,7 +99,7 @@ public class Props {
 	}
 
 	private static String getPropertyInternal(String propKey, String propFile) {
-		try (InputStream input = new FileInputStream(propFile);) {
+		try (InputStream input = new FileInputStream(propFile)) {
 			Properties prop = new Properties();
 			// load a properties file
 			prop.load(input);
@@ -112,13 +112,13 @@ public class Props {
 
 	public static void deleteProperty(String string, boolean userProps) {
 		String propFile = userProps ? CONFIG_PROPERTIES : GLOBAL_PROPERTIES;
-		try (InputStream input = new FileInputStream(propFile);) {
+		try (InputStream input = new FileInputStream(propFile)) {
 			Properties prop = new Properties();
 			prop.load(input);
 			// set the properties value
 			prop.remove(string);
 			// save properties to project root folder
-			try (OutputStream output = new FileOutputStream(propFile);) {
+			try (OutputStream output = new FileOutputStream(propFile)) {
 				prop.store(output, null);
 			}
 

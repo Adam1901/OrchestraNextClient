@@ -1,29 +1,21 @@
 package controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-
-import dto.DTOBranch;
-import dto.DTOQueue;
-import dto.DTOServicePoint;
-import dto.DTOUserStatus;
-import dto.DTOWorkProfile;
-import dto.LoginUser;
-import dto.OrchestraDTO;
+import dto.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import utils.Props;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class Controller {
 	private final static Logger log = LogManager.getLogger(Controller.class);
@@ -259,21 +251,13 @@ public class Controller {
 
 	private <T extends OrchestraDTO> void sortAndRemove(List<T> ret, boolean sortByName) {
 		if (sortByName) {
-			ret.sort(new Comparator<T>() {
-				@Override
-				public int compare(T arg0, T arg1) {
-					return arg0.getName().compareTo(arg1.getName());
-				}
-			});
+			ret.sort((arg0, arg1) -> arg0.getName().compareTo(arg1.getName()));
 		} else {
-			ret.sort(new Comparator<T>() {
-				@Override
-				public int compare(T arg0, T arg1) {
-					Integer i1 = arg0.getId();
-					Integer i2 = arg1.getId();
-					return i1.compareTo(i2);
-				}
-			});
+			ret.sort((arg0, arg1) -> {
+                Integer i1 = arg0.getId();
+                Integer i2 = arg1.getId();
+                return i1.compareTo(i2);
+            });
 		}
 
 		// Remove casual called (J8 FTW)

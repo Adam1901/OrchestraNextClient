@@ -207,9 +207,7 @@ public class SelectionFrame extends JFrame {
 		panel.add(cmbWorkProfile, gbc_comboBox);
 
 		JButton btnClose = new JButton("Close");
-		btnClose.addActionListener(arg0 -> {
-			setVisible(false);
-		});
+		btnClose.addActionListener(arg0 -> setVisible(false));
 		GridBagConstraints gbc_btnClose = new GridBagConstraints();
 		gbc_btnClose.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnClose.gridwidth = 2;

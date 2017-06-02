@@ -31,7 +31,7 @@ public class UpdateThread implements Runnable {
 		try {
 
 			URL url = new URL(lu.getServerIPPort() + "/download/version.js");
-			try (Scanner s = new Scanner(url.openStream());) {
+			try (Scanner s = new Scanner(url.openStream())) {
 				while (s.hasNext()) {
 					serverVersion += s.next();
 				}

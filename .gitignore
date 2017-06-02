@@ -13,3 +13,5 @@ global.properties
 .project
 .classpath
 *.properties
+.idea/
+OrchestraNextClient.iml

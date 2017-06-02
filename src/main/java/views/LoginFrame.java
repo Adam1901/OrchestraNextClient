@@ -47,7 +47,7 @@ public class LoginFrame extends JFrame {
 	private final static Logger log = LogManager.getLogger(LoginFrame.class);
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField txtUsername = new JTextField();;
+	private JTextField txtUsername = new JTextField();
 	private JPasswordField passwordField = new JPasswordField();
 	private JTextField txtIp = new JTextField();
 	private final JComboBox<String> cmbProtocol = new JComboBox<String>();
