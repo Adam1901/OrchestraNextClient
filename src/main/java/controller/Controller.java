@@ -24,7 +24,7 @@ public class Controller {
 			.valueOf(Props.getGlobalProperty(Props.GlobalProperties.SORT_BY_NAME));
 
 	public List<DTOBranch> getBranches(LoginUser lu) throws UnirestException {
-		List<DTOBranch> ret = new ArrayList<DTOBranch>();
+		List<DTOBranch> ret = new ArrayList<>();
 		HttpResponse<JsonNode> asJson = Unirest.get(lu.getServerIPPort() + "/rest/servicepoint/branches/")
 				.basicAuth(lu.getUsername(), lu.getPassword())
 				.asJson();
@@ -40,7 +40,7 @@ public class Controller {
 	}
 
 	public List<DTOWorkProfile> getWorkProfile(LoginUser lu, DTOBranch branchId) throws UnirestException {
-		List<DTOWorkProfile> ret = new ArrayList<DTOWorkProfile>();
+		List<DTOWorkProfile> ret = new ArrayList<>();
 		HttpResponse<JsonNode> asJson = Unirest
 				.get(lu.getServerIPPort() + "/rest/servicepoint/branches/{branchId}/workProfiles/")
 				.routeParam("branchId", branchId.getIdAsString())
@@ -251,7 +251,7 @@ public class Controller {
 
 	private <T extends OrchestraDTO> void sortAndRemove(List<T> ret, boolean sortByName) {
 		if (sortByName) {
-			ret.sort((arg0, arg1) -> arg0.getName().compareTo(arg1.getName()));
+			ret.sort(Comparator.comparing(OrchestraDTO::getName));
 		} else {
 			ret.sort((arg0, arg1) -> {
                 Integer i1 = arg0.getId();
