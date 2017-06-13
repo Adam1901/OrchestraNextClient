@@ -142,6 +142,6 @@ public class Props {
 		public static String SHOW_COUTER_POPUP_EACH_START_DEFAULT = "false";
 		
 		public static String VERSION = "Version";
-		public static String VERSION_DEFAULT = "1.0.0.2";
+		public static String VERSION_DEFAULT = "1.0.0.3";
 	}
 }

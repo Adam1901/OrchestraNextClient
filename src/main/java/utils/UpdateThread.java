@@ -10,17 +10,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import dto.LoginUser;
-import views.Main;
+import views.Workstation;
+import views.MainView;
 
 public class UpdateThread implements Runnable {
 	private final static Logger log = LogManager.getLogger(UpdateThread.class);
 
 	private LoginUser lu;
-	private Main main;
+	private Workstation main;
 
-	public UpdateThread(LoginUser lu, Main main) {
+	private MainView mv;
+
+	public UpdateThread(LoginUser lu, Workstation main, MainView mv) {
 		this.lu = lu;
 		this.main = main;
+		this.mv = mv;
 	}
 
 	@Override
@@ -41,8 +45,12 @@ public class UpdateThread implements Runnable {
 			serverVersion = split[1];
 
 			String localVersion = Props.getGlobalProperty("Version");
+			log.info(serverVersion + "" + localVersion);
 			if (!serverVersion.equals(localVersion)) {
-				main.showMessageDialog(Props.getLangProperty("Update.newVersion"), JOptionPane.ERROR_MESSAGE);
+				mv.showMessageDialog(Props.getLangProperty("Update.newVersion"), JOptionPane.ERROR_MESSAGE);
+			} else {
+				//TODO Check the diff version is higher and set it 
+				
 			}
 		} catch (IOException | ArrayIndexOutOfBoundsException e) {
 			log.error("Could not find server version.", e);
