@@ -54,8 +54,8 @@ public class MainView extends JFrame {
 
         Workstation main = new Workstation(lu, this);
         tabbedPane.addTab("Workstation", null, main.contentPane, null);
-
-        tabbedPane.addTab("Reception", null, receptionTab, null);
+        ReceptionPanel rp = new ReceptionPanel(lu);
+        tabbedPane.addTab("Reception", null, rp, null);
 
         setResizable(false);
         setVisible(true);

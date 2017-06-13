@@ -76,6 +76,26 @@ public class Controller {
 		return ret;
 
 	}
+	
+	public List<DTOEntryPoint> getEntryPoints(LoginUser lu, DTOBranch branchId) throws UnirestException {
+		List<DTOEntryPoint> ret = new ArrayList<DTOEntryPoint>();
+		HttpResponse<JsonNode> asJson = Unirest
+				.get(lu.getServerIPPort()
+						+ "/rest/entrypoint/branches/{branchID}/entryPoints/deviceTypes/SW_RECEPTION")
+				.routeParam("branchID", branchId.getIdAsString())
+				.basicAuth(lu.getUsername(), lu.getPassword())
+				.asJson();
+
+		JSONArray json = new JSONArray(asJson.getBody().toString());
+		for (int i = 0; i < json.length(); i++) {
+			JSONObject object = json.getJSONObject(i);
+			DTOEntryPoint fromJson = new Gson().fromJson(object.toString(), DTOEntryPoint.class);
+			ret.add(fromJson);
+		}
+		sortAndRemove(ret, sortByName);
+		return ret;
+
+	}
 
 	public void startSession(LoginUser lu, DTOBranch branchId, DTOServicePoint spId) throws UnirestException {
 
@@ -164,6 +184,34 @@ public class Controller {
 		userStat.setVisit(visi);
 
 		return userStat;
+	}
+	
+	public DTOVisit createVisit(LoginUser lu, DTOBranch branch, DTOEntryPoint epId, DTOServicePoint service) throws UnirestException {
+		HttpResponse<JsonNode> asJson = Unirest
+				.post(lu.getServerIPPort()
+						+ "/rest/entrypoint/branches/{branchID}/entryPoints/{entryPointId}/visits/")
+				.routeParam("branchID", "1")
+				.routeParam("entryPointId", "1")
+				.header("Allow", "POST")
+				.header("accept", "application/json")
+				.basicAuth(lu.getUsername(), lu.getPassword())
+				.body("{\"services\" : [1]}")
+				.asJson();
+
+		log.info(asJson.getStatus());
+		log.info(asJson.getStatusText());
+		log.info(asJson.getHeaders());
+		log.info(asJson.getBody());
+
+		JSONObject object = new JSONObject(asJson.getBody());
+
+		//DTOUserStatus userStat = new Gson().fromJson(object.getJSONObject("object").toString(), DTOUserStatus.class);
+		//DTOUserStatus.Visit visi = new Gson().fromJson(object.getJSONObject("object").getJSONObject("visit").toString(),
+		//		DTOUserStatus.Visit.class);
+
+		//userStat.setVisit(visi);
+
+		return null;
 	}
 
 	public void setWorkProfile(LoginUser lu, DTOBranch branchId, DTOWorkProfile wpId) throws UnirestException {

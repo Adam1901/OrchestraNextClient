@@ -61,7 +61,7 @@ public class Workstation {
     private DTOUserStatus visit;
     private BufferedImage nextImage;
     private BufferedImage nextImageClicked;
-    private SelectionFrame frm;
+    private WorkstationSelectionFrame frm;
     private boolean flash = false;
     private QueueInfoFrame queueInfoFrame = null;
     private MainView mv;
@@ -79,7 +79,7 @@ public class Workstation {
         createImagesForButtons();
         readFromProperties();
 
-        frm = new SelectionFrame(lu, this, mv);
+        frm = new WorkstationSelectionFrame(lu, this, mv);
         queueInfoFrame = new QueueInfoFrame(lu, this);
         postJbInit();
 

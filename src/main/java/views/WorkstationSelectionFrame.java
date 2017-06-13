@@ -14,9 +14,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class SelectionFrame extends JFrame {
+public class WorkstationSelectionFrame extends JFrame {
     private static final long serialVersionUID = 1L;
-    private final static Logger log = LogManager.getLogger(SelectionFrame.class);
+    private final static Logger log = LogManager.getLogger(WorkstationSelectionFrame.class);
     private JComboBox<DTOWorkProfile> cmbWorkProfile = new JComboBox<DTOWorkProfile>();
     private JComboBox<DTOServicePoint> cmbServicePoint = new JComboBox<DTOServicePoint>();
     private JComboBox<DTOBranch> cmbBranch = new JComboBox<DTOBranch>();
@@ -28,7 +28,7 @@ public class SelectionFrame extends JFrame {
     /**
      * Create the frame.
      */
-    public SelectionFrame(LoginUser lu, Workstation main, MainView mv) {
+    public WorkstationSelectionFrame(LoginUser lu, Workstation main, MainView mv) {
         this.mv = mv;
         setTitle("Branch | Counter | Profile");
         setResizable(false);
