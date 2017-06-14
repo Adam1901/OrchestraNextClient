@@ -63,7 +63,7 @@ public class Main extends JFrame {
 	private DTOUserStatus visit;
 
 	private final JLabel lblNewLabel = new JLabel(Props.getLangProperty("MainFrame.CurrentlyServing"));
-	private final JLabel lblA = new JLabel(Props.getLangProperty("MainFrame.CurrentlyServingInit"));
+	private final JLabel lblA = new JLabel("A");
 	private final JButton btnOpenCounter = new JButton(Props.getLangProperty("MainFrame.OpenBtn"));
 	private final JButton btnRecall = new JButton(Props.getLangProperty("MainFrame.RecallBtn"));
 	private final JButton btnClose = new JButton(Props.getLangProperty("MainFrame.CloseBtn"));
@@ -147,6 +147,12 @@ public class Main extends JFrame {
 			pblCounter.setVisible(showCounter);
 			String appName = Props.getGlobalProperty(GlobalProperties.APP_NAME);
 			setTitle(Props.getLangProperty("MainFrame.title") + appName);
+
+			String langProperty = Props.getLangProperty("MainFrame.CurrentlyServingInit");
+			String langProperty2 = Props.getLangProperty("MainFrame.callForwardInitText");
+			lblA.setText(Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.CALL_FORWARDS))
+					? langProperty2
+					: langProperty);
 		} catch (Exception ex) {
 			log.error(ex);
 		}
@@ -400,13 +406,13 @@ public class Main extends JFrame {
 
 					String ticketId;
 					DTOUserStatus callNext;
-					
+
 					Boolean callFowards = Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.CALL_FORWARDS));
 					if (callFowards) {
-						String  serviceId = Props.getGlobalProperty(GlobalProperties.CALL_FORWARDS_SERVICE);
-						cont.callNextAndEnd(lu, branch, sp,  Integer.valueOf(serviceId));
-						callNext = new DTOUserStatus();
-						ticketId = Props.getLangProperty("Main.callForwardText");
+						String serviceId = Props.getGlobalProperty(GlobalProperties.CALL_FORWARDS_SERVICE);
+						cont.callNextAndEnd(lu, branch, sp, Integer.valueOf(serviceId));
+						callNext = null;
+						ticketId = Props.getLangProperty("MainFrame.callForwardText");
 					} else {
 						boolean custWaiting = false;
 						List<DTOQueue> queueInfoForWorkprofile = cont.getQueueInfoForWorkprofile(lu, branch, wp);
