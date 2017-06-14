@@ -15,6 +15,7 @@ import utils.Props;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 public class Controller {
@@ -137,6 +138,21 @@ public class Controller {
 		userStat.setVisit(visi);
 
 		return userStat;
+	}
+	
+	public void callNextAndEnd(LoginUser lu, DTOBranch branch, DTOServicePoint spId, Integer serviceId) throws UnirestException {
+		String json = "{\"services\" : [\""+serviceId.toString() + "\"]}";
+		String url = lu.getServerIPPort()
+				+ "/rest/servicepoint/branches/{branchID}/servicePoints/{servicePointId}/visits/createAndEnd";
+		Unirest .post(url)
+				.routeParam("branchID", branch.getIdAsString())	
+				.routeParam("servicePointId", spId.getIdAsString())
+				.header("Allow", "POST")
+				.header("accept", "application/json")
+				.header("Content-Type", "application/json")
+				.basicAuth(lu.getUsername(), lu.getPassword())
+				.body(json)
+				.asJson();
 	}
 
 	public DTOUserStatus recall(LoginUser lu, DTOBranch branchId, DTOServicePoint spId) throws UnirestException {

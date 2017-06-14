@@ -51,6 +51,10 @@ import javax.swing.Timer;
 
 public class Main extends JFrame {
 
+	// Todo notification
+	// TODO reception
+	// Casualcaller
+
 	private final static Logger log = LogManager.getLogger(Main.class);
 
 	private static final long serialVersionUID = 1L;
@@ -114,7 +118,6 @@ public class Main extends JFrame {
 		queueInfoFrame = new QueueInfoFrame(lu, this);
 		postJbInit();
 
-		
 	}
 
 	private void postJbInit() {
@@ -129,7 +132,7 @@ public class Main extends JFrame {
 		if (Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.SHOW_COUTER_POPUP_EACH_START))) {
 			frm.setVisible(true);
 		}
-		
+
 		Thread t = new Thread(new Flash());
 		t.start();
 
@@ -395,26 +398,37 @@ public class Main extends JFrame {
 					DTOServicePoint sp = (DTOServicePoint) frm.getCmbServicePoint().getSelectedItem();
 					DTOWorkProfile wp = (DTOWorkProfile) getCmbWorkProfile().getSelectedItem();
 
-					boolean custWaiting = false;
-					List<DTOQueue> queueInfoForWorkprofile = cont.getQueueInfoForWorkprofile(lu, branch, wp);
-					for (DTOQueue dtoQueue : queueInfoForWorkprofile) {
-						if (dtoQueue.getCustomersWaiting() != 0) {
-							custWaiting = true;
+					String ticketId;
+					DTOUserStatus callNext;
+					
+					Boolean callFowards = Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.CALL_FORWARDS));
+					if (callFowards) {
+						String  serviceId = Props.getGlobalProperty(GlobalProperties.CALL_FORWARDS_SERVICE);
+						cont.callNextAndEnd(lu, branch, sp,  Integer.valueOf(serviceId));
+						callNext = new DTOUserStatus();
+						ticketId = Props.getLangProperty("Main.callForwardText");
+					} else {
+						boolean custWaiting = false;
+						List<DTOQueue> queueInfoForWorkprofile = cont.getQueueInfoForWorkprofile(lu, branch, wp);
+						for (DTOQueue dtoQueue : queueInfoForWorkprofile) {
+							if (dtoQueue.getCustomersWaiting() != 0) {
+								custWaiting = true;
+							}
 						}
-					}
 
-					if (!custWaiting) {
-						showMessageDialog(Props.getLangProperty("MainFrame.NoWatingCustomers"),
-								JOptionPane.INFORMATION_MESSAGE);
-						return;
-					}
+						if (!custWaiting) {
+							showMessageDialog(Props.getLangProperty("MainFrame.NoWatingCustomers"),
+									JOptionPane.INFORMATION_MESSAGE);
+							return;
+						}
 
-					if (checkIfDSNeeded()) {
-						return;
-					}
+						if (checkIfDSNeeded()) {
+							return;
+						}
 
-					DTOUserStatus callNext = cont.callNext(lu, branch, sp);
-					String ticketId = callNext.getVisit().getTicketId();
+						callNext = cont.callNext(lu, branch, sp);
+						ticketId = callNext.getVisit().getTicketId();
+					}
 					lblA.setText(ticketId);
 					visit = callNext;
 					flash = true;
@@ -504,7 +518,6 @@ public class Main extends JFrame {
 		}
 		revalidate();
 		repaint();
-		System.out.println("coloring");
 		amount++;
 
 	});
