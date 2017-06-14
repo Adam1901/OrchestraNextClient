@@ -20,7 +20,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 
-public class Workstation {
+public class Workstation extends JPanel {
 
     private final static Logger log = LogManager.getLogger(Workstation.class);
 
@@ -41,7 +41,6 @@ public class Workstation {
     private final JLabel lblCounter = new JLabel("AAAAAAA");
     private final JLabel lblWorkProfile = new JLabel("A");
     private final JPanel panel_2 = new JPanel();
-    public JPanel contentPane;
     int amount = 0;
     boolean started = false;
     Timer timer = new Timer(500, evt -> {
@@ -118,14 +117,13 @@ public class Workstation {
 
     private void jbInit() {
 
-        contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        setBorder(new EmptyBorder(5, 5, 5, 5));
         GridBagLayout gbl_contentPane = new GridBagLayout();
         gbl_contentPane.columnWidths = new int[]{5, 0, 0, 0, 0};
         gbl_contentPane.rowHeights = new int[]{0, 30, 0, 0, 0};
         gbl_contentPane.columnWeights = new double[]{0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
         gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-        contentPane.setLayout(gbl_contentPane);
+        setLayout(gbl_contentPane);
 
         GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
         gbc_lblNewLabel.fill = GridBagConstraints.HORIZONTAL;
@@ -133,7 +131,7 @@ public class Workstation {
         gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
         gbc_lblNewLabel.gridx = 1;
         gbc_lblNewLabel.gridy = 0;
-        contentPane.add(lblNewLabel, gbc_lblNewLabel);
+        add(lblNewLabel, gbc_lblNewLabel);
 
         GridBagConstraints gbc_lblA = new GridBagConstraints();
         gbc_lblA.gridwidth = 2;
@@ -143,7 +141,7 @@ public class Workstation {
         gbc_lblA.gridy = 1;
         lblA.setHorizontalAlignment(SwingConstants.CENTER);
         lblA.setFont(new Font("Tahoma", Font.BOLD, 24));
-        contentPane.add(lblA, gbc_lblA);
+        add(lblA, gbc_lblA);
 
         GridBagConstraints gbc_panel_1 = new GridBagConstraints();
         gbc_panel_1.gridwidth = 2;
@@ -154,7 +152,7 @@ public class Workstation {
         panel_1.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
                 Props.getLangProperty("MainFrame.VisitBorderText"), TitledBorder.LEADING, TitledBorder.TOP, null,
                 new Color(0, 0, 0)));
-        contentPane.add(panel_1, gbc_panel_1);
+        add(panel_1, gbc_panel_1);
         GridBagLayout gbl_panel_1 = new GridBagLayout();
         gbl_panel_1.columnWidths = new int[]{0, 0, 0};
         gbl_panel_1.rowHeights = new int[]{0, 0, 0};
@@ -288,7 +286,7 @@ public class Workstation {
         pblCounter.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
                 Props.getLangProperty("MainFrame.CounterBorderText"), TitledBorder.LEADING, TitledBorder.TOP, null,
                 new Color(0, 0, 0)));
-        contentPane.add(pblCounter, gbc_pblCoutner);
+        add(pblCounter, gbc_pblCoutner);
         GridBagLayout gbl_pblCoutner = new GridBagLayout();
         gbl_pblCoutner.columnWidths = new int[]{0, 0, 0};
         gbl_pblCoutner.rowHeights = new int[]{0, 0};

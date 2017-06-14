@@ -10,20 +10,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import dto.LoginUser;
-import views.Workstation;
 import views.MainView;
 
 public class UpdateThread implements Runnable {
 	private final static Logger log = LogManager.getLogger(UpdateThread.class);
 
 	private LoginUser lu;
-	private Workstation main;
 
 	private MainView mv;
 
-	public UpdateThread(LoginUser lu, Workstation main, MainView mv) {
+	public UpdateThread(LoginUser lu, MainView mv) {
 		this.lu = lu;
-		this.main = main;
 		this.mv = mv;
 	}
 

@@ -186,16 +186,17 @@ public class Controller {
 		return userStat;
 	}
 	
-	public DTOVisit createVisit(LoginUser lu, DTOBranch branch, DTOEntryPoint epId, DTOServicePoint service) throws UnirestException {
+	public DTOVisit createVisit(LoginUser lu, DTOBranch branch, DTOEntryPoint epId, DTOService service) throws UnirestException {
 		HttpResponse<JsonNode> asJson = Unirest
 				.post(lu.getServerIPPort()
 						+ "/rest/entrypoint/branches/{branchID}/entryPoints/{entryPointId}/visits/")
-				.routeParam("branchID", "1")
-				.routeParam("entryPointId", "1")
+				.routeParam("branchID", branch.getIdAsString())
+				.routeParam("entryPointId", epId.getIdAsString())
 				.header("Allow", "POST")
 				.header("accept", "application/json")
+                .header("Content-Type", "application/json")
 				.basicAuth(lu.getUsername(), lu.getPassword())
-				.body("{\"services\" : [1]}")
+				.body("{\"services\" : [" + service.getId() + "]}")
 				.asJson();
 
 		log.info(asJson.getStatus());
@@ -205,13 +206,9 @@ public class Controller {
 
 		JSONObject object = new JSONObject(asJson.getBody());
 
-		//DTOUserStatus userStat = new Gson().fromJson(object.getJSONObject("object").toString(), DTOUserStatus.class);
-		//DTOUserStatus.Visit visi = new Gson().fromJson(object.getJSONObject("object").getJSONObject("visit").toString(),
-		//		DTOUserStatus.Visit.class);
+		DTOVisit vsist = new Gson().fromJson(object.getJSONObject("object").toString(), DTOVisit.class);
 
-		//userStat.setVisit(visi);
-
-		return null;
+		return vsist;
 	}
 
 	public void setWorkProfile(LoginUser lu, DTOBranch branchId, DTOWorkProfile wpId) throws UnirestException {
@@ -310,5 +307,26 @@ public class Controller {
 
 		// Remove casual called (J8 FTW)
 		ret.removeIf(p -> p.getName().toLowerCase().equals("casual caller"));
+	}
+
+	public List<DTOService> getServices(LoginUser lu, DTOBranch dtoBranch) throws UnirestException {
+		List<DTOService> ret = new ArrayList<DTOService>();
+		HttpResponse<JsonNode> asJson = Unirest
+				.get(lu.getServerIPPort() + "/rest/entrypoint/branches/{branchID}/services/")
+				.routeParam("branchID", dtoBranch.getIdAsString())
+				.basicAuth(lu.getUsername(), lu.getPassword())
+				.asJson();
+
+		JSONArray json = new JSONArray(asJson.getBody().toString());
+		for (int i = 0; i < json.length(); i++) {
+			JSONObject object = json.getJSONObject(i);
+			DTOService fromJson = new Gson().fromJson(object.toString(), DTOService.class);
+			ret.add(fromJson);
+		}
+
+		sortAndRemove(ret, sortByName);
+
+		return ret;
+		
 	}
 }
