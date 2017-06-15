@@ -1,67 +1,30 @@
 package views;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
+import controller.Controller;
+import dto.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.imgscalr.Scalr;
-
-import com.mashape.unirest.http.exceptions.UnirestException;
-
-import controller.Controller;
-import dto.DTOBranch;
-import dto.DTOQueue;
-import dto.DTOServicePoint;
-import dto.DTOUserStatus;
-import dto.DTOWorkProfile;
-import dto.LoginUser;
 import utils.Props;
-import utils.UpdateThread;
 import utils.Props.GlobalProperties;
 
-import java.awt.GridBagLayout;
-import javax.swing.JButton;
-import java.awt.GridBagConstraints;
-import javax.swing.JComboBox;
-import java.awt.Insets;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.border.TitledBorder;
+public class Workstation extends JPanel {
 
-import java.awt.Color;
-import java.awt.Dimension;
-
-import javax.swing.border.EtchedBorder;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.Font;
-import javax.swing.SwingConstants;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import javax.swing.Timer;
-
-public class Main extends JFrame {
-
-	// Todo notification
-	// TODO reception
-	// Casualcaller
-
-	private final static Logger log = LogManager.getLogger(Main.class);
+	private final static Logger log = LogManager.getLogger(Workstation.class);
 
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
-	private LoginUser lu;
-	private DTOUserStatus visit;
-
 	private final JLabel lblNewLabel = new JLabel(Props.getLangProperty("MainFrame.CurrentlyServing"));
 	private final JLabel lblA = new JLabel("A");
 	private final JButton btnOpenCounter = new JButton(Props.getLangProperty("MainFrame.OpenBtn"));
@@ -69,24 +32,44 @@ public class Main extends JFrame {
 	private final JButton btnClose = new JButton(Props.getLangProperty("MainFrame.CloseBtn"));
 	private final JButton btnEnd = new JButton(Props.getLangProperty("MainFrame.endBtn"));
 	private final JButton btnInfo = new JButton(Props.getLangProperty("MainFrame.QueuInfoBtn"));
-
-	private final String ERROR_MESSAGE = Props.getLangProperty("MainFrame.ErrorMessage");
 	private final JPanel pblCounter = new JPanel();
 	private final JLabel lblImageNext = new JLabel("");
-
-	private BufferedImage nextImage;
-	private BufferedImage nextImageClicked;
 	private final JPanel panel = new JPanel();
 	private final JLabel lblSettings = new JLabel("");
-
-	private SelectionFrame frm;
 	private final JPanel panel_1 = new JPanel();
 	private final JLabel lblBranch = new JLabel("A");
 	private final JLabel lblCounter = new JLabel("AAAAAAA");
 	private final JLabel lblWorkProfile = new JLabel("A");
 	private final JPanel panel_2 = new JPanel();
+	int amount = 0;
+	boolean started = false;
+	private LoginUser lu;
+	private DTOUserStatus visit;
+	private BufferedImage nextImage;
+	private BufferedImage nextImageClicked;
+	private WorkstationSelectionFrame frm;
 	private boolean flash = false;
 	private QueueInfoFrame queueInfoFrame = null;
+	private MainView mv;
+
+	/**
+	 * Create the frame.
+	 *
+	 * @param lu
+	 * @throws IOException
+	 */
+	public Workstation(LoginUser lu, MainView mv) {
+		this.mv = mv;
+		this.lu = lu;
+		jbInit();
+		createImagesForButtons();
+		readFromProperties();
+
+		frm = new WorkstationSelectionFrame(lu, this, mv);
+		queueInfoFrame = new QueueInfoFrame(lu, this);
+		postJbInit();
+
+	}
 
 	public JLabel getLblWorkProfile() {
 		return lblWorkProfile;
@@ -100,76 +83,39 @@ public class Main extends JFrame {
 		return lblCounter;
 	}
 
-	/**
-	 * Create the frame.
-	 * 
-	 * @param lu
-	 * @throws IOException
-	 */
-	public Main(LoginUser lu) {
-		setResizable(false);
-		this.lu = lu;
-		jbInit();
-		createImagesForButtons();
-		readFromProperties();
-		setVisible(true);
-		setLocationRelativeTo(null);
-		frm = new SelectionFrame(lu, this);
-		queueInfoFrame = new QueueInfoFrame(lu, this);
-		postJbInit();
-
-	}
-
 	private void postJbInit() {
-		Boolean showCounter = Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.SHOW_COUNTER_OPTIONS));
-		Dimension sizeCurrent = getSize();
-		if (!showCounter) {
-			Dimension newDim = new Dimension((int) sizeCurrent.getWidth(), (int) sizeCurrent.getHeight() - 50);
-			setPreferredSize(newDim);
-			setSize(newDim);
-		}
-
 		if (Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.SHOW_COUTER_POPUP_EACH_START))) {
 			frm.setVisible(true);
 		}
 
+		String langProperty = Props.getLangProperty("MainFrame.CurrentlyServingInit");
+		String langProperty2 = Props.getLangProperty("MainFrame.callForwardInitText");
+		lblA.setText(Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.CALL_FORWARDS)) ? langProperty2
+				: langProperty);
+
 		Thread t = new Thread(new Flash());
 		t.start();
-
-		UpdateThread updateThread = new UpdateThread(lu, this);
-		new Thread(updateThread).start();
-
 	}
 
 	private void readFromProperties() {
 		try {
 			Boolean showCounter = Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.SHOW_COUNTER_OPTIONS));
 			pblCounter.setVisible(showCounter);
-			String appName = Props.getGlobalProperty(GlobalProperties.APP_NAME);
-			setTitle(Props.getLangProperty("MainFrame.title") + appName);
 
-			String langProperty = Props.getLangProperty("MainFrame.CurrentlyServingInit");
-			String langProperty2 = Props.getLangProperty("MainFrame.callForwardInitText");
-			lblA.setText(Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.CALL_FORWARDS))
-					? langProperty2
-					: langProperty);
 		} catch (Exception ex) {
 			log.error(ex);
 		}
 	}
 
 	private void jbInit() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 390, 402);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
+
+		setBorder(new EmptyBorder(5, 5, 5, 5));
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[] { 5, 0, 0, 0, 0 };
 		gbl_contentPane.rowHeights = new int[] { 0, 30, 0, 0, 0 };
 		gbl_contentPane.columnWeights = new double[] { 0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE };
 		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
-		contentPane.setLayout(gbl_contentPane);
+		setLayout(gbl_contentPane);
 
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.fill = GridBagConstraints.HORIZONTAL;
@@ -177,7 +123,7 @@ public class Main extends JFrame {
 		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel.gridx = 1;
 		gbc_lblNewLabel.gridy = 0;
-		contentPane.add(lblNewLabel, gbc_lblNewLabel);
+		add(lblNewLabel, gbc_lblNewLabel);
 
 		GridBagConstraints gbc_lblA = new GridBagConstraints();
 		gbc_lblA.gridwidth = 2;
@@ -187,7 +133,7 @@ public class Main extends JFrame {
 		gbc_lblA.gridy = 1;
 		lblA.setHorizontalAlignment(SwingConstants.CENTER);
 		lblA.setFont(new Font("Tahoma", Font.BOLD, 24));
-		contentPane.add(lblA, gbc_lblA);
+		add(lblA, gbc_lblA);
 
 		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
 		gbc_panel_1.gridwidth = 2;
@@ -198,7 +144,7 @@ public class Main extends JFrame {
 		panel_1.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
 				Props.getLangProperty("MainFrame.VisitBorderText"), TitledBorder.LEADING, TitledBorder.TOP, null,
 				new Color(0, 0, 0)));
-		contentPane.add(panel_1, gbc_panel_1);
+		add(panel_1, gbc_panel_1);
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
 		gbl_panel_1.columnWidths = new int[] { 0, 0, 0 };
 		gbl_panel_1.rowHeights = new int[] { 0, 0, 0 };
@@ -229,7 +175,7 @@ public class Main extends JFrame {
 				DTOServicePoint sp = (DTOServicePoint) frm.getCmbServicePoint().getSelectedItem();
 
 				if (visit == null) {
-					JOptionPane.showMessageDialog(this, Props.getLangProperty("MainFrame.notservingMessage"), "Error",
+					mv.showMessageDialog(Props.getLangProperty("MainFrame.notservingMessage"),
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -241,7 +187,7 @@ public class Main extends JFrame {
 				flash = true;
 			} catch (Exception e) {
 				log.error("Failed to data", e);
-				showMessageDialog();
+				mv.showMessageDialog();
 			}
 		});
 		GridBagConstraints gbc_btnEnd = new GridBagConstraints();
@@ -254,7 +200,7 @@ public class Main extends JFrame {
 		btnEnd.addActionListener(arg0 -> {
 			try {
 				if (visit == null) {
-					JOptionPane.showMessageDialog(this, Props.getLangProperty("MainFrame.notCurrentlyServing"), "Error",
+					mv.showMessageDialog(Props.getLangProperty("MainFrame.notCurrentlyServing"),
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -271,7 +217,7 @@ public class Main extends JFrame {
 				cont.endVisit(lu, branch, visitId);
 			} catch (Exception e) {
 				log.error("Failed to data", e);
-				showMessageDialog();
+				mv.showMessageDialog();
 			}
 		});
 		GridBagConstraints gbc_btnInfo = new GridBagConstraints();
@@ -332,7 +278,7 @@ public class Main extends JFrame {
 		pblCounter.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
 				Props.getLangProperty("MainFrame.CounterBorderText"), TitledBorder.LEADING, TitledBorder.TOP, null,
 				new Color(0, 0, 0)));
-		contentPane.add(pblCounter, gbc_pblCoutner);
+		add(pblCounter, gbc_pblCoutner);
 		GridBagLayout gbl_pblCoutner = new GridBagLayout();
 		gbl_pblCoutner.columnWidths = new int[] { 0, 0, 0 };
 		gbl_pblCoutner.rowHeights = new int[] { 0, 0 };
@@ -361,7 +307,7 @@ public class Main extends JFrame {
 				visit = null;
 			} catch (Exception e) {
 				log.error("Failed to data", e);
-				showMessageDialog();
+				mv.showMessageDialog();
 			}
 		});
 
@@ -374,7 +320,7 @@ public class Main extends JFrame {
 				cont.startSession(lu, branch, sp);
 			} catch (Exception e) {
 				log.error("Failed to data", e);
-				showMessageDialog();
+				mv.showMessageDialog();
 			}
 		});
 		lblSettings.addMouseListener(new MouseAdapter() {
@@ -423,7 +369,7 @@ public class Main extends JFrame {
 						}
 
 						if (!custWaiting) {
-							showMessageDialog(Props.getLangProperty("MainFrame.NoWatingCustomers"),
+							mv.showMessageDialog(Props.getLangProperty("MainFrame.NoWatingCustomers"),
 									JOptionPane.INFORMATION_MESSAGE);
 							return;
 						}
@@ -441,35 +387,13 @@ public class Main extends JFrame {
 				} catch (Exception ee) {
 					lblA.setText(Props.getLangProperty("MainFrame.ErrorCurretServing"));
 					log.error("Failed to data", ee);
-					showMessageDialog(Props.getLangProperty("MainFrame.noWaitingCustText"),
+					mv.showMessageDialog(Props.getLangProperty("MainFrame.noWaitingCustText"),
 							JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		});
 
 		btnInfo.addActionListener(arg0 -> queueInfoFrame.setVisible(true));
-
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent arg0) {
-				Controller cont = new Controller();
-				try {
-					cont.logout(lu);
-					log.info("Logged out and killed unirest");
-				} catch (UnirestException | IOException e) {
-					log.error(e);
-				}
-			}
-		});
-
-	}
-
-	public void showMessageDialog() {
-		JOptionPane.showMessageDialog(this, ERROR_MESSAGE, "Error", JOptionPane.ERROR_MESSAGE);
-	}
-
-	public void showMessageDialog(String message, int type) {
-		JOptionPane.showMessageDialog(this, message, "Error", type);
 	}
 
 	private void createImagesForButtons() {
@@ -483,7 +407,6 @@ public class Main extends JFrame {
 			ImageIcon imageIcon = new ImageIcon(image);
 			lblSettings.setIcon(imageIcon);
 
-			setIconImage(ImageIO.read(getClass().getClassLoader().getResource("qmaticBigTransparent.png")));
 		} catch (Throwable e) {
 			log.error(e);
 		}
@@ -506,27 +429,12 @@ public class Main extends JFrame {
 		String visitState = visit.getVisitState();
 		for (String state : arrays) {
 			if (visitState.equals(state)) {
-				showMessageDialog(Props.getLangProperty("MainFrame.DsOutEtNeeded"), JOptionPane.ERROR_MESSAGE);
+				mv.showMessageDialog(Props.getLangProperty("MainFrame.DsOutEtNeeded"), JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 		}
 		return false;
 	}
-
-	int amount = 0;
-	boolean started = false;
-	Timer timer = new Timer(500, evt -> {
-		Color foreground2 = lblA.getForeground();
-		if (foreground2 == Color.BLACK) {
-			lblA.setForeground(Color.GRAY);
-		} else {
-			lblA.setForeground(Color.BLACK);
-		}
-		revalidate();
-		repaint();
-		amount++;
-
-	});
 
 	private class Flash implements Runnable {
 		public void run() {
@@ -552,4 +460,17 @@ public class Main extends JFrame {
 			}
 		}
 	}
+
+	Timer timer = new Timer(500, evt -> {
+		Color foreground2 = lblA.getForeground();
+		if (foreground2 == Color.BLACK) {
+			lblA.setForeground(Color.GRAY);
+		} else {
+			lblA.setForeground(Color.BLACK);
+		}
+		// revalidate();
+		// repaint();
+		amount++;
+
+	});
 }
