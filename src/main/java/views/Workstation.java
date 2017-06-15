@@ -52,6 +52,10 @@ public class Workstation extends JPanel {
 	private QueueInfoFrame queueInfoFrame = null;
 	private MainView mv;
 
+	public MainView getMainView() {
+		return mv;
+	}
+
 	/**
 	 * Create the frame.
 	 *

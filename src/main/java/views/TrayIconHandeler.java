@@ -6,27 +6,41 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import utils.Props;
+import utils.Props.GlobalProperties;
+
 public class TrayIconHandeler {
-	
+	private final static Logger log = LogManager.getLogger(TrayIconHandeler.class);
 	private boolean supported;
+	TrayIcon trayIcon;
 
 	public TrayIconHandeler() {
 		supported = SystemTray.isSupported();
-		
+		if (supported) {
+			try {
+				SystemTray tray = SystemTray.getSystemTray();
+				Image image = ImageIO.read(getClass().getClassLoader().getResource("qmaticBigTransparent.png"));
+
+				trayIcon = new TrayIcon(image, Props.getLangProperty("noti.title"));
+				trayIcon.setImageAutoSize(true);
+				tray.add(trayIcon);
+			} catch (IOException | AWTException e) {
+				log.error(e);
+			}
+		}
 	}
 
-	public void displayTray(String title, String message, MessageType messageType) throws AWTException, IOException {
+	public void displayTray(String title, String message, MessageType messageType) {
 		if (!supported) {
-			System.err.println("System tray not supported!");
+			log.error("System tray not supported!");
 			return;
 		}
-		SystemTray tray = SystemTray.getSystemTray();
-
-		// If the icon is a file
-		Image image = ImageIO.read(getClass().getClassLoader().getResource("qmaticBigTransparent.png"));
-		TrayIcon trayIcon = new TrayIcon(image, "Tray Demo");
-		trayIcon.setImageAutoSize(true);
-		tray.add(trayIcon);
+		if (!Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.NOTIFICATIONS))) {
+			return;
+		}
 		trayIcon.displayMessage(title, message, messageType);
 	}
 }

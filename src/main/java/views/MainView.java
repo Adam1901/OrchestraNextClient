@@ -25,6 +25,7 @@ public class MainView extends JFrame {
 	JTabbedPane workstationTab = null;
 	JTabbedPane receptionTab = new JTabbedPane(JTabbedPane.TOP);
 	private JPanel contentPane;
+	private TrayIconHandeler tih = new TrayIconHandeler();
 
 	/**
 	 * Create the frame.
@@ -91,14 +92,11 @@ public class MainView extends JFrame {
 			setPreferredSize(newDim);
 			setSize(newDim);
 		}
+		tih.displayTray(Props.getLangProperty("noti.loggedIn.title"), Props.getLangProperty("noti.loggedIn.message"), MessageType.INFO);
+	}
 
-		try {
-			new TrayIconHandeler().displayTray("title", "message", MessageType.ERROR);
-		} catch (AWTException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+	public TrayIconHandeler getNotification() {
+		return tih;
 	}
 
 	public void showMessageDialog() {

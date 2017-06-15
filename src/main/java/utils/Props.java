@@ -37,6 +37,7 @@ public class Props {
 				Props.setGlobalProperty(GlobalProperties.SHOW_COUTER_POPUP_EACH_START, GlobalProperties.SHOW_COUTER_POPUP_EACH_START_DEFAULT);
 				Props.setGlobalProperty(GlobalProperties.VERSION, GlobalProperties.VERSION_DEFAULT);
 				Props.setGlobalProperty(GlobalProperties.CALL_FORWARDS, GlobalProperties.CALL_FORWARDS_DEFAULT);
+				Props.setGlobalProperty(GlobalProperties.NOTIFICATIONS, GlobalProperties.NOTIFICATIONS_DEFAULT);
 			}
 
 		} catch (IOException e) {
@@ -150,6 +151,9 @@ public class Props {
 	
 		public static String CALL_FORWARDS_SERVICE = "callForwardsServiceId";
 		public static String CALL_FORWARDS_SERVICE_DEFAULT = "1";
+		
+		public static String NOTIFICATIONS = "notifications";
+		public static String NOTIFICATIONS_DEFAULT = "true";
 		
 	}
 }
