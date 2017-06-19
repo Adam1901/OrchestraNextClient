@@ -6,12 +6,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,16 +38,50 @@ public class Props {
 			new FileOutputStream(Props.GLOBAL_PROPERTIES, true).close();
 
 			if (!exists) {
-				Props.setGlobalProperty(GlobalProperties.SORT_BY_NAME, GlobalProperties.SORT_BY_NAME_DEFAULT_VALUE);
-				Props.setGlobalProperty(GlobalProperties.APP_NAME, GlobalProperties.APP_NAME_DEFAULT);
-				Props.setGlobalProperty(GlobalProperties.SHOW_COUNTER_OPTIONS, GlobalProperties.SHOW_COUNTER_OPTIONS_DEFAULT);
-				Props.setGlobalProperty(GlobalProperties.SHOW_COUTER_POPUP_EACH_START, GlobalProperties.SHOW_COUTER_POPUP_EACH_START_DEFAULT);
-				Props.setGlobalProperty(GlobalProperties.VERSION, GlobalProperties.VERSION_DEFAULT);
-				Props.setGlobalProperty(GlobalProperties.CALL_FORWARDS, GlobalProperties.CALL_FORWARDS_DEFAULT);
-				Props.setGlobalProperty(GlobalProperties.NOTIFICATIONS, GlobalProperties.NOTIFICATIONS_DEFAULT);
+				Props.setGlobalProperty(GlobalProperties.SORT_BY_NAME, GlobalDefaults.SORT_BY_NAME_DEFAULT);
+				Props.setGlobalProperty(GlobalProperties.APP_NAME, GlobalDefaults.APP_NAME_DEFAULT);
+				Props.setGlobalProperty(GlobalProperties.SHOW_COUNTER_OPTIONS,GlobalDefaults.SHOW_COUNTER_OPTIONS_DEFAULT);
+				Props.setGlobalProperty(GlobalProperties.SHOW_COUTER_POPUP_EACH_START,GlobalDefaults.SHOW_COUTER_POPUP_EACH_START_DEFAULT);
+				Props.setGlobalProperty(GlobalProperties.VERSION, GlobalDefaults.VERSION_DEFAULT);
+				Props.setGlobalProperty(GlobalProperties.CALL_FORWARDS, GlobalDefaults.CALL_FORWARDS_DEFAULT);
+				Props.setGlobalProperty(GlobalProperties.CALL_FORWARDS_SERVICE, GlobalDefaults.CALL_FORWARDS_SERVICE_DEFAULT);
+				Props.setGlobalProperty(GlobalProperties.NOTIFICATIONS, GlobalDefaults.NOTIFICATIONS_DEFAULT);
+				Props.setGlobalProperty(GlobalProperties.RECEPTION1WORKSTATION2BOTH0, GlobalDefaults.RECEPTION1WORKSTATION2BOTH0_DEFAULT);
 			}
 
-		} catch (IOException e) {
+			Set<String> valuesList = new HashSet<String>();
+			Map<String, Map<String, String>> valuePair = new HashMap<>(); 
+			
+			// Check each one props exist
+			Field[] values = GlobalProperties.class.getDeclaredFields(); 
+			for (Field field : values) {
+				if (field.getType().equals(String.class)) { 
+					valuesList.add(field.getName());
+				}
+			}
+			
+			Field[] defaults = GlobalDefaults.class.getDeclaredFields(); 
+			for (Field field : defaults) {
+				field.setAccessible(true);
+				if (field.getType().equals(String.class)) { 
+					Map<String, String> defaultPair = new HashMap<>(); 
+					String fieldStr = field.getName();
+					Object value = field.get(GlobalDefaults.class);
+					defaultPair.put(fieldStr, value.toString());
+					for (String key : valuesList) {
+						valuePair.put(key, defaultPair);
+					}
+				}
+			}
+			
+			for (Entry<String, Map<String, String>> valuePairObj : valuePair.entrySet()) {
+				Set<Entry<String, String>> entrySet = valuePairObj.getValue().entrySet();
+				for (Entry<String, String> entry : entrySet) {
+					System.out.println(valuePairObj.getKey() + " - " + entry.getKey() + ":" + entry.getValue());
+				}
+			}
+
+		} catch (IOException | IllegalArgumentException | IllegalAccessException e) {
 			log.error(e);
 		}
 
@@ -132,28 +173,26 @@ public class Props {
 
 	public static class GlobalProperties {
 		public static String SORT_BY_NAME = "soryByName";
-		public static String SORT_BY_NAME_DEFAULT_VALUE = "true";
-
 		public static String APP_NAME = "appName";
-		public static String APP_NAME_DEFAULT = "Build";
-
 		public static String SHOW_COUNTER_OPTIONS = "showCounterOptions";
-		public static String SHOW_COUNTER_OPTIONS_DEFAULT = "true";
-
 		public static String SHOW_COUTER_POPUP_EACH_START = "showCounterPopUPOnEachStart";
-		public static String SHOW_COUTER_POPUP_EACH_START_DEFAULT = "false";
-		
 		public static String VERSION = "Version";
-		public static String VERSION_DEFAULT = "1.0.0.3";
-	
 		public static String CALL_FORWARDS = "callForwards";
-		public static String CALL_FORWARDS_DEFAULT = "false";
-	
 		public static String CALL_FORWARDS_SERVICE = "callForwardsServiceId";
-		public static String CALL_FORWARDS_SERVICE_DEFAULT = "1";
-		
 		public static String NOTIFICATIONS = "notifications";
-		public static String NOTIFICATIONS_DEFAULT = "true";
-		
+		public static String RECEPTION1WORKSTATION2BOTH0 = "reception1Workstation2Both0";
 	}
+
+	public static class GlobalDefaults {
+		public static String SORT_BY_NAME_DEFAULT = "true";
+		public static String APP_NAME_DEFAULT = "Build";
+		public static String SHOW_COUNTER_OPTIONS_DEFAULT = "true";
+		public static String SHOW_COUTER_POPUP_EACH_START_DEFAULT = "false";
+		public static String VERSION_DEFAULT = "1.0.0.3";
+		public static String CALL_FORWARDS_DEFAULT = "false";
+		public static String CALL_FORWARDS_SERVICE_DEFAULT = "1";
+		public static String NOTIFICATIONS_DEFAULT = "true";
+		public static String RECEPTION1WORKSTATION2BOTH0_DEFAULT = "0";
+	}
+
 }

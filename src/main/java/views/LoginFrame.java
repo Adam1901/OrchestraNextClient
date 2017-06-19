@@ -8,6 +8,7 @@ import dto.LoginUser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.Props;
+import utils.Props.GlobalDefaults;
 import utils.Props.GlobalProperties;
 import utils.Utils;
 
@@ -228,7 +229,7 @@ public class LoginFrame extends JFrame {
         gbc_lblNewLabel_2.insets = new Insets(0, 0, 0, 5);
         gbc_lblNewLabel_2.gridx = 0;
         gbc_lblNewLabel_2.gridy = 5;
-        lblVersion.setText("Version: " + GlobalProperties.VERSION_DEFAULT);
+        lblVersion.setText("Version: " + GlobalDefaults.VERSION_DEFAULT);
         contentPane.add(lblVersion, gbc_lblNewLabel_2);
     }
 
