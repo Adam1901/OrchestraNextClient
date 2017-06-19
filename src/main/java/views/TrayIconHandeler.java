@@ -33,6 +33,11 @@ public class TrayIconHandeler {
 		}
 	}
 
+	public void removeTray() {
+		SystemTray tray = SystemTray.getSystemTray();
+		tray.remove(trayIcon);
+	}
+
 	public void displayTray(String title, String message, MessageType messageType) {
 		if (!supported) {
 			log.error("System tray not supported!");

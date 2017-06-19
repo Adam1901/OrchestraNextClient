@@ -75,6 +75,7 @@ public class MainView extends JFrame {
 				Controller cont = new Controller();
 				try {
 					cont.logout(lu);
+					tih.removeTray();
 					log.info("Logged out and killed unirest");
 				} catch (UnirestException | IOException e) {
 					log.error(e);
