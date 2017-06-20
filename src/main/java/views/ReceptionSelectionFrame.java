@@ -64,7 +64,7 @@ public class ReceptionSelectionFrame extends JFrame {
 				log.error(e);
 			}
 
-			List<DTOBranch> branches = cont.getBranches(lu);
+			List<DTOBranch> branches = cont.getBranches(lu).getValue();
 			for (DTOBranch dtoBranch : branches) {
 				getCmbBranch().addItem(dtoBranch);
 			}
@@ -86,7 +86,7 @@ public class ReceptionSelectionFrame extends JFrame {
 				if (getCmbEntryPoints().getItemCount() != 0) {
 					getCmbEntryPoints().removeAllItems();
 				}
-				List<DTOEntryPoint> servicePoints = cont.getEntryPoints(lu, branchLastUsed);
+				List<DTOEntryPoint> servicePoints = cont.getEntryPoints(lu, branchLastUsed).getValue();
 				for (DTOEntryPoint dtoServicePoint : servicePoints) {
 					getCmbEntryPoints().addItem(dtoServicePoint);
 				}
@@ -180,11 +180,11 @@ public class ReceptionSelectionFrame extends JFrame {
 			Props.setUserProperty("branchIdLastUsed", String.valueOf(selBranch.getId()));
 			getCmbEntryPoints().removeAllItems();
 			try {
-				for (DTOEntryPoint dtoServicePoint : cont.getEntryPoints(lu, selBranch)) {
+				for (DTOEntryPoint dtoServicePoint : cont.getEntryPoints(lu, selBranch).getValue()) {
 					getCmbEntryPoints().addItem(dtoServicePoint);
 				}
 				rsf.getLblBranch().setText("Branch: " + selBranch.getName());
-				services = cont.getServices(lu, selBranch);
+				services = cont.getServices(lu, selBranch).getValue();
 				rsf.fillCombo(services);
 			} catch (UnirestException e) {
 				log.error("Failed to data", e);

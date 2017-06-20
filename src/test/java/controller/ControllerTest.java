@@ -39,15 +39,20 @@ public class ControllerTest {
 
     @Test
     public void startSession() throws Exception {
-        List<DTOBranch> branches = cont.getBranches(lu);
-        List<DTOServicePoint> servicePoints = cont.getServicePoints(lu, branches.get(0));
-        HttpResponse<JsonNode> jsonNodeHttpResponse = cont.startSession(lu, branches.get(0), servicePoints.get(0));
+        Pair<List<DTOBranch>> branches = cont.getBranches(lu);
+        assertEquals(200,branches.getLeft().getStatus());
+        List<DTOBranch> branch = branches.getValue();
+        Pair<List<DTOServicePoint>> servicePointsP = cont.getServicePoints(lu, branch.get(0));
+        assertEquals(200,servicePointsP.getLeft().getStatus());
+        List<DTOServicePoint> servicePoints = servicePointsP.getValue();
+        HttpResponse<JsonNode> jsonNodeHttpResponse = cont.startSession(lu, branch.get(0), servicePoints.get(0));
         assertEquals(200, jsonNodeHttpResponse.getStatus());
     }
 
     @Test
     public void getBranches() throws Exception {
-        List<DTOBranch> branches = cont.getBranches(lu);
+        Pair<List<DTOBranch>> branchesP = cont.getBranches(lu);
+        List<DTOBranch> branches = branchesP.getValue();
         assertFalse(branches.isEmpty());
     }
 

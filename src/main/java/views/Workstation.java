@@ -185,7 +185,7 @@ public class Workstation extends JPanel {
 				}
 
 				Controller cont = new Controller();
-				DTOUserStatus recall = cont.recall(lu, branch, sp);
+				DTOUserStatus recall = cont.recall(lu, branch, sp).getValue();
 				visit = recall;
 				lblA.setText(recall.getVisit().getTicketId());
 				flash = true;
@@ -365,7 +365,7 @@ public class Workstation extends JPanel {
 						ticketId = Props.getLangProperty("MainFrame.callForwardText");
 					} else {
 						boolean custWaiting = false;
-						List<DTOQueue> queueInfoForWorkprofile = cont.getQueueInfoForWorkprofile(lu, branch, wp);
+						List<DTOQueue> queueInfoForWorkprofile = cont.getQueueInfoForWorkprofile(lu, branch, wp).getValue();
 						for (DTOQueue dtoQueue : queueInfoForWorkprofile) {
 							if (dtoQueue.getCustomersWaiting() != 0) {
 								custWaiting = true;
@@ -382,7 +382,7 @@ public class Workstation extends JPanel {
 							return;
 						}
 
-						callNext = cont.callNext(lu, branch, sp);
+						callNext = cont.callNext(lu, branch, sp).getValue();
 						ticketId = callNext.getVisit().getTicketId();
 					}
 					lblA.setText(ticketId);

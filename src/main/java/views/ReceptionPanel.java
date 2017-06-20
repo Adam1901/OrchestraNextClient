@@ -81,7 +81,7 @@ public class ReceptionPanel extends JPanel {
 					DTOBranch branch = (DTOBranch) frm.getCmbBranch().getSelectedItem();
 					DTOEntryPoint ep = (DTOEntryPoint) frm.getCmbEntryPoints().getSelectedItem();
 					DTOService service = (DTOService) cmbServices.getSelectedItem();
-					visit = cont.createVisit(lu, branch, ep, service);
+					visit = cont.createVisit(lu, branch, ep, service).getValue();
 					lblA.setText(visit.getTicketId());
 				} catch (UnirestException e) {
 					e.printStackTrace();

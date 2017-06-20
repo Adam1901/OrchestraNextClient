@@ -108,9 +108,9 @@ public class QueueInfoFrame extends JFrame implements Runnable {
 					List<DTOQueue> queueInfo;
 					DTOBranch branch = (DTOBranch) workstation.getCmbBranch().getSelectedItem();
 					DTOWorkProfile workProfile = (DTOWorkProfile) workstation.getCmbWorkProfile().getSelectedItem();
-					queueInfo = cont.getQueueInfo(lu, branch);
+					queueInfo = cont.getQueueInfo(lu, branch).getValue();
 					drawEverything(queueInfo, true);
-					queueInfo = cont.getQueueInfoForWorkprofile(lu, branch, workProfile);
+					queueInfo = cont.getQueueInfoForWorkprofile(lu, branch, workProfile).getValue();
 					drawEverything(queueInfo, false);
 
 					Thread.sleep(5000);

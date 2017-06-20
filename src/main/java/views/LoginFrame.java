@@ -200,7 +200,7 @@ public class LoginFrame extends JFrame {
             LoginUser lu = new LoginUser(txtUsername.getText(), new String(passwordField.getPassword()),
                     connectionString);
             try {
-                List<DTOBranch> branches = new Controller().getBranches(lu);
+                List<DTOBranch> branches = new Controller().getBranches(lu).getValue();
                 if (branches.isEmpty()) {
                     failToLoginMessage();
                     return;
