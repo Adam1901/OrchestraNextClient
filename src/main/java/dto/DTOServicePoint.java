@@ -10,7 +10,8 @@ public class DTOServicePoint implements OrchestraDTO{
 	Map<String, String> parameters;
 	List<String> deviceTypes;
 	String profileUnitName;
-
+	String state;
+	
 	public int getId() {
 		return id;
 	}
@@ -66,5 +67,13 @@ public class DTOServicePoint implements OrchestraDTO{
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 }

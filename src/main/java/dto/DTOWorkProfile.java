@@ -22,7 +22,6 @@ public class DTOWorkProfile implements OrchestraDTO {
 	int id;
 	String name;
 	public String getIdAsString() {
-		// TODO Auto-generated method stub
 		return String.valueOf(id);
 	}
 	
