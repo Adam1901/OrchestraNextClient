@@ -53,10 +53,31 @@ public class MainView extends JFrame {
 		gbc_tabbedPane.gridy = 0;
 		contentPane.add(tabbedPane, gbc_tabbedPane);
 
-		Workstation main = new Workstation(lu, this);
-		tabbedPane.addTab("Workstation", null, main, null);
-		ReceptionPanel rp = new ReceptionPanel(lu, this);
-		tabbedPane.addTab("Reception", null, rp, null);
+		Integer propsForWS = 2; // Default to workstation
+
+		try {
+			propsForWS = Integer.valueOf(Props.getGlobalProperty(GlobalProperties.RECEPTION1WORKSTATION2BOTH0));
+		} catch (NumberFormatException e) {
+		}
+
+		Workstation main = null;
+		ReceptionPanel rp = null;
+
+		if (propsForWS == 0) {
+			main = new Workstation(lu, this);
+			rp = new ReceptionPanel(lu, this);
+		} else if (propsForWS == 1) {
+			rp = new ReceptionPanel(lu, this);
+		} else if (propsForWS == 2) {
+			main = new Workstation(lu, this);
+		}
+
+		if (rp != null) {
+			tabbedPane.addTab("Reception", null, rp, null);
+		}
+		if (main != null) {
+			tabbedPane.addTab("Workstation", null, main, null);
+		}
 
 		setResizable(false);
 		setVisible(true);
@@ -93,7 +114,8 @@ public class MainView extends JFrame {
 			setPreferredSize(newDim);
 			setSize(newDim);
 		}
-		tih.displayTray(Props.getLangProperty("noti.loggedIn.title"), Props.getLangProperty("noti.loggedIn.message"), MessageType.INFO);
+		tih.displayTray(Props.getLangProperty("noti.loggedIn.title"), Props.getLangProperty("noti.loggedIn.message"),
+				MessageType.INFO);
 	}
 
 	public TrayIconHandeler getNotification() {

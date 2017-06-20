@@ -25,6 +25,8 @@ import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.border.TitledBorder;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.imgscalr.Scalr;
 
 import javax.swing.border.EtchedBorder;
@@ -39,9 +41,6 @@ import javax.swing.SwingConstants;
 
 public class ReceptionPanel extends JPanel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private LoginUser lu;
 	private ReceptionSelectionFrame frm;
@@ -51,6 +50,7 @@ public class ReceptionPanel extends JPanel {
 	JComboBox<DTOService> cmbServices = new JComboBox<DTOService>();
 	JLabel lblA = new JLabel("Not Serving");
 	DTOVisit visit = null;
+	private final static Logger log = LogManager.getLogger(ReceptionPanel.class);
 	private final JPanel panel_1 = new JPanel();
 	private final JButton btnNewButton = new JButton("Create Casual caller");
 	private final JComboBox cmbCasualCaller = new JComboBox();
@@ -189,8 +189,7 @@ public class ReceptionPanel extends JPanel {
 			ImageIcon imageIcon = new ImageIcon(image);
 			lblSettings.setIcon(imageIcon);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e);
 		}
 	}
 	

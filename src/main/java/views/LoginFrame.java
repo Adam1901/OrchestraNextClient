@@ -8,7 +8,7 @@ import dto.LoginUser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.Props;
-import utils.Props.GlobalProperties;
+import utils.Props.GlobalDefaults;
 import utils.Utils;
 
 import javax.imageio.ImageIO;
@@ -47,8 +47,7 @@ public class LoginFrame extends JFrame {
         try {
             setIconImage(ImageIO.read(getClass().getClassLoader().getResource("qmaticBigTransparent.png")));
         } catch (Throwable e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+           log.error(e1);
         }
         setTitle("Orchestra Next Client");
         setResizable(false);
@@ -228,7 +227,7 @@ public class LoginFrame extends JFrame {
         gbc_lblNewLabel_2.insets = new Insets(0, 0, 0, 5);
         gbc_lblNewLabel_2.gridx = 0;
         gbc_lblNewLabel_2.gridy = 5;
-        lblVersion.setText("Version: " + GlobalProperties.VERSION_DEFAULT);
+        lblVersion.setText("Version: " + GlobalDefaults.VERSION_DEFAULT);
         contentPane.add(lblVersion, gbc_lblNewLabel_2);
     }
 
