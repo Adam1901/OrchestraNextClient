@@ -1,6 +1,6 @@
 package dto;
 
-public class DTOQueue implements OrchestraDTO{
+public class DTOQueue implements OrchestraDTOSortable {
 	private int id;
 	private String name;
 	private int customersWaiting;

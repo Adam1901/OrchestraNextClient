@@ -1,6 +1,6 @@
 package dto;
 
-public class DTOBranch implements OrchestraDTO {
+public class DTOBranch implements OrchestraDTOSortable,OrchestraDTO {
 	
 	String name;
 	int id;

@@ -3,7 +3,8 @@ package dto;
 import java.util.List;
 import java.util.Map;
 
-public class DTOUserStatus {
+public class DTOUserStatus implements OrchestraDTO
+{
 
 	public Visit getVisit() {
 		return visit;

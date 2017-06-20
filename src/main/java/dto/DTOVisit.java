@@ -3,7 +3,7 @@ package dto;
 import java.util.List;
 import java.util.Map;
 
-public class DTOVisit {
+public class DTOVisit implements OrchestraDTO {
 	private int id;
 	private int totalWaitingTime;
 	private int waitingTime;

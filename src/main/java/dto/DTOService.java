@@ -1,6 +1,6 @@
 package dto;
 
-public class DTOService implements OrchestraDTO {
+public class DTOService implements OrchestraDTOSortable ,OrchestraDTO{
 	String externalName;
 	String internalDescription;
 	String externalDescription;

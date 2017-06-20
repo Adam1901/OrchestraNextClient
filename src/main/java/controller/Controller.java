@@ -295,14 +295,14 @@ public class Controller {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends OrchestraDTO> ArrayList<T> sortAndRemove(OrchestraDTO[] obj, boolean sortByName) {
+	private <T extends OrchestraDTOSortable> ArrayList<T> sortAndRemove(OrchestraDTOSortable[] obj, boolean sortByName) {
 		List<T> ret = new ArrayList<T>();
-		for (OrchestraDTO orchestraDTO : obj) {
-			ret.add((T) orchestraDTO);
+		for (OrchestraDTOSortable orchestraDTOSortable : obj) {
+			ret.add((T) orchestraDTOSortable);
 		}
 		
 		if (sortByName) {
-			ret.sort(Comparator.comparing(OrchestraDTO::getName));
+			ret.sort(Comparator.comparing(OrchestraDTOSortable::getName));
 		} else {
 			ret.sort((arg0, arg1) -> {
                 Integer i1 = arg0.getId();
