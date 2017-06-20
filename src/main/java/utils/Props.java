@@ -81,7 +81,7 @@ public class Props {
 					Object value = field.get(GlobalDefaults.class);
 					defaultPair.put(fieldStr, value.toString());
 					for (Entry<String, String> key : valueMap.entrySet()) {
-						if (fieldStr.startsWith(key.getKey()))
+						if (fieldStr.equals(key.getKey() + "_DEFAULT"))
 							valuePair.put(key.getValue(), defaultPair);
 					}
 				}

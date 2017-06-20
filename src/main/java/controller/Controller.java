@@ -162,8 +162,8 @@ public class Controller {
 	public void callNextAndEnd(LoginUser lu, DTOBranch branch, DTOServicePoint spId, Integer serviceId) throws UnirestException {
 		String json = "{\"services\" : [\""+serviceId.toString() + "\"]}";
 		String url = lu.getServerIPPort()
-				+ "/rest/servicepoint/branches/{branchID}/servicePoints/{servicePointId}/visits/createAndEnd";
-		Unirest .post(url)
+				+ "/rest/servicepoint/branches/{branchID}/servicePoints/{servicePointId}/visits/createAndEnd?transactionTime=600";
+		HttpResponse<JsonNode> asJson = Unirest .post(url)
 				.routeParam("branchID", branch.getIdAsString())	
 				.routeParam("servicePointId", spId.getIdAsString())
 				.header("Allow", "POST")
@@ -172,6 +172,11 @@ public class Controller {
 				.basicAuth(lu.getUsername(), lu.getPassword())
 				.body(json)
 				.asJson();
+		
+		log.info(asJson.getStatus());
+		log.info(asJson.getStatusText());
+		log.info(asJson.getHeaders());
+		log.info(asJson.getBody());
 	}
 
 	public DTOUserStatus recall(LoginUser lu, DTOBranch branchId, DTOServicePoint spId) throws UnirestException {
