@@ -53,7 +53,7 @@ public class Props {
 						GlobalDefaults.RECEPTION1WORKSTATION2BOTH0_DEFAULT);
 			}
 
-			Set<String> valuesList = new HashSet<String>();
+			Map<String, String> valueMap = new HashMap<>();
 			Map<String, Map<String, String>> valuePair = new HashMap<>();
 
 			// Check each one props exist
@@ -65,8 +65,10 @@ public class Props {
 			 */
 			Field[] values = GlobalProperties.class.getDeclaredFields();
 			for (Field field : values) {
+				field.setAccessible(true);
 				if (field.getType().equals(String.class)) {
-					valuesList.add(field.getName());
+					String keyNameValue = field.get(GlobalProperties.class).toString();
+					valueMap.put(field.getName(), keyNameValue);
 				}
 			}
 
@@ -78,9 +80,9 @@ public class Props {
 					String fieldStr = field.getName();
 					Object value = field.get(GlobalDefaults.class);
 					defaultPair.put(fieldStr, value.toString());
-					for (String key : valuesList) {
-						if (fieldStr.startsWith(key))
-							valuePair.put(key, defaultPair);
+					for (Entry<String, String> key : valueMap.entrySet()) {
+						if (fieldStr.startsWith(key.getKey()))
+							valuePair.put(key.getValue(), defaultPair);
 					}
 				}
 			}

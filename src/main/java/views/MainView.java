@@ -72,11 +72,11 @@ public class MainView extends JFrame {
 			main = new Workstation(lu, this);
 		}
 
-		if (rp != null) {
-			tabbedPane.addTab("Reception", null, rp, null);
-		}
 		if (main != null) {
 			tabbedPane.addTab("Workstation", null, main, null);
+		}
+		if (rp != null) {
+			tabbedPane.addTab("Reception", null, rp, null);
 		}
 
 		setResizable(false);
