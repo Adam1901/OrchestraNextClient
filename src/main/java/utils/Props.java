@@ -14,7 +14,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -37,47 +36,65 @@ public class Props {
 			new FileOutputStream(Props.CONFIG_PROPERTIES, true).close();
 			new FileOutputStream(Props.GLOBAL_PROPERTIES, true).close();
 
+			// Out right write the file if it doesnt exist.
 			if (!exists) {
 				Props.setGlobalProperty(GlobalProperties.SORT_BY_NAME, GlobalDefaults.SORT_BY_NAME_DEFAULT);
 				Props.setGlobalProperty(GlobalProperties.APP_NAME, GlobalDefaults.APP_NAME_DEFAULT);
-				Props.setGlobalProperty(GlobalProperties.SHOW_COUNTER_OPTIONS,GlobalDefaults.SHOW_COUNTER_OPTIONS_DEFAULT);
-				Props.setGlobalProperty(GlobalProperties.SHOW_COUTER_POPUP_EACH_START,GlobalDefaults.SHOW_COUTER_POPUP_EACH_START_DEFAULT);
+				Props.setGlobalProperty(GlobalProperties.SHOW_COUNTER_OPTIONS,
+						GlobalDefaults.SHOW_COUNTER_OPTIONS_DEFAULT);
+				Props.setGlobalProperty(GlobalProperties.SHOW_COUTER_POPUP_EACH_START,
+						GlobalDefaults.SHOW_COUTER_POPUP_EACH_START_DEFAULT);
 				Props.setGlobalProperty(GlobalProperties.VERSION, GlobalDefaults.VERSION_DEFAULT);
 				Props.setGlobalProperty(GlobalProperties.CALL_FORWARDS, GlobalDefaults.CALL_FORWARDS_DEFAULT);
-				Props.setGlobalProperty(GlobalProperties.CALL_FORWARDS_SERVICE, GlobalDefaults.CALL_FORWARDS_SERVICE_DEFAULT);
+				Props.setGlobalProperty(GlobalProperties.CALL_FORWARDS_SERVICE,
+						GlobalDefaults.CALL_FORWARDS_SERVICE_DEFAULT);
 				Props.setGlobalProperty(GlobalProperties.NOTIFICATIONS, GlobalDefaults.NOTIFICATIONS_DEFAULT);
-				Props.setGlobalProperty(GlobalProperties.RECEPTION1WORKSTATION2BOTH0, GlobalDefaults.RECEPTION1WORKSTATION2BOTH0_DEFAULT);
+				Props.setGlobalProperty(GlobalProperties.RECEPTION1WORKSTATION2BOTH0,
+						GlobalDefaults.RECEPTION1WORKSTATION2BOTH0_DEFAULT);
 			}
 
 			Set<String> valuesList = new HashSet<String>();
-			Map<String, Map<String, String>> valuePair = new HashMap<>(); 
-			
+			Map<String, Map<String, String>> valuePair = new HashMap<>();
+
 			// Check each one props exist
-			Field[] values = GlobalProperties.class.getDeclaredFields(); 
+			/*
+			 * Use reflection to find all varialbes in global properties and
+			 * global defaults and set them.
+			 * 
+			 * TODO migrate to an object list at some point
+			 */
+			Field[] values = GlobalProperties.class.getDeclaredFields();
 			for (Field field : values) {
-				if (field.getType().equals(String.class)) { 
+				if (field.getType().equals(String.class)) {
 					valuesList.add(field.getName());
 				}
 			}
-			
-			Field[] defaults = GlobalDefaults.class.getDeclaredFields(); 
+
+			Field[] defaults = GlobalDefaults.class.getDeclaredFields();
 			for (Field field : defaults) {
 				field.setAccessible(true);
-				if (field.getType().equals(String.class)) { 
-					Map<String, String> defaultPair = new HashMap<>(); 
+				if (field.getType().equals(String.class)) {
+					Map<String, String> defaultPair = new HashMap<>();
 					String fieldStr = field.getName();
 					Object value = field.get(GlobalDefaults.class);
 					defaultPair.put(fieldStr, value.toString());
 					for (String key : valuesList) {
-						valuePair.put(key, defaultPair);
+						if (fieldStr.startsWith(key))
+							valuePair.put(key, defaultPair);
 					}
 				}
 			}
-			
+
 			for (Entry<String, Map<String, String>> valuePairObj : valuePair.entrySet()) {
 				Set<Entry<String, String>> entrySet = valuePairObj.getValue().entrySet();
 				for (Entry<String, String> entry : entrySet) {
-					System.out.println(valuePairObj.getKey() + " - " + entry.getKey() + ":" + entry.getValue());
+					String propKey = valuePairObj.getKey();
+					String propValue = entry.getValue();
+					String globalProperty = Props.getGlobalProperty(propKey);
+					if (globalProperty == null) {
+						log.info("found null value of key" + propKey + ", setting default of + " + propValue);
+						Props.setGlobalProperty(propKey, propValue);
+					}
 				}
 			}
 
@@ -183,6 +200,12 @@ public class Props {
 		public static String RECEPTION1WORKSTATION2BOTH0 = "reception1Workstation2Both0";
 	}
 
+	/**
+	 * Names must start with the property name with default at the end
+	 * 
+	 * @author adamea
+	 *
+	 */
 	public static class GlobalDefaults {
 		public static String SORT_BY_NAME_DEFAULT = "true";
 		public static String APP_NAME_DEFAULT = "Build";

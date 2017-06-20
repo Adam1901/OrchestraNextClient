@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.Props;
 import utils.Props.GlobalDefaults;
-import utils.Props.GlobalProperties;
 import utils.Utils;
 
 import javax.imageio.ImageIO;
@@ -48,8 +47,7 @@ public class LoginFrame extends JFrame {
         try {
             setIconImage(ImageIO.read(getClass().getClassLoader().getResource("qmaticBigTransparent.png")));
         } catch (Throwable e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+           log.error(e1);
         }
         setTitle("Orchestra Next Client");
         setResizable(false);
