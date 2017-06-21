@@ -194,7 +194,7 @@ public class Props {
 		public static String APP_NAME = "appName";
 		public static String SHOW_COUNTER_OPTIONS = "showCounterOptions";
 		public static String SHOW_COUTER_POPUP_EACH_START = "showCounterPopUPOnEachStart";
-		public static String VERSION = "Version";
+		static String VERSION = "Version";
 		public static String CALL_FORWARDS = "callForwards";
 		public static String CALL_FORWARDS_SERVICE = "callForwardsServiceId";
 		public static String NOTIFICATIONS = "notifications";
@@ -208,15 +208,15 @@ public class Props {
 	 *
 	 */
 	public static class GlobalDefaults {
-		public static String SORT_BY_NAME_DEFAULT = "true";
-		public static String APP_NAME_DEFAULT = "Build";
-		public static String SHOW_COUNTER_OPTIONS_DEFAULT = "true";
-		public static String SHOW_COUTER_POPUP_EACH_START_DEFAULT = "false";
+		static String SORT_BY_NAME_DEFAULT = "true";
+		static String APP_NAME_DEFAULT = "Build";
+		static String SHOW_COUNTER_OPTIONS_DEFAULT = "true";
+		static String SHOW_COUTER_POPUP_EACH_START_DEFAULT = "false";
 		public static String VERSION_DEFAULT = "1.0.0.3";
-		public static String CALL_FORWARDS_DEFAULT = "false";
-		public static String CALL_FORWARDS_SERVICE_DEFAULT = "1";
-		public static String NOTIFICATIONS_DEFAULT = "true";
-		public static String RECEPTION1WORKSTATION2BOTH0_DEFAULT = "0";
+		static String CALL_FORWARDS_DEFAULT = "false";
+		static String CALL_FORWARDS_SERVICE_DEFAULT = "1";
+		static String NOTIFICATIONS_DEFAULT = "true";
+		static String RECEPTION1WORKSTATION2BOTH0_DEFAULT = "0";
 	}
 
 }

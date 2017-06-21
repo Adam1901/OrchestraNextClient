@@ -295,7 +295,7 @@ public class Controller {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends OrchestraDTOSortable> ArrayList<T> sortAndRemove(OrchestraDTOSortable[] obj, boolean sortByName) {
+    protected <T extends OrchestraDTOSortable> ArrayList<T> sortAndRemove(OrchestraDTOSortable[] obj, boolean sortByName) {
         List<T> ret = new ArrayList<T>();
         for (OrchestraDTOSortable orchestraDTOSortable : obj) {
             ret.add((T) orchestraDTOSortable);

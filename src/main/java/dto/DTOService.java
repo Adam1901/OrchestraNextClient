@@ -117,7 +117,7 @@ public class DTOService implements OrchestraDTOSortable ,OrchestraDTO{
 
 	@Override
 	public String getName() {
-		
 		return externalName;
 	}
+
 }
