@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import utils.Props;
 import utils.Props.GlobalDefaults;
 import utils.Utils;
+import utils.UtilsTest;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

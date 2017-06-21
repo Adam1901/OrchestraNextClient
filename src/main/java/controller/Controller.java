@@ -314,6 +314,5 @@ public class Controller {
         // Remove casual called (J8 FTW)
         ret.removeIf(p -> p.getName().toLowerCase().equals("casual caller"));
         return (ArrayList<T>) ret;
-
     }
 }

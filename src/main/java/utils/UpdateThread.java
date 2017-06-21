@@ -1,6 +1,7 @@
 package utils;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
@@ -30,27 +31,30 @@ public class UpdateThread implements Runnable {
 		String serverVersion = "";
 
 		try {
-
-			URL url = new URL(lu.getServerIPPort() + "/download/version.js");
-			try (Scanner s = new Scanner(url.openStream())) {
-				while (s.hasNext()) {
-					serverVersion += s.next();
-				}
-			}
-			String[] split = serverVersion.split("\"");
-
-			serverVersion = split[1];
-
-			String localVersion = Props.getGlobalProperty("Version");
-			log.info(serverVersion + "" + localVersion);
-			if (!serverVersion.equals(localVersion)) {
+			if (checkServerVersion(serverVersion)) {
 				mv.showMessageDialog(Props.getLangProperty("Update.newVersion"), JOptionPane.ERROR_MESSAGE);
 			} else {
 				//TODO Check the diff version is higher and set it 
-				
 			}
 		} catch (IOException | ArrayIndexOutOfBoundsException e) {
 			log.error("Could not find server version.", e);
 		}
+	}
+
+	protected boolean checkServerVersion(String serverVersion) throws MalformedURLException, IOException {
+		URL url = new URL(lu.getServerIPPort() + "/download/version.js");
+		try (Scanner s = new Scanner(url.openStream())) {
+			while (s.hasNext()) {
+				serverVersion += s.next();
+			}
+		}
+		String[] split = serverVersion.split("\"");
+
+		serverVersion = split[1];
+
+		String localVersion = Props.getGlobalProperty("Version");
+		log.info(serverVersion + "" + localVersion);
+		boolean b = !serverVersion.equals(localVersion);
+		return b;
 	}
 }
