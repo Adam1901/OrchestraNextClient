@@ -20,249 +20,319 @@ import static utils.Props.getUserProperty;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ControllerTest {
-    private Controller cont = new Controller();
-    private LoginUser lu = null;
+	private Controller cont = new Controller();
+	private LoginUser lu = null;
 
-    @Before
-    public void beforeTest() throws Exception {
-        String ip = getUserProperty("ip");
-        String port = getUserProperty("port");
-        String proto = getUserProperty("proto");
-        String username = getUserProperty("username");
-        String password = Utils.decode(Props.getUserProperty("password"));
+	@Before
+	public void beforeTest() throws Exception {
+		String ip = getUserProperty("ip");
+		String port = getUserProperty("port");
+		String proto = getUserProperty("proto");
+		String username = getUserProperty("username");
+		String password = Utils.decode(Props.getUserProperty("password"));
 
-        String connectionString = proto + ip + ":"
-                + port;
+		String connectionString = proto + ip + ":" + port;
 
-        lu = new LoginUser(username, password, connectionString);
-    }
+		lu = new LoginUser(username, password, connectionString);
+		
+		
+	}
 
-    @Test
-    public void startSession() throws Exception {
-        Pair<List<DTOBranch>> branches = cont.getBranches(lu);
-        assertEquals(200,branches.getLeft().getStatus());
-        List<DTOBranch> branch = branches.getValue();
-        Pair<List<DTOServicePoint>> servicePointsP = cont.getServicePoints(lu, branch.get(0));
-        assertEquals(200,servicePointsP.getLeft().getStatus());
-        List<DTOServicePoint> servicePoints = servicePointsP.getValue();
-        HttpResponse<JsonNode> jsonNodeHttpResponse = cont.startSession(lu, branch.get(0), servicePoints.get(0));
-        assertEquals(200, jsonNodeHttpResponse.getStatus());
-    }
+	private <T> void testResponse(Pair<T> response) {
+		assertEquals(200, response.getLeft().getStatus());
+	}
 
-    @Test
-    public void getBranches() throws Exception {
-        Pair<List<DTOBranch>> branchesP = cont.getBranches(lu);
-        List<DTOBranch> branches = branchesP.getValue();
-        assertFalse(branches.isEmpty());
-    }
+	private <T> void testResponse(HttpResponse<T> response) {
+		assertEquals(200, response.getStatus());
+	}
 
-    @Test
-    public void getWorkProfile() throws Exception {
-        List<DTOWorkProfile> workProfile = cont.getWorkProfile(lu, cont.getBranches(lu).get(0));
-        assertFalse(workProfile.isEmpty());
-    }
+	@Test
+	public void startSession() throws Exception {
+		Pair<List<DTOBranch>> branches = cont.getBranches(lu);
+		assertEquals(200, branches.getLeft().getStatus());
+		List<DTOBranch> branch = branches.getValue();
+		Pair<List<DTOServicePoint>> servicePointsP = cont.getServicePoints(lu, branch.get(0));
+		assertEquals(200, servicePointsP.getLeft().getStatus());
+		List<DTOServicePoint> servicePoints = servicePointsP.getValue();
+		HttpResponse<JsonNode> jsonNodeHttpResponse = cont.startSession(lu, branch.get(0), servicePoints.get(0));
+		assertEquals(200, jsonNodeHttpResponse.getStatus());
+	}
 
-    @Test
-    public void getServicePoints() throws Exception {
-        List<DTOServicePoint> servicePoints = cont.getServicePoints(lu, cont.getBranches(lu).get(0));
-        assertFalse(servicePoints.isEmpty());
-    }
+	@Test
+	public void getBranches() throws Exception {
+		Pair<List<DTOBranch>> branchesP = cont.getBranches(lu);
+		List<DTOBranch> branches = branchesP.getValue();
+		assertFalse(branches.isEmpty());
+	}
 
-    @Test
-    public void getEntryPoints() throws Exception {
-        List<DTOEntryPoint> entryPoints = cont.getEntryPoints(lu, cont.getBranches(lu).get(0));
-        assertFalse(entryPoints.isEmpty());
-    }
+	@Test
+	public void getWorkProfile() throws Exception {
+		Pair<List<DTOBranch>> branche = cont.getBranches(lu);
+		DTOBranch right = branche.getRight().get(0);
+		Pair<List<DTOWorkProfile>> workProfile = cont.getWorkProfile(lu, right);
+		assertFalse(workProfile.getValue().isEmpty());
+		testResponse(workProfile);
+	}
 
-    /**
-     * Not MAY FAIL IF VISITS ALREADY IN SYSTEM. PLEASE LOOK INTO IT.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void callNext() throws Exception {
-        List<DTOBranch> branches = cont.getBranches(lu);
-        DTOBranch branchId = branches.get(0);
-        List<DTOService> services = cont.getServices(lu, branchId);
-        List<DTOEntryPoint> entryPoints = cont.getEntryPoints(lu, branchId);
-        DTOVisit visitCreate = cont.createVisit(lu, branchId, entryPoints.get(0), services.get(0));
-        assertNotNull(visitCreate);
+	@Test
+	public void getServicePoints() throws Exception {
+		Pair<List<DTOBranch>> branches = cont.getBranches(lu);
+		testResponse(branches);
+		Pair<List<DTOServicePoint>> servicePoints = cont.getServicePoints(lu, branches.getValue().get(0));
+		testResponse(servicePoints);
+		assertFalse(servicePoints.getValue().isEmpty());
+	}
 
-        List<DTOServicePoint> servicePoints = cont.getServicePoints(lu, branchId);
-        List<DTOWorkProfile> workProfile = cont.getWorkProfile(lu, branchId);
-        cont.setWorkProfile(lu, branchId, workProfile.get(0));
-        DTOUserStatus dtoUserStatus = cont.callNext(lu, branchId, servicePoints.get(0));
-        DTOUserStatus.Visit visitCalled = dtoUserStatus.getVisit();
-        assertNotNull(visitCalled);
-        assertNotNull(visitCalled.getTicketId());
+	@Test
+	public void getEntryPoints() throws Exception {
+		Pair<List<DTOEntryPoint>> entryPoints = cont.getEntryPoints(lu, cont.getBranches(lu).getValue().get(0));
+		testResponse(entryPoints);
+		assertFalse(entryPoints.getValue().isEmpty());
+	}
 
-        assertEquals(visitCreate.getTicketId(), visitCalled.getTicketId());
-        assertEquals(visitCreate.getId(), visitCalled.getId());
+	/**
+	 * Not MAY FAIL IF VISITS ALREADY IN SYSTEM. PLEASE LOOK INTO IT.
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void callNext() throws Exception {
+		Pair<List<DTOBranch>> branches = cont.getBranches(lu);
+		testResponse(branches);
+		DTOBranch branchId = branches.getValue().get(0);
+		Pair<List<DTOService>> services = cont.getServices(lu, branchId);
+		testResponse(services);
+		Pair<List<DTOEntryPoint>> entryPoints = cont.getEntryPoints(lu, branchId);
+		testResponse(entryPoints);
+		Pair<DTOVisit> visitCreate = cont.createVisit(lu, branchId, entryPoints.getV().get(0),
+				services.getValue().get(0));
+		testResponse(visitCreate);
+		assertNotNull(visitCreate.getValue());
 
-        HttpResponse<JsonNode> jsonNodeHttpResponse = cont.endVisit(lu, branchId, String.valueOf(visitCreate.getId()));
-        assertEquals(200, jsonNodeHttpResponse.getStatus());
-    }
+		Pair<List<DTOServicePoint>> servicePoints = cont.getServicePoints(lu, branchId);
+		testResponse(servicePoints);
+		Pair<List<DTOWorkProfile>> workProfile = cont.getWorkProfile(lu, branchId);
+		testResponse(workProfile);
+		HttpResponse<JsonNode> setWorkProfile = cont.setWorkProfile(lu, branchId, workProfile.getValue().get(0));
+		testResponse(setWorkProfile);
+		Pair<DTOUserStatus> dtoUserStatus = cont.callNext(lu, branchId, servicePoints.getV().get(0));
+		testResponse(dtoUserStatus);
+		DTOUserStatus.Visit visitCalled = dtoUserStatus.getValue().getVisit();
+		assertNotNull(visitCalled);
+		assertNotNull(visitCalled.getTicketId());
 
-    /**
-     * Expected to fail on < UP8
-     *
-     * @throws Exception
-     */
-    @Test
-    public void callNextAndEnd() throws Exception {
-        List<DTOBranch> branches = cont.getBranches(lu);
-        DTOBranch branchId = branches.get(0);
-        List<DTOService> services = cont.getServices(lu, branchId);
-        List<DTOServicePoint> servicePoints = cont.getServicePoints(lu, branchId);
-        HttpResponse<JsonNode> jsonNodeHttpResponse = cont.callNextAndEnd(lu, branchId, servicePoints.get(0), services.get(0).getId());
-        assertEquals(200, jsonNodeHttpResponse.getStatus());
-    }
+		assertEquals(visitCreate.getValue().getTicketId(), visitCalled.getTicketId());
+		assertEquals(visitCreate.getValue().getId(), visitCalled.getId());
 
-    @Test
-    public void recall() throws Exception {
-        List<DTOBranch> branches = cont.getBranches(lu);
-        DTOBranch branchId = branches.get(0);
-        List<DTOService> services = cont.getServices(lu, branchId);
-        List<DTOEntryPoint> entryPoints = cont.getEntryPoints(lu, branchId);
-        DTOVisit visitCreate = cont.createVisit(lu, branchId, entryPoints.get(0), services.get(0));
-        assertNotNull(visitCreate);
+		HttpResponse<JsonNode> jsonNodeHttpResponse = cont.endVisit(lu, branchId,
+				String.valueOf(visitCreate.getValue().getId()));
+		assertEquals(200, jsonNodeHttpResponse.getStatus());
+	}
 
-        List<DTOServicePoint> servicePoints = cont.getServicePoints(lu, branchId);
-        List<DTOWorkProfile> workProfile = cont.getWorkProfile(lu, branchId);
-        cont.setWorkProfile(lu, branchId, workProfile.get(0));
-        DTOUserStatus dtoUserStatus = cont.callNext(lu, branchId, servicePoints.get(0));
-        DTOUserStatus.Visit visitCalled = dtoUserStatus.getVisit();
-        assertNotNull(visitCalled);
-        assertNotNull(visitCalled.getTicketId());
+	/**
+	 * Expected to fail on < UP8
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void callNextAndEnd() throws Exception {
+		Pair<List<DTOBranch>> branches = cont.getBranches(lu);
+		testResponse(branches);
+		DTOBranch branchId = branches.getV().get(0);
+		Pair<List<DTOService>> services = cont.getServices(lu, branchId);
+		testResponse(services);
 
-        assertEquals(visitCreate.getTicketId(), visitCalled.getTicketId());
-        assertEquals(visitCreate.getId(), visitCalled.getId());
+		Pair<List<DTOServicePoint>> servicePoints = cont.getServicePoints(lu, branchId);
+		testResponse(servicePoints);
+		HttpResponse<JsonNode> jsonNodeHttpResponse = cont.callNextAndEnd(lu, branchId, servicePoints.getV().get(0),
+				services.getV().get(0).getId());
+		assertEquals(200, jsonNodeHttpResponse.getStatus());
+	}
 
-        // Wait so we can recall
-        Thread.sleep(5000);
-        DTOUserStatus recall = cont.recall(lu, branchId, servicePoints.get(0));
-        assertNotNull(recall);
-        assertNotNull(recall.getVisit());
+	@Test
+	public void recall() throws Exception {
+		Pair<List<DTOBranch>> branches = cont.getBranches(lu);
+		testResponse(branches);
+		DTOBranch branchId = branches.getV().get(0);
+		Pair<List<DTOService>> services = cont.getServices(lu, branchId);
+		testResponse(services);
+		Pair<List<DTOEntryPoint>> entryPoints = cont.getEntryPoints(lu, branchId);
+		testResponse(entryPoints);
+		Pair<DTOVisit> visitCreate = cont.createVisit(lu, branchId, entryPoints.getV().get(0), services.getV().get(0));
+		testResponse(visitCreate);
+		assertNotNull(visitCreate.getValue().getTicketId());
 
-        assertEquals(recall.getVisit().getTicketId(), visitCalled.getTicketId());
-        assertEquals(recall.getVisit().getId(), visitCalled.getId());
-    }
+		Pair<List<DTOServicePoint>> servicePoints = cont.getServicePoints(lu, branchId);
+		testResponse(servicePoints);
+		Pair<List<DTOWorkProfile>> workProfile = cont.getWorkProfile(lu, branchId);
+		testResponse(workProfile);
+		HttpResponse<JsonNode> setWorkProfile = cont.setWorkProfile(lu, branchId, workProfile.getV().get(0));
+		testResponse(setWorkProfile);
+		Pair<DTOUserStatus> dtoUserStatus = cont.callNext(lu, branchId, servicePoints.getV().get(0));
+		testResponse(dtoUserStatus);
+		DTOUserStatus.Visit visitCalled = dtoUserStatus.getV().getVisit();
+		assertNotNull(visitCalled);
+		assertNotNull(visitCalled.getTicketId());
 
-    @Test
-    public void createVisit() throws Exception {
-        List<DTOBranch> branches = cont.getBranches(lu);
-        DTOBranch branchId = branches.get(0);
-        List<DTOService> services = cont.getServices(lu, branchId);
-        List<DTOEntryPoint> entryPoints = cont.getEntryPoints(lu, branchId);
-        DTOVisit visitCreate = cont.createVisit(lu, branchId, entryPoints.get(0), services.get(0));
-        assertNotNull(visitCreate.getTicketId());
+		assertEquals(visitCreate.getV().getTicketId(), visitCalled.getTicketId());
+		assertEquals(visitCreate.getV().getId(), visitCalled.getId());
 
+		// Wait so we can recall
+		Thread.sleep(5000);
+		Pair<DTOUserStatus> recall = cont.recall(lu, branchId, servicePoints.getV().get(0));
+		testResponse(recall);
+		assertNotNull(recall.getValue());
+		assertNotNull(recall.getValue().getVisit());
 
+		assertEquals(recall.getValue().getVisit().getTicketId(), visitCalled.getTicketId());
+		assertEquals(recall.getValue().getVisit().getId(), visitCalled.getId());
+	}
 
-        //now end the visit for the other tests :)
-        List<DTOServicePoint> servicePoints = cont.getServicePoints(lu, branchId);
-        List<DTOWorkProfile> workProfile = cont.getWorkProfile(lu, branchId);
-        HttpResponse<JsonNode> jsonNodeHttpResponse1 = cont.setWorkProfile(lu, branchId, workProfile.get(0));
-        assertEquals(200, jsonNodeHttpResponse1.getStatus());
-        DTOUserStatus dtoUserStatus = cont.callNext(lu, branchId, servicePoints.get(0));
-        DTOUserStatus.Visit visitCalled = dtoUserStatus.getVisit();
-        assertNotNull(visitCalled);
-        assertNotNull(visitCalled.getTicketId());
+	@Test
+	public void createVisit() throws Exception {
+		Pair<List<DTOBranch>> branches = cont.getBranches(lu);
+		testResponse(branches);
+		DTOBranch branchId = branches.getV().get(0);
+		Pair<List<DTOService>> services = cont.getServices(lu, branchId);
+		testResponse(services);
+		Pair<List<DTOEntryPoint>> entryPoints = cont.getEntryPoints(lu, branchId);
+		testResponse(entryPoints);
+		Pair<DTOVisit> visitCreate = cont.createVisit(lu, branchId, entryPoints.getV().get(0), services.getV().get(0));
+		testResponse(visitCreate);
+		assertNotNull(visitCreate.getValue().getTicketId());
 
-        assertEquals(visitCreate.getTicketId(), visitCalled.getTicketId());
-        assertEquals(visitCreate.getId(), visitCalled.getId());
+		// now end the visit for the other tests :)
+		Pair<List<DTOServicePoint>> servicePoints = cont.getServicePoints(lu, branchId);
+		testResponse(servicePoints);
+		Pair<List<DTOWorkProfile>> workProfile = cont.getWorkProfile(lu, branchId);
+		testResponse(workProfile);
+		HttpResponse<JsonNode> jsonNodeHttpResponse1 = cont.setWorkProfile(lu, branchId, workProfile.getV().get(0));
+		assertEquals(200, jsonNodeHttpResponse1.getStatus());
+		Pair<DTOUserStatus> dtoUserStatus = cont.callNext(lu, branchId, servicePoints.getV().get(0));
+		testResponse(dtoUserStatus);
+		DTOUserStatus.Visit visitCalled = dtoUserStatus.getV().getVisit();
+		assertNotNull(visitCalled);
+		assertNotNull(visitCalled.getTicketId());
 
-        HttpResponse<JsonNode> jsonNodeHttpResponse = cont.endVisit(lu, branchId, String.valueOf(visitCreate.getId()));
-        assertEquals(200, jsonNodeHttpResponse.getStatus());
-    }
+		assertEquals(visitCreate.getV().getTicketId(), visitCalled.getTicketId());
+		assertEquals(visitCreate.getV().getId(), visitCalled.getId());
 
-    @Test
-    public void setWorkProfile() throws Exception {
-        List<DTOBranch> branches = cont.getBranches(lu);
-        DTOBranch branchId = branches.get(0);
-        List<DTOService> services = cont.getServices(lu, branchId);
-        List<DTOEntryPoint> entryPoints = cont.getEntryPoints(lu, branchId);
-        DTOVisit visitCreate = cont.createVisit(lu, branchId, entryPoints.get(0), services.get(0));
-        assertNotNull(visitCreate);
+		HttpResponse<JsonNode> jsonNodeHttpResponse = cont.endVisit(lu, branchId, String.valueOf(visitCreate.getV().getId()));
+		assertEquals(200, jsonNodeHttpResponse.getStatus());
+	}
 
-        List<DTOServicePoint> servicePoints = cont.getServicePoints(lu, branchId);
-        List<DTOWorkProfile> workProfile = cont.getWorkProfile(lu, branchId);
-        cont.setWorkProfile(lu, branchId, workProfile.get(0));
-        DTOUserStatus dtoUserStatus = cont.callNext(lu, branchId, servicePoints.get(0));
-        DTOUserStatus.Visit visitCalled = dtoUserStatus.getVisit();
-        assertNotNull(visitCalled);
-        assertNotNull(visitCalled.getTicketId());
+	@Test
+	public void setWorkProfile() throws Exception {
+		Pair<List<DTOBranch>> branches = cont.getBranches(lu);
+		testResponse(branches);
+		DTOBranch branchId = branches.getV().get(0);
+		Pair<List<DTOService>> services = cont.getServices(lu, branchId);
+		testResponse(services);
+		Pair<List<DTOEntryPoint>> entryPoints = cont.getEntryPoints(lu, branchId);
+		testResponse(entryPoints);
+		Pair<DTOVisit> visitCreate = cont.createVisit(lu, branchId, entryPoints.getV().get(0), services.getV().get(0));
+		testResponse(visitCreate);
+		assertNotNull(visitCreate.getValue().getTicketId());
 
-        assertEquals(visitCreate.getTicketId(), visitCalled.getTicketId());
-        assertEquals(visitCreate.getId(), visitCalled.getId());
-        assertEquals(dtoUserStatus.getWorkProfileId(), workProfile.get(0).getId());
-    }
+		Pair<List<DTOServicePoint>> servicePoints = cont.getServicePoints(lu, branchId);
+		testResponse(servicePoints);
+		Pair<List<DTOWorkProfile>> workProfile = cont.getWorkProfile(lu, branchId);
+		testResponse(workProfile);
+		HttpResponse<JsonNode> jsonNodeHttpResponse1 = cont.setWorkProfile(lu, branchId, workProfile.getV().get(0));
+		assertEquals(200, jsonNodeHttpResponse1.getStatus());
+		Pair<DTOUserStatus> dtoUserStatus = cont.callNext(lu, branchId, servicePoints.getV().get(0));
+		testResponse(dtoUserStatus);
+		DTOUserStatus.Visit visitCalled = dtoUserStatus.getV().getVisit();
+		assertNotNull(visitCalled);
+		assertNotNull(visitCalled.getTicketId());
 
-    @Test
-    public void endVisit() throws Exception {
-        List<DTOBranch> branches = cont.getBranches(lu);
-        DTOBranch branchId = branches.get(0);
-        List<DTOService> services = cont.getServices(lu, branchId);
-        List<DTOEntryPoint> entryPoints = cont.getEntryPoints(lu, branchId);
-        DTOVisit visitCreate = cont.createVisit(lu, branchId, entryPoints.get(0), services.get(0));
-        assertNotNull(visitCreate);
+		assertEquals(visitCreate.getV().getTicketId(), visitCalled.getTicketId());
+		assertEquals(visitCreate.getV().getId(), visitCalled.getId());
+		assertEquals(dtoUserStatus.getV().getWorkProfileId(), workProfile.getV().get(0).getId());
+	}
 
-        List<DTOServicePoint> servicePoints = cont.getServicePoints(lu, branchId);
-        List<DTOWorkProfile> workProfile = cont.getWorkProfile(lu, branchId);
-        HttpResponse<JsonNode> jsonNodeHttpResponse1 = cont.setWorkProfile(lu, branchId, workProfile.get(0));
-        assertEquals(200, jsonNodeHttpResponse1.getStatus());
-        DTOUserStatus dtoUserStatus = cont.callNext(lu, branchId, servicePoints.get(0));
-        DTOUserStatus.Visit visitCalled = dtoUserStatus.getVisit();
-        assertNotNull(visitCalled);
-        assertNotNull(visitCalled.getTicketId());
+	@Test
+	public void endVisit() throws Exception {
+		Pair<List<DTOBranch>> branches = cont.getBranches(lu);
+		testResponse(branches);
+		DTOBranch branchId = branches.getV().get(0);
+		Pair<List<DTOService>> services = cont.getServices(lu, branchId);
+		testResponse(services);
+		Pair<List<DTOEntryPoint>> entryPoints = cont.getEntryPoints(lu, branchId);
+		testResponse(entryPoints);
+		Pair<DTOVisit> visitCreate = cont.createVisit(lu, branchId, entryPoints.getV().get(0), services.getV().get(0));
+		testResponse(visitCreate);
+		assertNotNull(visitCreate.getValue().getTicketId());
+		Pair<List<DTOServicePoint>> servicePoints = cont.getServicePoints(lu, branchId);
+		testResponse(servicePoints);
+		Pair<List<DTOWorkProfile>> workProfile = cont.getWorkProfile(lu, branchId);
+		testResponse(workProfile);
+		HttpResponse<JsonNode> jsonNodeHttpResponse1 = cont.setWorkProfile(lu, branchId, workProfile.getV().get(0));
+		assertEquals(200, jsonNodeHttpResponse1.getStatus());
+		Pair<DTOUserStatus> dtoUserStatus = cont.callNext(lu, branchId, servicePoints.getV().get(0));
+		testResponse(dtoUserStatus);
+		DTOUserStatus.Visit visitCalled = dtoUserStatus.getV().getVisit();
+		assertNotNull(visitCalled);
+		assertNotNull(visitCalled.getTicketId());
 
-        assertEquals(visitCreate.getTicketId(), visitCalled.getTicketId());
-        assertEquals(visitCreate.getId(), visitCalled.getId());
+		assertEquals(visitCreate.getV().getTicketId(), visitCalled.getTicketId());
+		assertEquals(visitCreate.getV().getId(), visitCalled.getId());
 
-        HttpResponse<JsonNode> jsonNodeHttpResponse = cont.endVisit(lu, branchId, String.valueOf(visitCreate.getId()));
-        assertEquals(200, jsonNodeHttpResponse.getStatus());
-    }
+		HttpResponse<JsonNode> jsonNodeHttpResponse = cont.endVisit(lu, branchId, String.valueOf(visitCreate.getV().getId()));
+		assertEquals(200, jsonNodeHttpResponse.getStatus());
+	}
 
-    @Test
-    public void getQueueInfoForWorkprofile() throws Exception {
-        List<DTOBranch> branches = cont.getBranches(lu);
-        DTOBranch branchId = branches.get(0);
-        List<DTOWorkProfile> workProfile = cont.getWorkProfile(lu, branchId);
-        DTOWorkProfile wpId = workProfile.get(0);
-        HttpResponse<JsonNode> jsonNodeHttpResponse1 = cont.setWorkProfile(lu, branchId, wpId);
-        assertEquals(200, jsonNodeHttpResponse1.getStatus());
-        List<DTOQueue> queueInfoForWorkprofile = cont.getQueueInfoForWorkprofile(lu, branchId, wpId);
-        assertFalse(queueInfoForWorkprofile.isEmpty());
+	@Test
+	public void getQueueInfoForWorkprofile() throws Exception {
+		Pair<List<DTOBranch>> branches = cont.getBranches(lu);
+		testResponse(branches);
+		DTOBranch branchId = branches.getV().get(0);
+		Pair<List<DTOWorkProfile>> workProfile = cont.getWorkProfile(lu, branchId);
+		testResponse(workProfile);
+		DTOWorkProfile wpId = workProfile.getValue().get(0);
+		HttpResponse<JsonNode> jsonNodeHttpResponse1 = cont.setWorkProfile(lu, branchId, wpId);
+		assertEquals(200, jsonNodeHttpResponse1.getStatus());
+		Pair<List<DTOQueue>> queueInfoForWorkprofile = cont.getQueueInfoForWorkprofile(lu, branchId, wpId);
+		testResponse(queueInfoForWorkprofile);
+		assertFalse(queueInfoForWorkprofile.getV().isEmpty());
 
-    }
+	}
 
-    @Test
-    public void getQueueInfo() throws Exception {
-        List<DTOBranch> branches = cont.getBranches(lu);
-        DTOBranch branchId = branches.get(0);
-        List<DTOQueue> queueInfoForWorkprofile = cont.getQueueInfo(lu, branchId);
-        assertFalse(queueInfoForWorkprofile.isEmpty());
-    }
+	@Test
+	public void getQueueInfo() throws Exception {
+		Pair<List<DTOBranch>> branches = cont.getBranches(lu);
+		testResponse(branches);
+		DTOBranch branchId = branches.getV().get(0);
+		Pair<List<DTOQueue>> queueInfoForWorkprofile = cont.getQueueInfo(lu, branchId);
+		testResponse(queueInfoForWorkprofile);
+		assertFalse(queueInfoForWorkprofile.getV().isEmpty());
+	}
 
-    @Test
-    public void getServices() throws Exception {
-        List<DTOBranch> branches = cont.getBranches(lu);
-        DTOBranch branchId = branches.get(0);
-        List<DTOService> services = cont.getServices(lu, branchId);
-        assertFalse(services.isEmpty());
-    }
+	@Test
+	public void getServices() throws Exception {
+		Pair<List<DTOBranch>> branches = cont.getBranches(lu);
+		testResponse(branches);
+		DTOBranch branchId = branches.getV().get(0);
+		Pair<List<DTOService>> services = cont.getServices(lu, branchId);
+		testResponse(services);
+		assertFalse(services.getV().isEmpty());
+	}
 
-    @Test
-    public void zzendSession() throws Exception {
-        List<DTOBranch> branches = cont.getBranches(lu);
-        List<DTOServicePoint> servicePoints = cont.getServicePoints(lu, branches.get(0));
-        HttpResponse<JsonNode> jsonNodeHttpResponse = cont.endSession(lu, branches.get(0), servicePoints.get(0));
-        assertEquals(200, jsonNodeHttpResponse.getStatus());
-    }
+	@Test
+	public void zzendSession() throws Exception {
+		Pair<List<DTOBranch>> branches = cont.getBranches(lu);
+		testResponse(branches);
+		Pair<List<DTOServicePoint>> servicePoints = cont.getServicePoints(lu, branches.getV().get(0));
+		testResponse(servicePoints);
+		HttpResponse<JsonNode> jsonNodeHttpResponse = cont.endSession(lu, branches.getV().get(0),
+				servicePoints.getValue().get(0));
+		testResponse(jsonNodeHttpResponse);
+		assertEquals(200, jsonNodeHttpResponse.getStatus());
+	}
 
-    @Test
-    public void zzzlogout() throws Exception {
-        HttpResponse<JsonNode> logout = cont.logout(lu);
-        assertEquals(200, logout.getStatus());
-    }
+	@Test
+	public void zzzlogout() throws Exception {
+		HttpResponse<JsonNode> logout = cont.logout(lu);
+		assertEquals(200, logout.getStatus());
+	}
 }

@@ -52,7 +52,7 @@ public class Controller {
         HttpResponse<DTOBranch[]> asObject = Unirest.get(lu.getServerIPPort() + "/rest/servicepoint/branches/")
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asObject(DTOBranch[].class);
-        return new Pair(asObject, sortAndRemove(asObject.getBody(), sortByName));
+        return new Pair<List<DTOBranch>>(asObject, sortAndRemove(asObject.getBody(), sortByName));
     }
 
 
@@ -62,7 +62,7 @@ public class Controller {
                 .routeParam("branchId", branchId.getIdAsString())
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asObject(DTOWorkProfile[].class);
-        return new Pair(asObject, sortAndRemove(asObject.getBody(), sortByName));
+        return new Pair<List<DTOWorkProfile>>(asObject, sortAndRemove(asObject.getBody(), sortByName));
     }
 
     public Pair<List<DTOServicePoint>> getServicePoints(LoginUser lu, DTOBranch branchId) throws UnirestException {
@@ -72,7 +72,7 @@ public class Controller {
                 .routeParam("branchID", branchId.getIdAsString())
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asObject(DTOServicePoint[].class);
-        return new Pair(asObject, sortAndRemove(asObject.getBody(), sortByName));
+        return new Pair<List<DTOServicePoint>>(asObject, sortAndRemove(asObject.getBody(), sortByName));
     }
 
     public Pair<List<DTOEntryPoint>> getEntryPoints(LoginUser lu, DTOBranch branchId) throws UnirestException {
@@ -82,7 +82,7 @@ public class Controller {
                 .routeParam("branchID", branchId.getIdAsString())
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asObject(DTOEntryPoint[].class);
-        return new Pair(asObject, sortAndRemove(asObject.getBody(), sortByName));
+        return new Pair<List<DTOEntryPoint>>(asObject, sortAndRemove(asObject.getBody(), sortByName));
     }
 
     public HttpResponse<JsonNode> startSession(LoginUser lu, DTOBranch branchId, DTOServicePoint spId) throws UnirestException {
@@ -152,7 +152,7 @@ public class Controller {
     public HttpResponse<JsonNode> callNextAndEnd(LoginUser lu, DTOBranch branch, DTOServicePoint spId, Integer serviceId) throws UnirestException {
         String json = "{\"services\" : [\"" + serviceId.toString() + "\"]}";
         String url = lu.getServerIPPort()
-                + "/rest/servicepoint/branches/{branchID}/servicePoints/{servicePointId}/visits/createAndEnd?transactionTime=600";
+                + "/rest/servicepoint/branches/{branchID}/servicePoints/{servicePointId}/visits/createAndEnd";
         HttpResponse<JsonNode> asJson = Unirest.post(url)
                 .routeParam("branchID", branch.getIdAsString())
                 .routeParam("servicePointId", spId.getIdAsString())
@@ -265,7 +265,7 @@ public class Controller {
                 .routeParam("workProfileId", wp.getIdAsString())
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asObject(DTOQueue[].class);
-        return new Pair(asObject, sortAndRemove(asObject.getBody(), sortByName));
+        return new Pair<List<DTOQueue>>(asObject, sortAndRemove(asObject.getBody(), sortByName));
     }
 
     public Pair<List<DTOQueue>> getQueueInfo(LoginUser lu, DTOBranch branch) throws UnirestException {
@@ -274,7 +274,7 @@ public class Controller {
                 .routeParam("branchID", branch.getIdAsString())
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asObject(DTOQueue[].class);
-        return new Pair(asObject, sortAndRemove(asObject.getBody(), sortByName));
+        return new Pair<List<DTOQueue>>(asObject, sortAndRemove(asObject.getBody(), sortByName));
     }
 
     public HttpResponse<JsonNode> logout(LoginUser lu) throws UnirestException, IOException {
@@ -291,7 +291,7 @@ public class Controller {
                 .routeParam("branchID", dtoBranch.getIdAsString())
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asObject(DTOService[].class);
-        return new Pair(asObject, sortAndRemove(asObject.getBody(), sortByName));
+        return new Pair<List<DTOService>>(asObject, sortAndRemove(asObject.getBody(), sortByName));
     }
 
     @SuppressWarnings("unchecked")

@@ -75,7 +75,7 @@ public class WorkstationSelectionFrame extends JFrame {
                 log.error(e);
             }
 
-            List<DTOBranch> branches = cont.getBranches(lu);
+            List<DTOBranch> branches = cont.getBranches(lu).getValue();
             for (DTOBranch dtoBranch : branches) {
                 getCmbBranch().addItem(dtoBranch);
             }
@@ -97,7 +97,7 @@ public class WorkstationSelectionFrame extends JFrame {
                 if (getCmbServicePoint().getItemCount() != 0) {
                     getCmbServicePoint().removeAllItems();
                 }
-                List<DTOServicePoint> servicePoints = cont.getServicePoints(lu, branchLastUsed);
+                List<DTOServicePoint> servicePoints = cont.getServicePoints(lu, branchLastUsed).getValue();
                 for (DTOServicePoint dtoServicePoint : servicePoints) {
                     getCmbServicePoint().addItem(dtoServicePoint);
                 }
@@ -115,7 +115,7 @@ public class WorkstationSelectionFrame extends JFrame {
                 // and WP
                 if (lastWorkProfile != null) {
                     DTOBranch selBranch = (DTOBranch) getCmbBranch().getSelectedItem();
-                    List<DTOWorkProfile> workProfile = cont.getWorkProfile(lu, selBranch);
+                    List<DTOWorkProfile> workProfile = cont.getWorkProfile(lu, selBranch).getValue();
                     for (DTOWorkProfile dtoWorkProfile : workProfile) {
                         if (lastWorkProfile == dtoWorkProfile.getId()) {
                             getCmbWorkProfile().setSelectedItem(dtoWorkProfile);
@@ -244,7 +244,7 @@ public class WorkstationSelectionFrame extends JFrame {
             getCmbServicePoint().removeAllItems();
             getCmbServicePoint().removeAllItems();
             try {
-                for (DTOServicePoint dtoServicePoint : cont.getServicePoints(lu, selBranch)) {
+                for (DTOServicePoint dtoServicePoint : cont.getServicePoints(lu, selBranch).getValue()) {
                     getCmbServicePoint().addItem(dtoServicePoint);
                 }
                 main.getLblBranch().setText("Branch: " + selBranch.getName());
@@ -266,7 +266,7 @@ public class WorkstationSelectionFrame extends JFrame {
                 if (getCmbWorkProfile().getItemCount() != 0) {
                     getCmbWorkProfile().removeAllItems();
                 }
-                for (DTOWorkProfile dtoWp : cont.getWorkProfile(lu, selBranch)) {
+                for (DTOWorkProfile dtoWp : cont.getWorkProfile(lu, selBranch).getValue()) {
                     getCmbWorkProfile().addItem(dtoWp);
                 }
                 DTOServicePoint selectedSp = (DTOServicePoint) getCmbServicePoint().getSelectedItem();

@@ -6,7 +6,6 @@ import dto.DTOBranch;
 import dto.DTOQueue;
 import dto.DTOWorkProfile;
 import dto.LoginUser;
-import utils.Props;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.TrayIcon.MessageType;
 import java.util.List;
 
 public class QueueInfoFrame extends JFrame implements Runnable {
