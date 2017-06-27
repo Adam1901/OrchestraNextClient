@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import dto.LoginUser;
 import views.MainView;
+import java.lang.StringBuilder;
 
 public class UpdateThread implements Runnable {
 	private final static Logger log = LogManager.getLogger(UpdateThread.class);
@@ -28,7 +29,7 @@ public class UpdateThread implements Runnable {
 	@Override
 	public void run() {
 		// Get server version
-		String serverVersion = "";
+		StringBuilder serverVersion = new StringBuilder("");
 
 		try {
 			if (checkServerVersion(serverVersion)) {
@@ -41,20 +42,20 @@ public class UpdateThread implements Runnable {
 		}
 	}
 
-	protected boolean checkServerVersion(String serverVersion) throws MalformedURLException, IOException {
+	protected boolean checkServerVersion(StringBuilder serverVersion) throws MalformedURLException, IOException {
 		URL url = new URL(lu.getServerIPPort() + "/download/version.js");
-		try (Scanner s = new Scanner(url.openStream())) {
+		try (Scanner s = new Scanner(url.openStream(),"utf-8")) {
 			while (s.hasNext()) {
-				serverVersion += s.next();
+				serverVersion.append(s.next());
 			}
 		}
-		String[] split = serverVersion.split("\"");
+		String[] split = serverVersion.toString().split("\"");
 
-		serverVersion = split[1];
+		String serverVersions = split[1];
 
 		String localVersion = Props.getGlobalProperty("Version");
-		log.info(serverVersion + "" + localVersion);
-		boolean b = !serverVersion.equals(localVersion);
+		log.info(serverVersions + "" + localVersion);
+		boolean b = !serverVersions.equals(localVersion);
 		return b;
 	}
 }

@@ -29,7 +29,7 @@ public class UpdateThreadTest {
 
 	@Test
 	public void testCheckServerVersion() throws Exception {
-		boolean checkServerVersion = uut.checkServerVersion(Props.getGlobalProperty(GlobalProperties.VERSION));
+		boolean checkServerVersion = uut.checkServerVersion(new StringBuilder(Props.getGlobalProperty(GlobalProperties.VERSION)));
 		assertTrue(checkServerVersion);
 	}
 

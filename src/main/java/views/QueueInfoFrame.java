@@ -121,13 +121,15 @@ public class QueueInfoFrame extends JFrame implements Runnable {
 
 	private void drawEverything(List<DTOQueue> queueInfo, boolean showWP) throws InterruptedException {
 
-		String txt = "";
+		StringBuilder txt = new StringBuilder();
 		for (DTOQueue dtoQueue : queueInfo) {
 
 			String name = dtoQueue.getName();
 			int customersWaiting = dtoQueue.getCustomersWaiting();
 
-			txt += customersWaiting + " - " + name + System.lineSeparator();
+			txt.append(customersWaiting);
+			txt.append(" - ");
+			txt.append(name + System.lineSeparator());
 		}
 		if (showWP) {
 			txtQueueInfo.setText("All queue information" + System.lineSeparator() + txt);
