@@ -20,7 +20,7 @@ public class WorkstationSelectionFrame extends JFrame {
     private JComboBox<DTOWorkProfile> cmbWorkProfile = new JComboBox<DTOWorkProfile>();
     private JComboBox<DTOServicePoint> cmbServicePoint = new JComboBox<DTOServicePoint>();
     private JComboBox<DTOBranch> cmbBranch = new JComboBox<DTOBranch>();
-    private Workstation main;
+    private WorkstationPanel main;
     private LoginUser lu;
     private DTOWorkProfile selectedWp = null;
     private MainView mv;
@@ -28,7 +28,7 @@ public class WorkstationSelectionFrame extends JFrame {
     /**
      * Create the frame.
      */
-    public WorkstationSelectionFrame(LoginUser lu, Workstation main, MainView mv) {
+    public WorkstationSelectionFrame(LoginUser lu, WorkstationPanel main, MainView mv) {
         this.mv = mv;
         setTitle("Branch | Counter | Profile");
         setResizable(false);
@@ -270,6 +270,7 @@ public class WorkstationSelectionFrame extends JFrame {
                     getCmbWorkProfile().addItem(dtoWp);
                 }
                 DTOServicePoint selectedSp = (DTOServicePoint) getCmbServicePoint().getSelectedItem();
+                cont.startSession(lu,selBranch,selectedSp);
                 main.getLblCounter().setText("Counter: " + selectedSp.getName());
                 Props.setUserProperty("lastCounter", selectedSp.getIdAsString());
             } catch (Exception ee) {

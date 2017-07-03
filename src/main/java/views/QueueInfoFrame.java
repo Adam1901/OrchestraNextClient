@@ -21,13 +21,13 @@ public class QueueInfoFrame extends JFrame implements Runnable {
 	private final static Logger log = LogManager.getLogger(QueueInfoFrame.class);
 	JTextPane txtWPQueueInfo = new JTextPane();
 	private LoginUser lu;
-	private Workstation workstation;
+	private WorkstationPanel workstationPanel;
 	private JTextPane txtQueueInfo = new JTextPane();
 
-	public QueueInfoFrame(LoginUser lu, Workstation workstation) {
+	public QueueInfoFrame(LoginUser lu, WorkstationPanel workstationPanel) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.lu = lu;
-		this.workstation = workstation;
+		this.workstationPanel = workstationPanel;
 		jbInit();
 		Thread t = new Thread(this);
 		t.start();
@@ -104,8 +104,8 @@ public class QueueInfoFrame extends JFrame implements Runnable {
 			while (isVisible()) {
 				try {
 					List<DTOQueue> queueInfo;
-					DTOBranch branch = (DTOBranch) workstation.getCmbBranch().getSelectedItem();
-					DTOWorkProfile workProfile = (DTOWorkProfile) workstation.getCmbWorkProfile().getSelectedItem();
+					DTOBranch branch = (DTOBranch) workstationPanel.getCmbBranch().getSelectedItem();
+					DTOWorkProfile workProfile = (DTOWorkProfile) workstationPanel.getCmbWorkProfile().getSelectedItem();
 					queueInfo = cont.getQueueInfo(lu, branch).getValue();
 					drawEverything(queueInfo, true);
 					queueInfo = cont.getQueueInfoForWorkprofile(lu, branch, workProfile).getValue();

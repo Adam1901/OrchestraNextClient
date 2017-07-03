@@ -14,15 +14,16 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 
-public class Workstation extends JPanel {
+public class WorkstationPanel extends JPanel {
 
-	private final static Logger log = LogManager.getLogger(Workstation.class);
+	private final static Logger log = LogManager.getLogger(WorkstationPanel.class);
 
 	private static final long serialVersionUID = 1L;
 	private final JLabel lblNewLabel = new JLabel(Props.getLangProperty("MainFrame.CurrentlyServing"));
@@ -62,7 +63,7 @@ public class Workstation extends JPanel {
 	 * @param lu
 	 * @throws IOException
 	 */
-	public Workstation(LoginUser lu, MainView mv) {
+	public WorkstationPanel(LoginUser lu, MainView mv) {
 		this.mv = mv;
 		this.lu = lu;
 		jbInit();
@@ -465,7 +466,7 @@ public class Workstation extends JPanel {
 		}
 	}
 
-	Timer timer = new Timer(500, evt -> {
+	private Timer timer = new Timer(500, (ActionEvent evt) -> {
 		Color foreground2 = lblA.getForeground();
 		if (foreground2 == Color.BLACK) {
 			lblA.setForeground(Color.GRAY);

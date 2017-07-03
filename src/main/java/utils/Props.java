@@ -155,7 +155,7 @@ public class Props {
             Properties prop = new Properties();
             // load a properties file
             prop.load(input);
-            return prop.getProperty(propKey);
+            return prop.getProperty(propKey).trim();
         } catch (IOException ex) {
             log.error(ex);
             throw new RuntimeException("value not found for key: " + propKey);
@@ -202,7 +202,7 @@ public class Props {
         static final String APP_NAME_DEFAULT = "Build";
         static final String SHOW_COUNTER_OPTIONS_DEFAULT = "true";
         static final String SHOW_COUTER_POPUP_EACH_START_DEFAULT = "false";
-        public final static String VERSION_DEFAULT = "1.0.0.3";
+        public final static String VERSION_DEFAULT = "1.0.0.4";
         static final String CALL_FORWARDS_DEFAULT = "false";
         static final String CALL_FORWARDS_SERVICE_DEFAULT = "1";
         static final String NOTIFICATIONS_DEFAULT = "true";

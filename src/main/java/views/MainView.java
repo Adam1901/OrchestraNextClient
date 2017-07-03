@@ -20,6 +20,10 @@ import java.io.IOException;
 
 public class MainView extends JFrame {
 
+	//TODO
+	// check change sp
+
+
 	private final static Logger log = LogManager.getLogger(MainView.class);
 	private static final long serialVersionUID = 1L;
 	JTabbedPane workstationTab = null;
@@ -60,20 +64,20 @@ public class MainView extends JFrame {
 		} catch (NumberFormatException e) {
 		}
 
-		Workstation main = null;
+		WorkstationPanel main = null;
 		ReceptionPanel rp = null;
 
 		if (propsForWS == 0) {
-			main = new Workstation(lu, this);
+			main = new WorkstationPanel(lu, this);
 			rp = new ReceptionPanel(lu, this);
 		} else if (propsForWS == 1) {
 			rp = new ReceptionPanel(lu, this);
 		} else if (propsForWS == 2) {
-			main = new Workstation(lu, this);
+			main = new WorkstationPanel(lu, this);
 		}
 
 		if (main != null) {
-			tabbedPane.addTab("Workstation", null, main, null);
+			tabbedPane.addTab("WorkstationPanel", null, main, null);
 		}
 		if (rp != null) {
 			tabbedPane.addTab("Reception", null, rp, null);
