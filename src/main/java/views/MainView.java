@@ -77,7 +77,7 @@ public class MainView extends JFrame {
 		}
 
 		if (main != null) {
-			tabbedPane.addTab("WorkstationPanel", null, main, null);
+			tabbedPane.addTab("Workstation", null, main, null);
 		}
 		if (rp != null) {
 			tabbedPane.addTab("Reception", null, rp, null);

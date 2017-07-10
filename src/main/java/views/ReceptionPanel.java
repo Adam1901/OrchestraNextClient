@@ -182,6 +182,8 @@ public class ReceptionPanel extends JPanel {
 		gbc_label_2.gridy = 1;
 		panel.add(lblEntryPoint, gbc_label_2);
 
+		panel_1.setVisible(false);
+
 		BufferedImage image;
 		try {
 			image = ImageIO.read(getClass().getClassLoader().getResource("settings.png"));
