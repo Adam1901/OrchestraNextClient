@@ -28,6 +28,8 @@ public class ControllerTest {
 
     @Before
     public void beforeTest() throws Exception {
+
+
         String ip = getUserProperty("ip");
         String port = getUserProperty("port");
         String proto = getUserProperty("proto");
@@ -120,7 +122,7 @@ public class ControllerTest {
         testResponse(servicePoints);
         Pair<List<DTOWorkProfile>> workProfile = cont.getWorkProfile(lu, branchId);
         testResponse(workProfile);
-        HttpResponse<JsonNode> setWorkProfile = cont.setWorkProfile(lu, branchId, workProfile.getValue().get(0));
+        HttpResponse<DTOUserStatus> setWorkProfile = cont.setWorkProfile(lu, branchId, workProfile.getValue().get(0));
         testResponse(setWorkProfile);
         Pair<DTOUserStatus> dtoUserStatus = cont.callNext(lu, branchId, servicePoints.getV().get(0));
         testResponse(dtoUserStatus);
@@ -134,6 +136,8 @@ public class ControllerTest {
         HttpResponse<JsonNode> jsonNodeHttpResponse = cont.endVisit(lu, branchId,
                 String.valueOf(visitCreate.getValue().getId()));
         assertEquals(200, jsonNodeHttpResponse.getStatus());
+
+
     }
 
     /**
@@ -173,7 +177,7 @@ public class ControllerTest {
         testResponse(servicePoints);
         Pair<List<DTOWorkProfile>> workProfile = cont.getWorkProfile(lu, branchId);
         testResponse(workProfile);
-        HttpResponse<JsonNode> setWorkProfile = cont.setWorkProfile(lu, branchId, workProfile.getV().get(0));
+        HttpResponse<DTOUserStatus> setWorkProfile = cont.setWorkProfile(lu, branchId, workProfile.getV().get(0));
         testResponse(setWorkProfile);
         Pair<DTOUserStatus> dtoUserStatus = cont.callNext(lu, branchId, servicePoints.getV().get(0));
         testResponse(dtoUserStatus);
@@ -213,7 +217,7 @@ public class ControllerTest {
         testResponse(servicePoints);
         Pair<List<DTOWorkProfile>> workProfile = cont.getWorkProfile(lu, branchId);
         testResponse(workProfile);
-        HttpResponse<JsonNode> jsonNodeHttpResponse1 = cont.setWorkProfile(lu, branchId, workProfile.getV().get(0));
+        HttpResponse<DTOUserStatus> jsonNodeHttpResponse1 = cont.setWorkProfile(lu, branchId, workProfile.getV().get(0));
         assertEquals(200, jsonNodeHttpResponse1.getStatus());
         Pair<DTOUserStatus> dtoUserStatus = cont.callNext(lu, branchId, servicePoints.getV().get(0));
         testResponse(dtoUserStatus);
@@ -245,7 +249,7 @@ public class ControllerTest {
         testResponse(servicePoints);
         Pair<List<DTOWorkProfile>> workProfile = cont.getWorkProfile(lu, branchId);
         testResponse(workProfile);
-        HttpResponse<JsonNode> jsonNodeHttpResponse1 = cont.setWorkProfile(lu, branchId, workProfile.getV().get(0));
+        HttpResponse<DTOUserStatus> jsonNodeHttpResponse1 = cont.setWorkProfile(lu, branchId, workProfile.getV().get(0));
         assertEquals(200, jsonNodeHttpResponse1.getStatus());
         Pair<DTOUserStatus> dtoUserStatus = cont.callNext(lu, branchId, servicePoints.getV().get(0));
         testResponse(dtoUserStatus);
@@ -274,7 +278,7 @@ public class ControllerTest {
         testResponse(servicePoints);
         Pair<List<DTOWorkProfile>> workProfile = cont.getWorkProfile(lu, branchId);
         testResponse(workProfile);
-        HttpResponse<JsonNode> jsonNodeHttpResponse1 = cont.setWorkProfile(lu, branchId, workProfile.getV().get(0));
+        HttpResponse<DTOUserStatus> jsonNodeHttpResponse1 = cont.setWorkProfile(lu, branchId, workProfile.getV().get(0));
         assertEquals(200, jsonNodeHttpResponse1.getStatus());
         Pair<DTOUserStatus> dtoUserStatus = cont.callNext(lu, branchId, servicePoints.getV().get(0));
         testResponse(dtoUserStatus);
@@ -297,7 +301,7 @@ public class ControllerTest {
         Pair<List<DTOWorkProfile>> workProfile = cont.getWorkProfile(lu, branchId);
         testResponse(workProfile);
         DTOWorkProfile wpId = workProfile.getValue().get(0);
-        HttpResponse<JsonNode> jsonNodeHttpResponse1 = cont.setWorkProfile(lu, branchId, wpId);
+        HttpResponse<DTOUserStatus> jsonNodeHttpResponse1 = cont.setWorkProfile(lu, branchId, wpId);
         assertEquals(200, jsonNodeHttpResponse1.getStatus());
         Pair<List<DTOQueue>> queueInfoForWorkprofile = cont.getQueueInfoForWorkprofile(lu, branchId, wpId);
         testResponse(queueInfoForWorkprofile);

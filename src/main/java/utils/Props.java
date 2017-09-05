@@ -48,7 +48,7 @@ public class Props {
 
             // Check each one props exist
             /*
-			 * Use reflection to find all varialbes in global properties and
+             * Use reflection to find all varialbes in global properties and
 			 * global defaults and set them.
 			 * 
 			 * TODO migrate to an object list at some point
@@ -155,7 +155,11 @@ public class Props {
             Properties prop = new Properties();
             // load a properties file
             prop.load(input);
-            return prop.getProperty(propKey).trim();
+            String property = prop.getProperty(propKey);
+            if (property != null && !property.isEmpty()) {
+                return property.trim();
+            }
+            return property;
         } catch (IOException ex) {
             log.error(ex);
             throw new RuntimeException("value not found for key: " + propKey);
@@ -181,7 +185,7 @@ public class Props {
     }
 
     public static class GlobalProperties {
-        public  final static String SORT_BY_NAME = "soryByName";
+        public final static String SORT_BY_NAME = "soryByName";
         public final static String APP_NAME = "appName";
         public final static String SHOW_COUNTER_OPTIONS = "showCounterOptions";
         public final static String SHOW_COUTER_POPUP_EACH_START = "showCounterPopUPOnEachStart";

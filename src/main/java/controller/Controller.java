@@ -222,23 +222,18 @@ public class Controller {
         return new Pair<DTOVisit>(asJson, vsist);
     }
 
-    public HttpResponse<JsonNode> setWorkProfile(LoginUser lu, DTOBranch branchId, DTOWorkProfile wpId) throws UnirestException {
-        HttpResponse<JsonNode> asJson = Unirest
+    public HttpResponse<DTOUserStatus> setWorkProfile(LoginUser lu, DTOBranch branchId, DTOWorkProfile wpId) throws UnirestException {
+        Unirest
                 .put(lu.getServerIPPort()
                         + "/rest/servicepoint/branches/{branchID}/users/{userName}/workProfile/{workProfileId}/")
                 .routeParam("branchID", branchId.getIdAsString())
                 .routeParam("userName", lu.getUsername())
                 .routeParam("workProfileId", wpId.getIdAsString())
                 .header("Allow", "PUT")
-                .basicAuth(lu.getUsername(), lu.getPassword())
-                .asJson();
+                .basicAuth(lu.getUsername(), lu.getPassword());
 
         log.info("SetWP");
-        log.info(asJson.getStatus());
-        log.info(asJson.getStatusText());
-        log.info(asJson.getHeaders());
-        log.info(asJson.getBody());
-        return asJson;
+        return null;
     }
 
     public HttpResponse<JsonNode> endVisit(LoginUser lu, DTOBranch branchId, String visitId) throws UnirestException {
