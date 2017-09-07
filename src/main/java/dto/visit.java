@@ -1,9 +1,12 @@
 package dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 import java.util.Map;
 
-public class DTOVisit implements OrchestraDTO {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class visit {
     private int id;
     private int totalWaitingTime;
     private int waitingTime;
@@ -18,7 +21,6 @@ public class DTOVisit implements OrchestraDTO {
     private Map<String, Object> parameterMap;
     private String appointmentTime;
     private String branchCurrentTime;
-    private Map<String, Object> unservedVisitServices;
     private Map<String, Object> currentVisitService;
 
     public int getTotalWaitingTime() {
@@ -125,14 +127,6 @@ public class DTOVisit implements OrchestraDTO {
         this.branchCurrentTime = branchCurrentTime;
     }
 
-    public Map<String, Object> getUnservedVisitServices() {
-        return unservedVisitServices;
-    }
-
-    public void setUnservedVisitServices(Map<String, Object> unservedVisitServices) {
-        this.unservedVisitServices = unservedVisitServices;
-    }
-
     public Map<String, Object> getCurrentVisitService() {
         return currentVisitService;
     }
@@ -149,9 +143,13 @@ public class DTOVisit implements OrchestraDTO {
         this.id = id;
     }
 
+    public String getIdAsString() {
+        return String.valueOf(id);
+    }
+
     @Override
     public String toString() {
-        return "DTOVisit{" +
+        return "visit{" +
                 "id=" + id +
                 ", totalWaitingTime=" + totalWaitingTime +
                 ", waitingTime=" + waitingTime +
@@ -166,7 +164,6 @@ public class DTOVisit implements OrchestraDTO {
                 ", parameterMap=" + parameterMap +
                 ", appointmentTime='" + appointmentTime + '\'' +
                 ", branchCurrentTime='" + branchCurrentTime + '\'' +
-                ", unservedVisitServices=" + unservedVisitServices +
                 ", currentVisitService=" + currentVisitService +
                 '}';
     }
@@ -174,34 +171,32 @@ public class DTOVisit implements OrchestraDTO {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DTOVisit)) return false;
+        if (!(o instanceof visit)) return false;
 
-        DTOVisit dtoVisit = (DTOVisit) o;
+        visit visit = (visit) o;
 
-        if (getId() != dtoVisit.getId()) return false;
-        if (getTotalWaitingTime() != dtoVisit.getTotalWaitingTime()) return false;
-        if (getWaitingTime() != dtoVisit.getWaitingTime()) return false;
-        if (isRecycleAllowed() != dtoVisit.isRecycleAllowed()) return false;
-        if (isNoshowAllowed() != dtoVisit.isNoshowAllowed()) return false;
-        if (isRecallAllowed() != dtoVisit.isRecallAllowed()) return false;
-        if (getTimeSinceCalled() != dtoVisit.getTimeSinceCalled()) return false;
-        if (getServedVisitServices() != null ? !getServedVisitServices().equals(dtoVisit.getServedVisitServices()) : dtoVisit.getServedVisitServices() != null)
+        if (getId() != visit.getId()) return false;
+        if (getTotalWaitingTime() != visit.getTotalWaitingTime()) return false;
+        if (getWaitingTime() != visit.getWaitingTime()) return false;
+        if (isRecycleAllowed() != visit.isRecycleAllowed()) return false;
+        if (isNoshowAllowed() != visit.isNoshowAllowed()) return false;
+        if (isRecallAllowed() != visit.isRecallAllowed()) return false;
+        if (getTimeSinceCalled() != visit.getTimeSinceCalled()) return false;
+        if (getServedVisitServices() != null ? !getServedVisitServices().equals(visit.getServedVisitServices()) : visit.getServedVisitServices() != null)
             return false;
-        if (getTicketId() != null ? !getTicketId().equals(dtoVisit.getTicketId()) : dtoVisit.getTicketId() != null)
+        if (getTicketId() != null ? !getTicketId().equals(visit.getTicketId()) : visit.getTicketId() != null)
             return false;
-        if (getVisitMarks() != null ? !getVisitMarks().equals(dtoVisit.getVisitMarks()) : dtoVisit.getVisitMarks() != null)
+        if (getVisitMarks() != null ? !getVisitMarks().equals(visit.getVisitMarks()) : visit.getVisitMarks() != null)
             return false;
-        if (getCustomerIds() != null ? !getCustomerIds().equals(dtoVisit.getCustomerIds()) : dtoVisit.getCustomerIds() != null)
+        if (getCustomerIds() != null ? !getCustomerIds().equals(visit.getCustomerIds()) : visit.getCustomerIds() != null)
             return false;
-        if (getParameterMap() != null ? !getParameterMap().equals(dtoVisit.getParameterMap()) : dtoVisit.getParameterMap() != null)
+        if (getParameterMap() != null ? !getParameterMap().equals(visit.getParameterMap()) : visit.getParameterMap() != null)
             return false;
-        if (getAppointmentTime() != null ? !getAppointmentTime().equals(dtoVisit.getAppointmentTime()) : dtoVisit.getAppointmentTime() != null)
+        if (getAppointmentTime() != null ? !getAppointmentTime().equals(visit.getAppointmentTime()) : visit.getAppointmentTime() != null)
             return false;
-        if (getBranchCurrentTime() != null ? !getBranchCurrentTime().equals(dtoVisit.getBranchCurrentTime()) : dtoVisit.getBranchCurrentTime() != null)
+        if (getBranchCurrentTime() != null ? !getBranchCurrentTime().equals(visit.getBranchCurrentTime()) : visit.getBranchCurrentTime() != null)
             return false;
-        if (getUnservedVisitServices() != null ? !getUnservedVisitServices().equals(dtoVisit.getUnservedVisitServices()) : dtoVisit.getUnservedVisitServices() != null)
-            return false;
-        return getCurrentVisitService() != null ? getCurrentVisitService().equals(dtoVisit.getCurrentVisitService()) : dtoVisit.getCurrentVisitService() == null;
+        return getCurrentVisitService() != null ? getCurrentVisitService().equals(visit.getCurrentVisitService()) : visit.getCurrentVisitService() == null;
     }
 
     @Override
@@ -220,7 +215,6 @@ public class DTOVisit implements OrchestraDTO {
         result = 31 * result + (getParameterMap() != null ? getParameterMap().hashCode() : 0);
         result = 31 * result + (getAppointmentTime() != null ? getAppointmentTime().hashCode() : 0);
         result = 31 * result + (getBranchCurrentTime() != null ? getBranchCurrentTime().hashCode() : 0);
-        result = 31 * result + (getUnservedVisitServices() != null ? getUnservedVisitServices().hashCode() : 0);
         result = 31 * result + (getCurrentVisitService() != null ? getCurrentVisitService().hashCode() : 0);
         return result;
     }

@@ -126,7 +126,7 @@ public class ControllerTest {
         testResponse(setWorkProfile);
         Pair<DTOUserStatus> dtoUserStatus = cont.callNext(lu, branchId, servicePoints.getV().get(0));
         testResponse(dtoUserStatus);
-        DTOUserStatus.Visit visitCalled = dtoUserStatus.getValue().getVisit();
+        visit visitCalled = dtoUserStatus.getValue().getVisit();
         assertNotNull(visitCalled);
         assertNotNull(visitCalled.getTicketId());
 
@@ -181,7 +181,7 @@ public class ControllerTest {
         testResponse(setWorkProfile);
         Pair<DTOUserStatus> dtoUserStatus = cont.callNext(lu, branchId, servicePoints.getV().get(0));
         testResponse(dtoUserStatus);
-        DTOUserStatus.Visit visitCalled = dtoUserStatus.getV().getVisit();
+        visit visitCalled = dtoUserStatus.getV().getVisit();
         assertNotNull(visitCalled);
         assertNotNull(visitCalled.getTicketId());
 
@@ -221,7 +221,7 @@ public class ControllerTest {
         assertEquals(200, jsonNodeHttpResponse1.getStatus());
         Pair<DTOUserStatus> dtoUserStatus = cont.callNext(lu, branchId, servicePoints.getV().get(0));
         testResponse(dtoUserStatus);
-        DTOUserStatus.Visit visitCalled = dtoUserStatus.getV().getVisit();
+        visit visitCalled = dtoUserStatus.getV().getVisit();
         assertNotNull(visitCalled);
         assertNotNull(visitCalled.getTicketId());
 
@@ -253,7 +253,7 @@ public class ControllerTest {
         assertEquals(200, jsonNodeHttpResponse1.getStatus());
         Pair<DTOUserStatus> dtoUserStatus = cont.callNext(lu, branchId, servicePoints.getV().get(0));
         testResponse(dtoUserStatus);
-        DTOUserStatus.Visit visitCalled = dtoUserStatus.getV().getVisit();
+        visit visitCalled = dtoUserStatus.getV().getVisit();
         assertNotNull(visitCalled);
         assertNotNull(visitCalled.getTicketId());
 
@@ -282,7 +282,7 @@ public class ControllerTest {
         assertEquals(200, jsonNodeHttpResponse1.getStatus());
         Pair<DTOUserStatus> dtoUserStatus = cont.callNext(lu, branchId, servicePoints.getV().get(0));
         testResponse(dtoUserStatus);
-        DTOUserStatus.Visit visitCalled = dtoUserStatus.getV().getVisit();
+        visit visitCalled = dtoUserStatus.getV().getVisit();
         assertNotNull(visitCalled);
         assertNotNull(visitCalled.getTicketId());
 

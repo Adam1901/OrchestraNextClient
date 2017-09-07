@@ -10,9 +10,11 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import dto.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import utils.Props;
 
+import javax.sound.midi.SysexMessage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -138,14 +140,13 @@ public class Controller {
         log.info(asJson.getHeaders());
         log.info(asJson.getBody());
 
-        JSONObject object = new JSONObject(asJson.getBody());
+        JSONObject response = new JSONObject(asJson.getBody());
+        JSONArray ar = response.getJSONArray("array");
+        String moddedArray = ar.toString();
+        moddedArray = moddedArray.substring(1);
+        moddedArray = moddedArray.substring(0, moddedArray.length() - 1);
 
-        DTOUserStatus userStat = new Gson().fromJson(object.getJSONObject("object").toString(), DTOUserStatus.class);
-        DTOUserStatus.Visit visi = new Gson().fromJson(object.getJSONObject("object").getJSONObject("visit").toString(),
-                DTOUserStatus.Visit.class);
-
-        userStat.setVisit(visi);
-
+        DTOUserStatus userStat = new Gson().fromJson(moddedArray, DTOUserStatus.class);
         return new Pair<DTOUserStatus>(asJson, userStat);
     }
 
@@ -162,7 +163,6 @@ public class Controller {
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .body(json)
                 .asJson();
-
         log.info(asJson.getStatus());
         log.info(asJson.getStatusText());
         log.info(asJson.getHeaders());
@@ -186,14 +186,13 @@ public class Controller {
         log.info(asJson.getHeaders());
         log.info(asJson.getBody());
 
-        JSONObject object = new JSONObject(asJson.getBody());
+        JSONObject response = new JSONObject(asJson.getBody());
+        JSONArray ar = response.getJSONArray("array");
+        String moddedArray = ar.toString();
+        moddedArray = moddedArray.substring(1);
+        moddedArray = moddedArray.substring(0, moddedArray.length() - 1);
 
-        DTOUserStatus userStat = new Gson().fromJson(object.getJSONObject("object").toString(), DTOUserStatus.class);
-        DTOUserStatus.Visit visi = new Gson().fromJson(object.getJSONObject("object").getJSONObject("visit").toString(),
-                DTOUserStatus.Visit.class);
-
-        userStat.setVisit(visi);
-
+        DTOUserStatus userStat = new Gson().fromJson(moddedArray, DTOUserStatus.class);
         return new Pair<DTOUserStatus>(asJson, userStat);
     }
 
@@ -215,25 +214,28 @@ public class Controller {
         log.info(asJson.getHeaders());
         log.info(asJson.getBody());
 
-        JSONObject object = new JSONObject(asJson.getBody());
+        JSONObject response = new JSONObject(asJson.getBody());
+        JSONArray ar = response.getJSONArray("array");
+        String moddedArray = ar.toString();
+        moddedArray = moddedArray.substring(1);
+        moddedArray = moddedArray.substring(0, moddedArray.length() - 1);
 
-        DTOVisit vsist = new Gson().fromJson(object.getJSONObject("object").toString(), DTOVisit.class);
+        DTOVisit vsist = new Gson().fromJson(moddedArray.toString(), DTOVisit.class);
 
         return new Pair<DTOVisit>(asJson, vsist);
     }
 
     public HttpResponse<DTOUserStatus> setWorkProfile(LoginUser lu, DTOBranch branchId, DTOWorkProfile wpId) throws UnirestException {
-        Unirest
-                .put(lu.getServerIPPort()
-                        + "/rest/servicepoint/branches/{branchID}/users/{userName}/workProfile/{workProfileId}/")
+        HttpResponse<DTOUserStatus> asJson = Unirest.put(lu.getServerIPPort()
+                + "/rest/servicepoint/branches/{branchID}/users/{userName}/workProfile/{workProfileId}/")
                 .routeParam("branchID", branchId.getIdAsString())
                 .routeParam("userName", lu.getUsername())
                 .routeParam("workProfileId", wpId.getIdAsString())
                 .header("Allow", "PUT")
-                .basicAuth(lu.getUsername(), lu.getPassword());
+                .basicAuth(lu.getUsername(), lu.getPassword()).asObject(DTOUserStatus.class);
 
         log.info("SetWP");
-        return null;
+        return asJson;
     }
 
     public HttpResponse<JsonNode> endVisit(LoginUser lu, DTOBranch branchId, String visitId) throws UnirestException {

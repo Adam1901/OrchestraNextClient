@@ -224,6 +224,7 @@ public class WorkstationSelectionFrame extends JFrame {
                     return;
                 }
                 selectedWp = wp;
+                cont.startSession(lu,branch, (DTOServicePoint) getCmbServicePoint().getSelectedItem());
                 cont.setWorkProfile(lu, branch, wp);
                 main.getLblWorkProfile().setText("Workprofile: " + wp.getName());
                 Props.setUserProperty("lastWorkProfile", wp.getIdAsString());
