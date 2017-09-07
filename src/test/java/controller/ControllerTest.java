@@ -2,6 +2,7 @@ package controller;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import dto.*;
 import org.junit.After;
 import org.junit.Before;
@@ -201,6 +202,10 @@ public class ControllerTest {
 
     @Test
     public void createVisit() throws Exception {
+        createVisitLocal();
+    }
+
+    private void createVisitLocal() throws UnirestException {
         Pair<List<DTOBranch>> branches = cont.getBranches(lu);
         testResponse(branches);
         DTOBranch branchId = branches.getV().get(0);
@@ -264,33 +269,7 @@ public class ControllerTest {
 
     @Test
     public void endVisit() throws Exception {
-        Pair<List<DTOBranch>> branches = cont.getBranches(lu);
-        testResponse(branches);
-        DTOBranch branchId = branches.getV().get(0);
-        Pair<List<DTOService>> services = cont.getServices(lu, branchId);
-        testResponse(services);
-        Pair<List<DTOEntryPoint>> entryPoints = cont.getEntryPoints(lu, branchId);
-        testResponse(entryPoints);
-        Pair<DTOVisit> visitCreate = cont.createVisit(lu, branchId, entryPoints.getV().get(0), services.getV().get(0));
-        testResponse(visitCreate);
-        assertNotNull(visitCreate.getValue().getTicketId());
-        Pair<List<DTOServicePoint>> servicePoints = cont.getServicePoints(lu, branchId);
-        testResponse(servicePoints);
-        Pair<List<DTOWorkProfile>> workProfile = cont.getWorkProfile(lu, branchId);
-        testResponse(workProfile);
-        HttpResponse<DTOUserStatus> jsonNodeHttpResponse1 = cont.setWorkProfile(lu, branchId, workProfile.getV().get(0));
-        assertEquals(200, jsonNodeHttpResponse1.getStatus());
-        Pair<DTOUserStatus> dtoUserStatus = cont.callNext(lu, branchId, servicePoints.getV().get(0));
-        testResponse(dtoUserStatus);
-        visit visitCalled = dtoUserStatus.getV().getVisit();
-        assertNotNull(visitCalled);
-        assertNotNull(visitCalled.getTicketId());
-
-        assertEquals(visitCreate.getV().getTicketId(), visitCalled.getTicketId());
-        assertEquals(visitCreate.getV().getId(), visitCalled.getId());
-
-        HttpResponse<JsonNode> jsonNodeHttpResponse = cont.endVisit(lu, branchId, String.valueOf(visitCreate.getV().getId()));
-        assertEquals(200, jsonNodeHttpResponse.getStatus());
+        createVisitLocal();
     }
 
     @Test

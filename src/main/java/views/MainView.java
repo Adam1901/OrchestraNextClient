@@ -34,7 +34,7 @@ public class MainView extends JFrame {
 	/**
 	 * Create the frame.
 	 *
-	 * @param lu
+	 * @param lu login user
 	 */
 	public MainView(LoginUser lu) {
 

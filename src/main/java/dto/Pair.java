@@ -1,7 +1,5 @@
 package dto;
 
-import java.util.List;
-
 import com.mashape.unirest.http.HttpResponse;
 
 /**

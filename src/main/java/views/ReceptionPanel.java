@@ -74,20 +74,18 @@ public class ReceptionPanel extends JPanel {
 		setLayout(gridBagLayout);
 
 		JButton btnNewButton_1 = new JButton("Create");
-		btnNewButton_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				Controller cont = new Controller();
-				try {
-					DTOBranch branch = (DTOBranch) frm.getCmbBranch().getSelectedItem();
-					DTOEntryPoint ep = (DTOEntryPoint) frm.getCmbEntryPoints().getSelectedItem();
-					DTOService service = (DTOService) cmbServices.getSelectedItem();
-					visit = cont.createVisit(lu, branch, ep, service).getValue();
-					lblA.setText(visit.getTicketId());
-				} catch (UnirestException e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		btnNewButton_1.addActionListener(arg0 -> {
+            Controller cont = new Controller();
+            try {
+                DTOBranch branch = (DTOBranch) frm.getCmbBranch().getSelectedItem();
+                DTOEntryPoint ep = (DTOEntryPoint) frm.getCmbEntryPoints().getSelectedItem();
+                DTOService service = (DTOService) cmbServices.getSelectedItem();
+                visit = cont.createVisit(lu, branch, ep, service).getValue();
+                lblA.setText(visit.getTicketId());
+            } catch (UnirestException e) {
+                e.printStackTrace();
+            }
+        });
 		
 
 		lblA.setHorizontalAlignment(SwingConstants.CENTER);

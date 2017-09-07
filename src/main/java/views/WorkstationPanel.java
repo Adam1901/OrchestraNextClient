@@ -61,7 +61,6 @@ public class WorkstationPanel extends JPanel {
 	 * Create the frame.
 	 *
 	 * @param lu
-	 * @throws IOException
 	 */
 	public WorkstationPanel(LoginUser lu, MainView mv) {
 		this.mv = mv;

@@ -38,11 +38,6 @@ public class LoginFrame extends JFrame {
     private JTextField txtIp = new JTextField();
     private JFormattedTextField txtPort;
 
-    /**
-     * Create the frame.
-     *
-     * @throws IOException
-     */
     public LoginFrame() {
         try {
             setIconImage(ImageIO.read(getClass().getClassLoader().getResource("qmaticBigTransparent.png")));
