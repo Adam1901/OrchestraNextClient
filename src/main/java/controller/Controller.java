@@ -97,10 +97,11 @@ public class Controller {
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asJson();
 
-        log.info(asJson.getStatus());
-        log.info(asJson.getStatusText());
-        log.info(asJson.getHeaders());
-        log.info(asJson.getBody());
+        log.info(spId.getIdAsString() + " " + lu.toString());
+        //.info(asJson.getStatus());
+       // log.info(asJson.getStatusText());
+        //log.info(asJson.getHeaders());
+        //log.info(asJson.getBody());
         return asJson;
 
     }
@@ -124,7 +125,7 @@ public class Controller {
     }
 
     public Pair<DTOUserStatus> callNext(LoginUser lu, DTOBranch branch, DTOServicePoint spId) throws UnirestException {
-
+    log.info(lu.toString());
         HttpResponse<JsonNode> asJson = Unirest
                 .post(lu.getServerIPPort()
                         + "/rest/servicepoint/branches/{branchID}/servicePoints/{servicePointId}/visits/next/")
@@ -134,10 +135,10 @@ public class Controller {
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asJson();
 
-        log.info(asJson.getStatus());
-        log.info(asJson.getStatusText());
-        log.info(asJson.getHeaders());
-        log.info(asJson.getBody());
+       // log.info(asJson.getStatus());
+       // log.info(asJson.getStatusText());
+        //log.info(asJson.getHeaders());
+        //log.info(asJson.getBody());
 
         JSONObject response = new JSONObject(asJson.getBody());
         JSONArray ar = response.getJSONArray("array");
@@ -225,16 +226,16 @@ public class Controller {
     }
 
     public HttpResponse<DTOUserStatus> setWorkProfile(LoginUser lu, DTOBranch branchId, DTOWorkProfile wpId) throws UnirestException {
-        HttpResponse<DTOUserStatus> asJson = Unirest.put(lu.getServerIPPort()
+        Unirest.put(lu.getServerIPPort()
                 + "/rest/servicepoint/branches/{branchID}/users/{userName}/workProfile/{workProfileId}/")
                 .routeParam("branchID", branchId.getIdAsString())
                 .routeParam("userName", lu.getUsername())
                 .routeParam("workProfileId", wpId.getIdAsString())
                 .header("Allow", "PUT")
-                .basicAuth(lu.getUsername(), lu.getPassword()).asObject(DTOUserStatus.class);
+                .basicAuth(lu.getUsername(), lu.getPassword());
 
         log.info("SetWP");
-        return asJson;
+        return null;
     }
 
     public HttpResponse<JsonNode> endVisit(LoginUser lu, DTOBranch branchId, String visitId) throws UnirestException {

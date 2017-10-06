@@ -1,6 +1,5 @@
 package views;
 
-
 import com.seaglasslookandfeel.SeaGlassLookAndFeel;
 import controller.Controller;
 import dto.DTOBranch;
@@ -16,7 +15,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
-import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.List;
 
@@ -37,12 +35,14 @@ public class LoginFrame extends JFrame {
     private JPasswordField passwordField = new JPasswordField();
     private JTextField txtIp = new JTextField();
     private JFormattedTextField txtPort;
+    private boolean additionalUsers = false;
+    private MainView mainView = null;
 
     public LoginFrame() {
         try {
             setIconImage(ImageIO.read(getClass().getClassLoader().getResource("qmaticBigTransparent.png")));
         } catch (Throwable e1) {
-           log.error(e1);
+            log.error(e1);
         }
         setTitle("Orchestra Next Client");
         setResizable(false);
@@ -70,6 +70,20 @@ public class LoginFrame extends JFrame {
 
     }
 
+    public LoginFrame(boolean additionalUsers, MainView mw) {
+        this.mainView = mw;
+        this.additionalUsers = additionalUsers;
+        setTitle("Orchestra Next Client");
+        setResizable(false);
+        jbInit();
+        setLocationRelativeTo(null);
+
+        txtIp.setText(Props.getUserProperty("ip"));
+        txtPort.setText(Props.getUserProperty("port"));
+        cmbProtocol.setSelectedItem(Props.getUserProperty("proto"));
+
+    }
+
     /**
      * Launch the application.
      */
@@ -87,7 +101,11 @@ public class LoginFrame extends JFrame {
     }
 
     private void jbInit() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        if (additionalUsers) {
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        } else {
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        }
         setBounds(100, 100, 449, 176);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -177,37 +195,7 @@ public class LoginFrame extends JFrame {
         contentPane.add(passwordField, gbc_passwordField);
 
         JButton btnLogin = new JButton(Props.getLangProperty("LoginFrame.LoginBtn"));
-        btnLogin.addActionListener(arg0 -> {
-
-            Props.setUserProperty("ip", txtIp.getText());
-            Props.setUserProperty("port", txtPort.getText());
-            Props.setUserProperty("proto", cmbProtocol.getSelectedItem().toString());
-            Props.setUserProperty("username", txtUsername.getText());
-            try {
-                Props.setUserProperty("password", Utils.encode(new String(passwordField.getPassword())));
-            } catch (Exception e) {
-                log.error("Password failed to decrypt", e);
-            }
-
-            String connectionString = cmbProtocol.getSelectedItem().toString() + txtIp.getText() + ":"
-                    + txtPort.getText();
-
-            LoginUser lu = new LoginUser(txtUsername.getText(), new String(passwordField.getPassword()),
-                    connectionString);
-            try {
-                List<DTOBranch> branches = new Controller().getBranches(lu).getValue();
-                if (branches.isEmpty()) {
-                    failToLoginMessage();
-                    return;
-                }
-            } catch (Throwable e) {
-                log.error("failed to log in", e);
-                failToLoginMessage();
-                return;
-            }
-            new views.MainView(lu);
-            setVisible(false);
-        });
+        btnLogin.addActionListener(arg0 -> loginFunction());
         GridBagConstraints gbc_btnLogin = new GridBagConstraints();
         gbc_btnLogin.gridwidth = 4;
         gbc_btnLogin.insets = new Insets(0, 0, 5, 5);
@@ -226,7 +214,48 @@ public class LoginFrame extends JFrame {
         contentPane.add(lblVersion, gbc_lblNewLabel_2);
     }
 
+    private void loginFunction() {
+
+        if (!additionalUsers) {
+            Props.setUserProperty("ip", txtIp.getText());
+            Props.setUserProperty("port", txtPort.getText());
+            Props.setUserProperty("proto", cmbProtocol.getSelectedItem().toString());
+            Props.setUserProperty("username", txtUsername.getText());
+            try {
+                Props.setUserProperty("password", Utils.encode(new String(passwordField.getPassword())));
+            } catch (Exception e) {
+                log.error("Password failed to decrypt", e);
+            }
+        }
+
+        String connectionString = cmbProtocol.getSelectedItem().toString() + txtIp.getText() + ":" + txtPort.getText();
+
+        LoginUser lu = new LoginUser(txtUsername.getText(), new String(passwordField.getPassword()), connectionString);
+        if(additionalUsers){
+            lu.setAdditionalUser(true);
+        }
+        try {
+            List<DTOBranch> branches = new Controller().getBranches(lu).getValue();
+            if (branches.isEmpty()) {
+                failToLoginMessage();
+                return;
+            }
+        } catch (Throwable e) {
+            log.error("failed to log in", e);
+            failToLoginMessage();
+            return;
+        }
+        if (!additionalUsers) {
+            new views.MainView(lu);
+        }
+        setVisible(false);
+        if (additionalUsers) {
+            mainView.addWorkstation(lu);
+        }
+    }
+
     private void failToLoginMessage() {
-        JOptionPane.showMessageDialog(this, Props.getLangProperty("LoginFrame.failedToLogin"), "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, Props.getLangProperty("LoginFrame.failedToLogin"), "Error",
+                JOptionPane.ERROR_MESSAGE);
     }
 }
