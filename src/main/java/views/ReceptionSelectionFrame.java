@@ -2,6 +2,7 @@ package views;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
 import controller.Controller;
+import controller.EntryPointController;
 import dto.DTOBranch;
 import dto.DTOEntryPoint;
 import dto.DTOService;
@@ -86,7 +87,7 @@ public class ReceptionSelectionFrame extends JFrame {
 				if (getCmbEntryPoints().getItemCount() != 0) {
 					getCmbEntryPoints().removeAllItems();
 				}
-				List<DTOEntryPoint> servicePoints = cont.getEntryPoints(lu, branchLastUsed).getValue();
+				List<DTOEntryPoint> servicePoints = new EntryPointController().getEntryPoints(lu, branchLastUsed).getValue();
 				for (DTOEntryPoint dtoServicePoint : servicePoints) {
 					getCmbEntryPoints().addItem(dtoServicePoint);
 				}
@@ -175,7 +176,7 @@ public class ReceptionSelectionFrame extends JFrame {
 				rsf.getLblBranch().setText("Branch: None");
 				return;
 			}
-			Controller cont = new Controller();
+			EntryPointController cont = new EntryPointController();
 			DTOBranch selBranch = (DTOBranch) getCmbBranch().getSelectedItem();
 			Props.setUserProperty("branchIdLastUsed", String.valueOf(selBranch.getId()));
 			getCmbEntryPoints().removeAllItems();

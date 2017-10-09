@@ -216,22 +216,34 @@ public class LoginFrame extends JFrame {
 
     private void loginFunction() {
 
+
+        String ip = txtIp.getText();
+        String port = txtPort.getText();
+        String usernameText = txtUsername.getText();
+        String protocol = cmbProtocol.getSelectedItem().toString();
+        String rawPassword = new String(passwordField.getPassword());
+
+        if (Utils.isStrNullOrEmpty(ip, port, usernameText, protocol, rawPassword)) {
+            failToLoginMessage();
+            return;
+        }
+
         if (!additionalUsers) {
-            Props.setUserProperty("ip", txtIp.getText());
-            Props.setUserProperty("port", txtPort.getText());
-            Props.setUserProperty("proto", cmbProtocol.getSelectedItem().toString());
-            Props.setUserProperty("username", txtUsername.getText());
+            Props.setUserProperty("ip", ip);
+            Props.setUserProperty("port", port);
+            Props.setUserProperty("proto", protocol);
+            Props.setUserProperty("username", usernameText);
             try {
-                Props.setUserProperty("password", Utils.encode(new String(passwordField.getPassword())));
+                Props.setUserProperty("password", Utils.encode(rawPassword));
             } catch (Exception e) {
                 log.error("Password failed to decrypt", e);
             }
         }
 
-        String connectionString = cmbProtocol.getSelectedItem().toString() + txtIp.getText() + ":" + txtPort.getText();
+        String connectionString = protocol + ip + ":" + port;
 
-        LoginUser lu = new LoginUser(txtUsername.getText(), new String(passwordField.getPassword()), connectionString);
-        if(additionalUsers){
+        LoginUser lu = new LoginUser(usernameText, rawPassword, connectionString);
+        if (additionalUsers) {
             lu.setAdditionalUser(true);
         }
         try {
@@ -250,9 +262,10 @@ public class LoginFrame extends JFrame {
         }
         setVisible(false);
         if (additionalUsers) {
-            mainView.addWorkstation(lu);
+            mainView.addAddionalWorkstationPanel(lu);
         }
     }
+
 
     private void failToLoginMessage() {
         JOptionPane.showMessageDialog(this, Props.getLangProperty("LoginFrame.failedToLogin"), "Error",

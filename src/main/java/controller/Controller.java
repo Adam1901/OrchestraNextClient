@@ -13,15 +13,13 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import utils.Props;
+import utils.Utils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class Controller {
     private final static Logger log = LogManager.getLogger(Controller.class);
-
     private final static boolean sortByName = Boolean
             .valueOf(Props.getGlobalProperty(Props.GlobalProperties.SORT_BY_NAME));
 
@@ -53,7 +51,7 @@ public class Controller {
         HttpResponse<DTOBranch[]> asObject = Unirest.get(lu.getServerIPPort() + "/rest/servicepoint/branches/")
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asObject(DTOBranch[].class);
-        return new Pair<List<DTOBranch>>(asObject, sortAndRemove(asObject.getBody(), sortByName));
+        return new Pair<List<DTOBranch>>(asObject, Utils.sortAndRemove(asObject.getBody(), sortByName));
     }
 
 
@@ -63,7 +61,7 @@ public class Controller {
                 .routeParam("branchId", branchId.getIdAsString())
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asObject(DTOWorkProfile[].class);
-        return new Pair<List<DTOWorkProfile>>(asObject, sortAndRemove(asObject.getBody(), sortByName));
+        return new Pair<List<DTOWorkProfile>>(asObject, Utils.sortAndRemove(asObject.getBody(), sortByName));
     }
 
     public Pair<List<DTOServicePoint>> getServicePoints(LoginUser lu, DTOBranch branchId) throws UnirestException {
@@ -73,33 +71,22 @@ public class Controller {
                 .routeParam("branchID", branchId.getIdAsString())
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asObject(DTOServicePoint[].class);
-        return new Pair<List<DTOServicePoint>>(asObject, sortAndRemove(asObject.getBody(), sortByName));
-    }
-
-    public Pair<List<DTOEntryPoint>> getEntryPoints(LoginUser lu, DTOBranch branchId) throws UnirestException {
-        HttpResponse<DTOEntryPoint[]> asObject = Unirest
-                .get(lu.getServerIPPort()
-                        + "/rest/entrypoint/branches/{branchID}/entryPoints/deviceTypes/SW_RECEPTION")
-                .routeParam("branchID", branchId.getIdAsString())
-                .basicAuth(lu.getUsername(), lu.getPassword())
-                .asObject(DTOEntryPoint[].class);
-        return new Pair<List<DTOEntryPoint>>(asObject, sortAndRemove(asObject.getBody(), sortByName));
+        return new Pair<List<DTOServicePoint>>(asObject, Utils.sortAndRemove(asObject.getBody(), sortByName));
     }
 
     public HttpResponse<JsonNode> startSession(LoginUser lu, DTOBranch branchId, DTOServicePoint spId) throws UnirestException {
-
+        String url = lu.getServerIPPort()
+                + "/rest/servicepoint/branches/{branchId}/servicePoints/{servicePointId}/users/{username}/";
         HttpResponse<JsonNode> asJson = Unirest
-                .put(lu.getServerIPPort()
-                        + "/rest/servicepoint/branches/{branchId}/servicePoints/{servicePointId}/users/{username}/")
+                .put(url)
                 .routeParam("branchId", branchId.getIdAsString())
                 .routeParam("servicePointId", spId.getIdAsString())
                 .routeParam("username", lu.getUsername())
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asJson();
-
-        log.info(spId.getIdAsString() + " " + lu.toString());
+        log.info(spId.getIdAsString() + " " + lu.toString() + " " + url);
         //.info(asJson.getStatus());
-       // log.info(asJson.getStatusText());
+        // log.info(asJson.getStatusText());
         //log.info(asJson.getHeaders());
         //log.info(asJson.getBody());
         return asJson;
@@ -125,18 +112,18 @@ public class Controller {
     }
 
     public Pair<DTOUserStatus> callNext(LoginUser lu, DTOBranch branch, DTOServicePoint spId) throws UnirestException {
-    log.info(lu.toString());
+        String url = lu.getServerIPPort() + "/rest/servicepoint/branches/{branchID}/servicePoints/{servicePointId}/visits/next/";
+        log.info(spId.getIdAsString() + " " + lu.toString() + " " + url);
         HttpResponse<JsonNode> asJson = Unirest
-                .post(lu.getServerIPPort()
-                        + "/rest/servicepoint/branches/{branchID}/servicePoints/{servicePointId}/visits/next/")
+                .post(url)
                 .routeParam("branchID", branch.getIdAsString())
                 .routeParam("servicePointId", spId.getIdAsString())
                 .header("Allow", "POST")
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asJson();
 
-       // log.info(asJson.getStatus());
-       // log.info(asJson.getStatusText());
+        // log.info(asJson.getStatus());
+        // log.info(asJson.getStatusText());
         //log.info(asJson.getHeaders());
         //log.info(asJson.getBody());
 
@@ -196,35 +183,6 @@ public class Controller {
         return new Pair<DTOUserStatus>(asJson, userStat);
     }
 
-    public Pair<DTOVisit> createVisit(LoginUser lu, DTOBranch branch, DTOEntryPoint epId, DTOService service) throws UnirestException {
-        HttpResponse<JsonNode> asJson = Unirest
-                .post(lu.getServerIPPort()
-                        + "/rest/entrypoint/branches/{branchID}/entryPoints/{entryPointId}/visits/")
-                .routeParam("branchID", branch.getIdAsString())
-                .routeParam("entryPointId", epId.getIdAsString())
-                .header("Allow", "POST")
-                .header("accept", "application/json")
-                .header("Content-Type", "application/json")
-                .basicAuth(lu.getUsername(), lu.getPassword())
-                .body("{\"services\" : [" + service.getId() + "]}")
-                .asJson();
-
-        log.info(asJson.getStatus());
-        log.info(asJson.getStatusText());
-        log.info(asJson.getHeaders());
-        log.info(asJson.getBody());
-
-        JSONObject response = new JSONObject(asJson.getBody());
-        JSONArray ar = response.getJSONArray("array");
-        String moddedArray = ar.toString();
-        moddedArray = moddedArray.substring(1);
-        moddedArray = moddedArray.substring(0, moddedArray.length() - 1);
-
-        DTOVisit vsist = new Gson().fromJson(moddedArray.toString(), DTOVisit.class);
-
-        return new Pair<DTOVisit>(asJson, vsist);
-    }
-
     public HttpResponse<DTOUserStatus> setWorkProfile(LoginUser lu, DTOBranch branchId, DTOWorkProfile wpId) throws UnirestException {
         Unirest.put(lu.getServerIPPort()
                 + "/rest/servicepoint/branches/{branchID}/users/{userName}/workProfile/{workProfileId}/")
@@ -262,7 +220,7 @@ public class Controller {
                 .routeParam("workProfileId", wp.getIdAsString())
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asObject(DTOQueue[].class);
-        return new Pair<List<DTOQueue>>(asObject, sortAndRemove(asObject.getBody(), sortByName));
+        return new Pair<List<DTOQueue>>(asObject, Utils.sortAndRemove(asObject.getBody(), sortByName));
     }
 
     public Pair<List<DTOQueue>> getQueueInfo(LoginUser lu, DTOBranch branch) throws UnirestException {
@@ -271,7 +229,7 @@ public class Controller {
                 .routeParam("branchID", branch.getIdAsString())
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asObject(DTOQueue[].class);
-        return new Pair<List<DTOQueue>>(asObject, sortAndRemove(asObject.getBody(), sortByName));
+        return new Pair<List<DTOQueue>>(asObject, Utils.sortAndRemove(asObject.getBody(), sortByName));
     }
 
     public HttpResponse<JsonNode> logout(LoginUser lu) throws UnirestException, IOException {
@@ -280,36 +238,5 @@ public class Controller {
                 .asJson();
         Unirest.shutdown();
         return asJson;
-    }
-
-    public Pair<List<DTOService>> getServices(LoginUser lu, DTOBranch dtoBranch) throws UnirestException {
-        HttpResponse<DTOService[]> asObject = Unirest
-                .get(lu.getServerIPPort() + "/rest/entrypoint/branches/{branchID}/services/")
-                .routeParam("branchID", dtoBranch.getIdAsString())
-                .basicAuth(lu.getUsername(), lu.getPassword())
-                .asObject(DTOService[].class);
-        return new Pair<List<DTOService>>(asObject, sortAndRemove(asObject.getBody(), sortByName));
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <T extends OrchestraDTOSortable> ArrayList<T> sortAndRemove(OrchestraDTOSortable[] obj, boolean sortByName) {
-        List<T> ret = new ArrayList<T>();
-        for (OrchestraDTOSortable orchestraDTOSortable : obj) {
-            ret.add((T) orchestraDTOSortable);
-        }
-
-        if (sortByName) {
-            ret.sort(Comparator.comparing(OrchestraDTOSortable::getName));
-        } else {
-            ret.sort((arg0, arg1) -> {
-                Integer i1 = arg0.getId();
-                Integer i2 = arg1.getId();
-                return i1.compareTo(i2);
-            });
-        }
-
-        // Remove casual called (J8 FTW)
-        ret.removeIf(p -> p.getName().toLowerCase().equals("casual caller"));
-        return (ArrayList<T>) ret;
     }
 }

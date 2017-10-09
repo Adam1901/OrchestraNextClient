@@ -65,10 +65,10 @@ public class MainView extends JFrame {
         gbc_panel.gridy = 1;
         contentPane.add(panel, gbc_panel);
         GridBagLayout gbl_panel = new GridBagLayout();
-        gbl_panel.columnWidths = new int[]{0, 0, 0, 0};
-        gbl_panel.rowHeights = new int[]{0, 0, 0, 0};
-        gbl_panel.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
-        gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+        gbl_panel.columnWidths = new int[]{5, 0, 5, 0};
+        gbl_panel.rowHeights = new int[]{0, 0};
+        gbl_panel.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+        gbl_panel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
         panel.setLayout(gbl_panel);
 
         JButton btnNewButton = new JButton("Login to additional desk");
@@ -77,9 +77,10 @@ public class MainView extends JFrame {
             frm.setVisible(true);
         });
         GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-        gbc_btnNewButton.insets = new Insets(0, 0, 5, 5);
+        gbc_btnNewButton.anchor = GridBagConstraints.WEST;
+        gbc_btnNewButton.insets = new Insets(0, 0, 0, 5);
         gbc_btnNewButton.gridx = 1;
-        gbc_btnNewButton.gridy = 1;
+        gbc_btnNewButton.gridy = 0;
         panel.add(btnNewButton, gbc_btnNewButton);
 
         Integer propsForWS = 2; // Default to workstation
@@ -159,7 +160,7 @@ public class MainView extends JFrame {
         JOptionPane.showMessageDialog(this, message, "Error", type);
     }
 
-    public void addWorkstation(LoginUser addionalUsers) {
+    public void addAddionalWorkstationPanel(LoginUser addionalUsers) {
         WorkstationPanel wp = new WorkstationPanel(addionalUsers, this);
         tabbedPane.addTab(addionalUsers.getUsername() + " - Workstation", null, wp, null);
     }

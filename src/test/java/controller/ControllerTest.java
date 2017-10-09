@@ -25,6 +25,7 @@ import static utils.Props.getUserProperty;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ControllerTest {
     private Controller cont = new Controller();
+    private EntryPointController epCont = new EntryPointController();
     private LoginUser lu = null;
 
     @Before
@@ -95,7 +96,7 @@ public class ControllerTest {
 
     @Test
     public void getEntryPoints() throws Exception {
-        Pair<List<DTOEntryPoint>> entryPoints = cont.getEntryPoints(lu, cont.getBranches(lu).getValue().get(0));
+        Pair<List<DTOEntryPoint>> entryPoints = epCont.getEntryPoints(lu, cont.getBranches(lu).getValue().get(0));
         testResponse(entryPoints);
         assertFalse(entryPoints.getValue().isEmpty());
     }
@@ -110,11 +111,11 @@ public class ControllerTest {
         Pair<List<DTOBranch>> branches = cont.getBranches(lu);
         testResponse(branches);
         DTOBranch branchId = branches.getValue().get(0);
-        Pair<List<DTOService>> services = cont.getServices(lu, branchId);
+        Pair<List<DTOService>> services = epCont.getServices(lu, branchId);
         testResponse(services);
-        Pair<List<DTOEntryPoint>> entryPoints = cont.getEntryPoints(lu, branchId);
+        Pair<List<DTOEntryPoint>> entryPoints = epCont.getEntryPoints(lu, branchId);
         testResponse(entryPoints);
-        Pair<DTOVisit> visitCreate = cont.createVisit(lu, branchId, entryPoints.getV().get(0),
+        Pair<DTOVisit> visitCreate = epCont.createVisit(lu, branchId, entryPoints.getV().get(0),
                 services.getValue().get(0));
         testResponse(visitCreate);
         assertNotNull(visitCreate.getValue());
@@ -151,7 +152,7 @@ public class ControllerTest {
         Pair<List<DTOBranch>> branches = cont.getBranches(lu);
         testResponse(branches);
         DTOBranch branchId = branches.getV().get(0);
-        Pair<List<DTOService>> services = cont.getServices(lu, branchId);
+        Pair<List<DTOService>> services = epCont.getServices(lu, branchId);
         testResponse(services);
 
         Pair<List<DTOServicePoint>> servicePoints = cont.getServicePoints(lu, branchId);
@@ -166,11 +167,11 @@ public class ControllerTest {
         Pair<List<DTOBranch>> branches = cont.getBranches(lu);
         testResponse(branches);
         DTOBranch branchId = branches.getV().get(0);
-        Pair<List<DTOService>> services = cont.getServices(lu, branchId);
+        Pair<List<DTOService>> services = epCont.getServices(lu, branchId);
         testResponse(services);
-        Pair<List<DTOEntryPoint>> entryPoints = cont.getEntryPoints(lu, branchId);
+        Pair<List<DTOEntryPoint>> entryPoints = epCont.getEntryPoints(lu, branchId);
         testResponse(entryPoints);
-        Pair<DTOVisit> visitCreate = cont.createVisit(lu, branchId, entryPoints.getV().get(0), services.getV().get(0));
+        Pair<DTOVisit> visitCreate = epCont.createVisit(lu, branchId, entryPoints.getV().get(0), services.getV().get(0));
         testResponse(visitCreate);
         assertNotNull(visitCreate.getValue().getTicketId());
 
@@ -209,11 +210,11 @@ public class ControllerTest {
         Pair<List<DTOBranch>> branches = cont.getBranches(lu);
         testResponse(branches);
         DTOBranch branchId = branches.getV().get(0);
-        Pair<List<DTOService>> services = cont.getServices(lu, branchId);
+        Pair<List<DTOService>> services = epCont.getServices(lu, branchId);
         testResponse(services);
-        Pair<List<DTOEntryPoint>> entryPoints = cont.getEntryPoints(lu, branchId);
+        Pair<List<DTOEntryPoint>> entryPoints = epCont.getEntryPoints(lu, branchId);
         testResponse(entryPoints);
-        Pair<DTOVisit> visitCreate = cont.createVisit(lu, branchId, entryPoints.getV().get(0), services.getV().get(0));
+        Pair<DTOVisit> visitCreate = epCont.createVisit(lu, branchId, entryPoints.getV().get(0), services.getV().get(0));
         testResponse(visitCreate);
         assertNotNull(visitCreate.getValue().getTicketId());
 
@@ -242,11 +243,11 @@ public class ControllerTest {
         Pair<List<DTOBranch>> branches = cont.getBranches(lu);
         testResponse(branches);
         DTOBranch branchId = branches.getV().get(0);
-        Pair<List<DTOService>> services = cont.getServices(lu, branchId);
+        Pair<List<DTOService>> services = epCont.getServices(lu, branchId);
         testResponse(services);
-        Pair<List<DTOEntryPoint>> entryPoints = cont.getEntryPoints(lu, branchId);
+        Pair<List<DTOEntryPoint>> entryPoints = epCont.getEntryPoints(lu, branchId);
         testResponse(entryPoints);
-        Pair<DTOVisit> visitCreate = cont.createVisit(lu, branchId, entryPoints.getV().get(0), services.getV().get(0));
+        Pair<DTOVisit> visitCreate = epCont.createVisit(lu, branchId, entryPoints.getV().get(0), services.getV().get(0));
         testResponse(visitCreate);
         assertNotNull(visitCreate.getValue().getTicketId());
 
@@ -303,7 +304,7 @@ public class ControllerTest {
         Pair<List<DTOBranch>> branches = cont.getBranches(lu);
         testResponse(branches);
         DTOBranch branchId = branches.getV().get(0);
-        Pair<List<DTOService>> services = cont.getServices(lu, branchId);
+        Pair<List<DTOService>> services = epCont.getServices(lu, branchId);
         testResponse(services);
         assertFalse(services.getV().isEmpty());
     }
@@ -320,7 +321,7 @@ public class ControllerTest {
         }
         {
             OrchestraDTOSortable[] list = obj.toArray(new OrchestraDTOSortable[0]);
-            List<DTOService> ts = cont.sortAndRemove(list, true);
+            List<DTOService> ts = Utils.sortAndRemove(list, true);
             for (int i = 0; i < ts.size(); i++) {
                 assertEquals(letters[i],
                         ts.get(i).getName());
@@ -328,7 +329,7 @@ public class ControllerTest {
         }
         {
             OrchestraDTOSortable[] list = obj.toArray(new OrchestraDTOSortable[0]);
-            List<DTOService> ts = cont.sortAndRemove(list, false);
+            List<DTOService> ts = Utils.sortAndRemove(list, false);
             for (int i = 0; i < ts.size(); i++) {
                 assertEquals(i, ts.get(i).getId());
             }
