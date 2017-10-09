@@ -85,10 +85,10 @@ public class Controller {
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asJson();
         log.info(spId.getIdAsString() + " " + lu.toString() + " " + url);
-        //.info(asJson.getStatus());
-        // log.info(asJson.getStatusText());
-        //log.info(asJson.getHeaders());
-        //log.info(asJson.getBody());
+        log.info(asJson.getStatus());
+        log.info(asJson.getStatusText());
+        log.info(asJson.getHeaders());
+        log.info(asJson.getBody());
         return asJson;
 
     }
@@ -122,10 +122,10 @@ public class Controller {
                 .basicAuth(lu.getUsername(), lu.getPassword())
                 .asJson();
 
-        // log.info(asJson.getStatus());
-        // log.info(asJson.getStatusText());
-        //log.info(asJson.getHeaders());
-        //log.info(asJson.getBody());
+        log.info(asJson.getStatus());
+        log.info(asJson.getStatusText());
+        log.info(asJson.getHeaders());
+        log.info(asJson.getBody());
 
         JSONObject response = new JSONObject(asJson.getBody());
         JSONArray ar = response.getJSONArray("array");

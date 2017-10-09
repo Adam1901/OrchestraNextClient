@@ -55,7 +55,7 @@ public class UpdateThread implements Runnable {
         String serverVersions = split[1];
 
         String localVersion = Props.getGlobalProperty("Version");
-        log.info(serverVersions + "" + localVersion);
+        log.info(serverVersions + " " + localVersion);
         boolean b = !serverVersions.equals(localVersion);
         return b;
     }

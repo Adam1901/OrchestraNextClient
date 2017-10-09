@@ -84,7 +84,7 @@ public class Props {
                     String propValue = entry.getValue();
                     String globalProperty = Props.getGlobalProperty(propKey);
                     if (globalProperty == null) {
-                        log.info("found null value of key" + propKey + ", setting default of + " + propValue);
+                        log.error("found null value of key" + propKey + ", setting default of " + propValue);
                         Props.setGlobalProperty(propKey, propValue);
                     }
                 }
@@ -102,6 +102,14 @@ public class Props {
 
     public static void setUserProperty(String propKey, String propVal) {
         setProperty(propKey, propVal, true);
+    }
+
+    public static String getGlobalProperty(String propKey, Integer defaultValue) {
+        String returnd = getGlobalProperty(propKey);
+        if(Utils.isStrNullOrEmpty(returnd)){
+            return defaultValue.toString();
+        }
+        return returnd;
     }
 
     public static String getGlobalProperty(String propKey) {

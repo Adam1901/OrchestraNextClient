@@ -83,12 +83,7 @@ public class MainView extends JFrame {
         gbc_btnNewButton.gridy = 0;
         panel.add(btnNewButton, gbc_btnNewButton);
 
-        Integer propsForWS = 2; // Default to workstation
-
-        try {
-            propsForWS = Integer.valueOf(Props.getGlobalProperty(GlobalProperties.RECEPTION1WORKSTATION2BOTH0));
-        } catch (NumberFormatException e) {
-        }
+        Integer propsForWS = Integer.valueOf(Props.getGlobalProperty(GlobalProperties.RECEPTION1WORKSTATION2BOTH0, 2));
 
         WorkstationPanel main = null;
         ReceptionPanel rp = null;
