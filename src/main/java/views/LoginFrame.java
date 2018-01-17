@@ -16,7 +16,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
-import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class LoginFrame extends JFrame {
         try {
             setIconImage(ImageIO.read(getClass().getClassLoader().getResource("qmaticBigTransparent.png")));
         } catch (Throwable e1) {
-           log.error(e1);
+            log.error(e1);
         }
         setTitle("Orchestra Next Client");
         setResizable(false);
@@ -192,6 +191,14 @@ public class LoginFrame extends JFrame {
             String connectionString = cmbProtocol.getSelectedItem().toString() + txtIp.getText() + ":"
                     + txtPort.getText();
 
+            try {
+                Class.forName("com.qmatic.qp.api.connectors.dto.Branch");
+            } catch (ClassNotFoundException e) {
+                log.error("Have you included qp-common-api.jar in the lib folder?", e);
+                showErrorMessage("Please confirm the lib folder exists!");
+                return;
+            }
+
             LoginUser lu = new LoginUser(txtUsername.getText(), new String(passwordField.getPassword()),
                     connectionString);
             try {
@@ -227,6 +234,10 @@ public class LoginFrame extends JFrame {
     }
 
     private void failToLoginMessage() {
-        JOptionPane.showMessageDialog(this, Props.getLangProperty("LoginFrame.failedToLogin"), "Error", JOptionPane.ERROR_MESSAGE);
+        showErrorMessage(Props.getLangProperty("LoginFrame.failedToLogin"));
+    }
+
+    private void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 }

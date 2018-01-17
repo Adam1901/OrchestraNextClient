@@ -86,16 +86,16 @@ public class ReceptionSelectionFrame extends JFrame {
 				if (getCmbEntryPoints().getItemCount() != 0) {
 					getCmbEntryPoints().removeAllItems();
 				}
-				List<DTOEntryPoint> servicePoints = cont.getEntryPoints(lu, branchLastUsed).getValue();
-				for (DTOEntryPoint dtoServicePoint : servicePoints) {
+				List<DTOEntryPoint> entryPoints = cont.getEntryPoints(lu, branchLastUsed).getValue();
+				for (DTOEntryPoint dtoServicePoint : entryPoints) {
 					getCmbEntryPoints().addItem(dtoServicePoint);
 				}
 
 				// Now try and set SP
 				if (lastCounter != null) {
-					for (DTOServicePoint dtoServicePoint : servicePoints) {
-						if (lastCounter == dtoServicePoint.getId()) {
-							getCmbEntryPoints().setSelectedItem(dtoServicePoint);
+					for (DTOEntryPoint entryPoint : entryPoints) {
+						if (lastCounter == entryPoint.getId()) {
+							getCmbEntryPoints().setSelectedItem(entryPoint);
 							break;
 						}
 					}

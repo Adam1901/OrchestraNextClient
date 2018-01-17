@@ -18,11 +18,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
-import java.awt.event.ActionEvent;
 import javax.swing.border.TitledBorder;
 
 import org.apache.logging.log4j.LogManager;

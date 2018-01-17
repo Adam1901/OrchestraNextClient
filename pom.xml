@@ -68,6 +68,14 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.qmatic</groupId>
+            <artifactId>common-api</artifactId>
+            <version>3.2.0.404</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/qp-common-api.jar</systemPath>
+        </dependency>
+
 
     </dependencies>
     <build>
@@ -87,6 +95,9 @@
                         <manifest>
                             <mainClass>views.LoginFrame</mainClass>
                         </manifest>
+                        <manifestEntries>
+                            <Class-Path>lib/qp-common-api.jar</Class-Path>
+                        </manifestEntries>
                     </archive>
                 </configuration>
                 <executions>

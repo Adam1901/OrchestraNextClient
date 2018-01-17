@@ -18,7 +18,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.List;
 
 public class WorkstationPanel extends JPanel {
@@ -214,7 +213,7 @@ public class WorkstationPanel extends JPanel {
 				}
 
 				DTOBranch branch = (DTOBranch) getCmbBranch().getSelectedItem();
-				String visitId = visit.getVisit().getIdAsString();
+				String visitId = visit.getVisit().getTicketId();
 				Controller cont = new Controller();
 				visit = null;
 				lblA.setText(Props.getLangProperty("MainFrame.notServingText"));
@@ -430,7 +429,7 @@ public class WorkstationPanel extends JPanel {
 		}
 		String[] arrays = { "OUTCOME_FOR_DELIVERED_SERVICE_NEEDED", "OUTCOME_OR_DELIVERED_SERVICE_NEEDED",
 				"DELIVERED_SERVICE_NEEDED", "OUTCOME_NEEDED" };
-		String visitState = visit.getVisitState();
+		String visitState = visit.getVisitState().toString();
 		for (String state : arrays) {
 			if (visitState.equals(state)) {
 				mv.showMessageDialog(Props.getLangProperty("MainFrame.DsOutEtNeeded"), JOptionPane.ERROR_MESSAGE);

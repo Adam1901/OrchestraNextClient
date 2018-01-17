@@ -10,4 +10,6 @@
 
 Build using "mvn package"
 
+Copy lib folder to target
+
 Run using "java -jar OrchestraNextClient-X.X.X.X-jar-with-dependencies.jar"

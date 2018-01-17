@@ -7,6 +7,6 @@ public interface OrchestraDTOSortable {
 
 	String getName();
 	
-	int getId();
+	Integer getId();
 
 }
