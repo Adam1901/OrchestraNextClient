@@ -39,7 +39,7 @@ public class MainView extends JFrame {
 	public MainView(LoginUser lu) {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 390, 452);
+		setBounds(100, 100, 390, 430);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -69,25 +69,26 @@ public class MainView extends JFrame {
 
 		if (propsForWS == 0) {
 			main = new WorkstationPanel(lu, this);
-			rp = new ReceptionPanel(lu, this);
+			rp = new ReceptionPanel(lu,this);
 		} else if (propsForWS == 1) {
-			rp = new ReceptionPanel(lu, this);
+			rp = new ReceptionPanel(lu,this);
 		} else if (propsForWS == 2) {
 			main = new WorkstationPanel(lu, this);
 		}
 
+
 		if (main != null) {
-			tabbedPane.addTab("Workstation", null, main, null);
+			tabbedPane.addTab("Workstation", null, main.getMainPanel(), null);
 		}
 		if (rp != null) {
-			tabbedPane.addTab("Reception", null, rp, null);
+			tabbedPane.addTab("Reception", null,rp.getMainPanel(),null);
 		}
 
 		setResizable(false);
 		setVisible(true);
 		setLocationRelativeTo(null);
 		String appName = Props.getGlobalProperty(GlobalProperties.APP_NAME);
-		setTitle(Props.getLangProperty("MainFrame.title") + appName);
+		setTitle(Props.getLangProperty("MainFrame.title") +" " + appName);
 		try {
 			setIconImage(ImageIO.read(getClass().getClassLoader().getResource("qmaticBigTransparent.png")));
 		} catch (IOException e) {

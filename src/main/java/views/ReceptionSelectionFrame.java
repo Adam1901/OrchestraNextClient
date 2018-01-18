@@ -5,7 +5,6 @@ import controller.Controller;
 import dto.DTOBranch;
 import dto.DTOEntryPoint;
 import dto.DTOService;
-import dto.DTOServicePoint;
 import dto.LoginUser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

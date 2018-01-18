@@ -1,78 +1,73 @@
 package views;
 
-import javax.swing.JPanel;
-
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 import com.mashape.unirest.http.exceptions.UnirestException;
-
 import controller.Controller;
-import dto.DTOBranch;
-import dto.DTOEntryPoint;
-import dto.DTOService;
-import dto.DTOVisit;
-import dto.LoginUser;
-
-import java.awt.GridBagLayout;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.List;
-import javax.swing.border.TitledBorder;
-
+import dto.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.imgscalr.Scalr;
-
-import javax.swing.border.EtchedBorder;
 import utils.Props;
-import java.awt.Color;
-import javax.swing.JLabel;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.JComboBox;
-import java.awt.Font;
-import javax.swing.SwingConstants;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.List;
 
-public class ReceptionPanel extends JPanel {
+public class ReceptionPanel {
+    private final static Logger log = LogManager.getLogger(ReceptionPanel.class);
+    DTOVisit visit = null;
+    private MainView mv;
+    private LoginUser lu;
+    private JPanel mainPanel;
+    private JButton createVisitButton;
+    private JComboBox cmbServices;
+    private JLabel lblImage;
+    private JPanel settings;
+    private JLabel lblEntryPoint;
+    private JLabel lblBranch;
+    private JPanel pnlExtra;
+    private JLabel lblA;
+    private ReceptionSelectionFrame frm;
 
-	private static final long serialVersionUID = 1L;
-	private LoginUser lu;
-	private ReceptionSelectionFrame frm;
-	private MainView mv;
-	JLabel lblBranch = new JLabel("A");
-	JLabel lblEntryPoint = new JLabel("AAAAAAA");
-	JComboBox<DTOService> cmbServices = new JComboBox<DTOService>();
-	JLabel lblA = new JLabel("Not Serving");
-	DTOVisit visit = null;
-	private final static Logger log = LogManager.getLogger(ReceptionPanel.class);
-	private final JPanel panel_1 = new JPanel();
-	private final JButton btnNewButton = new JButton("Create Casual caller");
-	private final JComboBox cmbCasualCaller = new JComboBox();
-	/**
-	 * Create the panel.
-	 */
-	public ReceptionPanel(LoginUser lu, MainView mv) {
-		this.lu = lu;
-		this.mv = mv;
-		frm = new ReceptionSelectionFrame(this.lu, this, this.mv);
-		jbInit();
+    public ReceptionPanel(LoginUser lu, MainView mv) {
+        this.lu = lu;
+        this.mv = mv;
+        frm = new ReceptionSelectionFrame(this.lu, this, this.mv);
+        settings.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
+                Props.getLangProperty("MainFrame.SettingBorderText"), TitledBorder.LEADING, TitledBorder.TOP, null,
+                new Color(0, 0, 0)));
+        pnlExtra.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
+                "TBC", TitledBorder.LEADING, TitledBorder.TOP, null,
+                new Color(0, 0, 0)));
 
-	}
+        BufferedImage image;
+        try {
+            image = ImageIO.read(getClass().getClassLoader().getResource("settings.png"));
+            image = Scalr.resize(image, Scalr.Method.SPEED, Scalr.Mode.AUTOMATIC, 80, 80);
+            ImageIcon imageIcon = new ImageIcon(image);
+            lblImage.setText("");
+            lblImage.setIcon(imageIcon);
+        } catch (IOException e) {
+            log.error(e);
+        }
 
-	private void jbInit() {
-		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] { 5, 0, 5, 0 };
-		gridBagLayout.rowHeights = new int[] { 5, 0, 0, 0, 0, 0, 0, 0 };
-		gridBagLayout.columnWeights = new double[] { 0.0, 1.0, 0.0, Double.MIN_VALUE };
-		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
-		setLayout(gridBagLayout);
+        lblImage.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+                frm.setVisible(true);
+            }
+        });
 
-		JButton btnNewButton_1 = new JButton("Create");
-		btnNewButton_1.addActionListener(arg0 -> {
+        createVisitButton.addActionListener(e -> {
             Controller cont = new Controller();
             try {
                 DTOBranch branch = (DTOBranch) frm.getCmbBranch().getSelectedItem();
@@ -80,131 +75,127 @@ public class ReceptionPanel extends JPanel {
                 DTOService service = (DTOService) cmbServices.getSelectedItem();
                 visit = cont.createVisit(lu, branch, ep, service).getValue();
                 lblA.setText(visit.getTicketId());
-            } catch (UnirestException e) {
-                e.printStackTrace();
+            } catch (UnirestException ee) {
+                ee.printStackTrace();
             }
         });
-		
+    }
 
-		lblA.setHorizontalAlignment(SwingConstants.CENTER);
-		lblA.setFont(new Font("Tahoma", Font.BOLD, 24));
-		GridBagConstraints gbc_lblNotServiing = new GridBagConstraints();
-		gbc_lblNotServiing.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNotServiing.gridx = 1;
-		gbc_lblNotServiing.gridy = 1;
-		add(lblA, gbc_lblNotServiing);
-		
-		
-		GridBagConstraints gbc_cmbServices = new GridBagConstraints();
-		gbc_cmbServices.insets = new Insets(0, 0, 5, 5);
-		gbc_cmbServices.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cmbServices.gridx = 1;
-		gbc_cmbServices.gridy = 2;
-		add(cmbServices, gbc_cmbServices);
-		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
-		gbc_btnNewButton_1.insets = new Insets(0, 0, 5, 5);
-		gbc_btnNewButton_1.fill = GridBagConstraints.BOTH;
-		gbc_btnNewButton_1.gridx = 1;
-		gbc_btnNewButton_1.gridy = 3;
-		add(btnNewButton_1, gbc_btnNewButton_1);
-		
-		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
-		gbc_panel_1.insets = new Insets(0, 0, 5, 5);
-		gbc_panel_1.fill = GridBagConstraints.BOTH;
-		gbc_panel_1.gridx = 1;
-		gbc_panel_1.gridy = 4;
-		panel_1.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Casual Caller", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		add(panel_1, gbc_panel_1);
-		GridBagLayout gbl_panel_1 = new GridBagLayout();
-		gbl_panel_1.columnWidths = new int[]{0, 0};
-		gbl_panel_1.rowHeights = new int[]{0, 0, 0};
-		gbl_panel_1.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_panel_1.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-		panel_1.setLayout(gbl_panel_1);
-		
-		GridBagConstraints gbc_cmbCasualCaller = new GridBagConstraints();
-		gbc_cmbCasualCaller.insets = new Insets(0, 0, 5, 0);
-		gbc_cmbCasualCaller.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cmbCasualCaller.gridx = 0;
-		gbc_cmbCasualCaller.gridy = 0;
-		panel_1.add(cmbCasualCaller, gbc_cmbCasualCaller);
-		
-		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnNewButton.gridx = 0;
-		gbc_btnNewButton.gridy = 1;
-		panel_1.add(btnNewButton, gbc_btnNewButton);
+    public void fillCombo(List<DTOService> services) {
+        cmbServices.removeAllItems();
+        for (DTOService dtoService : services) {
+            cmbServices.addItem(dtoService);
+        }
 
-		JPanel panel = new JPanel();
-		panel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
-				Props.getLangProperty("MainFrame.SettingBorderText"), TitledBorder.LEADING, TitledBorder.TOP, null,
-				new Color(0, 0, 0)));
-		GridBagConstraints gbc_panel = new GridBagConstraints();
-		gbc_panel.insets = new Insets(0, 0, 5, 5);
-		gbc_panel.fill = GridBagConstraints.BOTH;
-		gbc_panel.gridx = 1;
-		gbc_panel.gridy = 5;
-		add(panel, gbc_panel);
-		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[] { 0, 0, 0 };
-		gbl_panel.rowHeights = new int[] { 0, 0, 0, 0, 0 };
-		gbl_panel.columnWeights = new double[] { 1.0, 1.0, Double.MIN_VALUE };
-		gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
-		panel.setLayout(gbl_panel);
+    }
 
-		JLabel lblSettings = new JLabel("");
-		lblSettings.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				frm.setVisible(true);
-			}
-		});
-		GridBagConstraints gbc_lblSettings = new GridBagConstraints();
-		gbc_lblSettings.gridheight = 4;
-		gbc_lblSettings.insets = new Insets(0, 0, 0, 5);
-		gbc_lblSettings.gridx = 0;
-		gbc_lblSettings.gridy = 0;
-		panel.add(lblSettings, gbc_lblSettings);
+    public JLabel getLblBranch() {
+        return lblBranch;
+    }
 
-		GridBagConstraints gbc_label_1 = new GridBagConstraints();
-		gbc_label_1.insets = new Insets(0, 0, 5, 0);
-		gbc_label_1.gridx = 1;
-		gbc_label_1.gridy = 0;
-		panel.add(lblBranch, gbc_label_1);
+    public JLabel getLblEntryPoint() {
+        return lblEntryPoint;
+    }
 
-		GridBagConstraints gbc_label_2 = new GridBagConstraints();
-		gbc_label_2.insets = new Insets(0, 0, 5, 0);
-		gbc_label_2.gridx = 1;
-		gbc_label_2.gridy = 1;
-		panel.add(lblEntryPoint, gbc_label_2);
+    public JPanel getMainPanel() {
+        return mainPanel;
+    }
 
-		panel_1.setVisible(false);
+    {
+// GUI initializer generated by IntelliJ IDEA GUI Designer
+// >>> IMPORTANT!! <<<
+// DO NOT EDIT OR ADD ANY CODE HERE!
+        $$$setupUI$$$();
+    }
 
-		BufferedImage image;
-		try {
-			image = ImageIO.read(getClass().getClassLoader().getResource("settings.png"));
-			image = Scalr.resize(image, Scalr.Method.SPEED, Scalr.Mode.AUTOMATIC, 80, 80);
-			ImageIcon imageIcon = new ImageIcon(image);
-			lblSettings.setIcon(imageIcon);
-		} catch (IOException e) {
-			log.error(e);
-		}
-	}
-	
-	public void fillCombo(List<DTOService> services){
-		cmbServices.removeAllItems();
-		for (DTOService dtoService : services) {
-			cmbServices.addItem(dtoService);
-		}
-		
-	}
+    /**
+     * Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     *
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new GridLayoutManager(8, 5, new Insets(0, 0, 0, 0), -1, -1));
+        lblA = new JLabel();
+        Font lblAFont = this.$$$getFont$$$("Tahoma", Font.BOLD, 24, lblA.getFont());
+        if (lblAFont != null) lblA.setFont(lblAFont);
+        lblA.setText("Not Serving");
+        mainPanel.add(lblA, new GridConstraints(1, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        cmbServices = new JComboBox();
+        mainPanel.add(cmbServices, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        settings = new JPanel();
+        settings.setLayout(new GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), -1, -1));
+        mainPanel.add(settings, new GridConstraints(4, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, 1, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(79, 62), null, 0, false));
+        settings.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Settings", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, this.$$$getFont$$$(null, -1, -1, settings.getFont()), new Color(-16777216)));
+        final Spacer spacer1 = new Spacer();
+        settings.add(spacer1, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        lblBranch = new JLabel();
+        lblBranch.setHorizontalAlignment(0);
+        lblBranch.setHorizontalTextPosition(0);
+        lblBranch.setText("A");
+        settings.add(lblBranch, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        lblEntryPoint = new JLabel();
+        lblEntryPoint.setHorizontalAlignment(0);
+        lblEntryPoint.setHorizontalTextPosition(0);
+        lblEntryPoint.setText("AA");
+        settings.add(lblEntryPoint, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer2 = new Spacer();
+        settings.add(spacer2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        lblImage = new JLabel();
+        lblImage.setHorizontalAlignment(0);
+        lblImage.setHorizontalTextPosition(0);
+        lblImage.setText("image");
+        settings.add(lblImage, new GridConstraints(0, 0, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer3 = new Spacer();
+        mainPanel.add(spacer3, new GridConstraints(1, 3, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 30), new Dimension(-1, 30), 0, false));
+        createVisitButton = new JButton();
+        createVisitButton.setText("Create Visit");
+        mainPanel.add(createVisitButton, new GridConstraints(3, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer4 = new Spacer();
+        mainPanel.add(spacer4, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, new Dimension(5, -1), new Dimension(5, -1), new Dimension(5, -1), 0, false));
+        final Spacer spacer5 = new Spacer();
+        mainPanel.add(spacer5, new GridConstraints(6, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer6 = new Spacer();
+        mainPanel.add(spacer6, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, new Dimension(-1, 5), new Dimension(-1, 5), new Dimension(-1, 5), 0, false));
+        final Spacer spacer7 = new Spacer();
+        mainPanel.add(spacer7, new GridConstraints(7, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer8 = new Spacer();
+        mainPanel.add(spacer8, new GridConstraints(6, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, new Dimension(5, -1), new Dimension(5, -1), new Dimension(5, -1), 0, false));
+        pnlExtra = new JPanel();
+        pnlExtra.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        mainPanel.add(pnlExtra, new GridConstraints(5, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final Spacer spacer9 = new Spacer();
+        mainPanel.add(spacer9, new GridConstraints(5, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 50), null, 0, false));
+        final JLabel label1 = new JLabel();
+        label1.setText("Service:");
+        mainPanel.add(label1, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    }
 
-	public JLabel getLblBranch() {
-		return lblBranch;
-	}
+    /**
+     * @noinspection ALL
+     */
+    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
+        if (currentFont == null) return null;
+        String resultName;
+        if (fontName == null) {
+            resultName = currentFont.getName();
+        } else {
+            Font testFont = new Font(fontName, Font.PLAIN, 10);
+            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
+                resultName = fontName;
+            } else {
+                resultName = currentFont.getName();
+            }
+        }
+        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+    }
 
-	public JLabel getLblEntryPoint() {
-		return lblEntryPoint;
-	}
-
+    /**
+     * @noinspection ALL
+     */
+    public JComponent $$$getRootComponent$$$() {
+        return mainPanel;
+    }
 }

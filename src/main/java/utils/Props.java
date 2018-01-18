@@ -206,7 +206,7 @@ public class Props {
         static final String APP_NAME_DEFAULT = "Build";
         static final String SHOW_COUNTER_OPTIONS_DEFAULT = "true";
         static final String SHOW_COUTER_POPUP_EACH_START_DEFAULT = "false";
-        public final static String VERSION_DEFAULT = "1.0.0.4";
+        public final static String VERSION_DEFAULT = "1.0.0.6";
         static final String CALL_FORWARDS_DEFAULT = "false";
         static final String CALL_FORWARDS_SERVICE_DEFAULT = "1";
         static final String NOTIFICATIONS_DEFAULT = "true";
