@@ -86,7 +86,7 @@ public class WorkstationSelectionFrame extends JFrame {
 
             DTOBranch branchLastUsed = null;
             for (DTOBranch branch : branches) {
-                if (branch.getId() == branchIdLastUser) {
+                if (branch.getId().equals(branchIdLastUser)) {
                     branchLastUsed = branch;
                 }
             }
@@ -105,7 +105,7 @@ public class WorkstationSelectionFrame extends JFrame {
                 // Now try and set SP
                 if (lastCounter != null) {
                     for (DTOServicePoint dtoServicePoint : servicePoints) {
-                        if (lastCounter == dtoServicePoint.getId()) {
+                        if (lastCounter.equals(dtoServicePoint.getId())) {
                             getCmbServicePoint().setSelectedItem(dtoServicePoint);
                             break;
                         }
@@ -117,7 +117,7 @@ public class WorkstationSelectionFrame extends JFrame {
                     DTOBranch selBranch = (DTOBranch) getCmbBranch().getSelectedItem();
                     List<DTOWorkProfile> workProfile = cont.getWorkProfile(lu, selBranch).getValue();
                     for (DTOWorkProfile dtoWorkProfile : workProfile) {
-                        if (lastWorkProfile == dtoWorkProfile.getId()) {
+                        if (lastWorkProfile.equals(dtoWorkProfile.getId())) {
                             getCmbWorkProfile().setSelectedItem(dtoWorkProfile);
                             break;
                         }
@@ -224,7 +224,7 @@ public class WorkstationSelectionFrame extends JFrame {
                     return;
                 }
                 selectedWp = wp;
-                cont.startSession(lu,branch, (DTOServicePoint) getCmbServicePoint().getSelectedItem());
+                cont.startSession(lu, branch, (DTOServicePoint) getCmbServicePoint().getSelectedItem());
                 cont.setWorkProfile(lu, branch, wp);
                 main.getLblWorkProfile().setText("Workprofile: " + wp.getName());
                 Props.setUserProperty("lastWorkProfile", wp.getIdAsString());
@@ -271,7 +271,7 @@ public class WorkstationSelectionFrame extends JFrame {
                     getCmbWorkProfile().addItem(dtoWp);
                 }
                 DTOServicePoint selectedSp = (DTOServicePoint) getCmbServicePoint().getSelectedItem();
-                cont.startSession(lu,selBranch,selectedSp);
+                cont.startSession(lu, selBranch, selectedSp);
                 main.getLblCounter().setText("Counter: " + selectedSp.getName());
                 Props.setUserProperty("lastCounter", selectedSp.getIdAsString());
             } catch (Exception ee) {

@@ -1,5 +1,6 @@
 package utils;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -37,12 +38,23 @@ public class UpdateThread implements Runnable {
 			} else {
 				//TODO Check the diff version is higher and set it 
 			}
+		}catch (FileNotFoundException e) {
+			log.error("Server does not have download.war installed");
 		} catch (IOException | ArrayIndexOutOfBoundsException e) {
 			log.error("Could not find server version.", e);
 		}
 	}
 
-	protected boolean checkServerVersion(StringBuilder serverVersion) throws MalformedURLException, IOException {
+	protected boolean checkServerVersion(StringBuilder serverVersion) throws MalformedURLException, IOException, FileNotFoundException {
+		String serverVersions = getServerVersion(serverVersion);
+
+		String localVersion = Props.getGlobalProperty("Version");
+		log.info(serverVersions + "" + localVersion);
+		boolean b = !serverVersions.equals(localVersion);
+		return b;
+	}
+
+	private String getServerVersion(StringBuilder serverVersion) throws IOException {
 		URL url = new URL(lu.getServerIPPort() + "/download/version.js");
 		try (Scanner s = new Scanner(url.openStream(),"utf-8")) {
 			while (s.hasNext()) {
@@ -51,11 +63,6 @@ public class UpdateThread implements Runnable {
 		}
 		String[] split = serverVersion.toString().split("\"");
 
-		String serverVersions = split[1];
-
-		String localVersion = Props.getGlobalProperty("Version");
-		log.info(serverVersions + "" + localVersion);
-		boolean b = !serverVersions.equals(localVersion);
-		return b;
+		return split[1];
 	}
 }

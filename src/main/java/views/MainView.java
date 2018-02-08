@@ -109,9 +109,6 @@ public class MainView extends JFrame {
 			}
 		});
 
-		UpdateThread updateThread = new UpdateThread(lu, this);
-		new Thread(updateThread).start();
-
 		Boolean showCounter = Boolean.valueOf(Props.getGlobalProperty(GlobalProperties.SHOW_COUNTER_OPTIONS));
 		Dimension sizeCurrent = getSize();
 		if (!showCounter) {
@@ -121,6 +118,9 @@ public class MainView extends JFrame {
 		}
 		tih.displayTray(Props.getLangProperty("noti.loggedIn.title"), Props.getLangProperty("noti.loggedIn.message"),
 				MessageType.INFO);
+
+		UpdateThread updateThread = new UpdateThread(lu, this);
+		new Thread(updateThread).start();
 	}
 
 	public TrayIconHandeler getNotification() {

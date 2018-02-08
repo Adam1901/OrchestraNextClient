@@ -74,7 +74,7 @@ public class ReceptionSelectionFrame extends JFrame {
 
 			DTOBranch branchLastUsed = null;
 			for (DTOBranch branch : branches) {
-				if (branch.getId() == branchIdLastUser) {
+				if (branch.getId().equals(branchIdLastUser)) {
 					branchLastUsed = branch;
 				}
 			}
@@ -93,7 +93,7 @@ public class ReceptionSelectionFrame extends JFrame {
 				// Now try and set SP
 				if (lastCounter != null) {
 					for (DTOEntryPoint entryPoint : entryPoints) {
-						if (lastCounter == entryPoint.getId()) {
+						if (lastCounter .equals( entryPoint.getId())) {
 							getCmbEntryPoints().setSelectedItem(entryPoint);
 							break;
 						}
