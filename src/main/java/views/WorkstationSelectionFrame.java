@@ -1,6 +1,6 @@
 package views;
 
-import com.mashape.unirest.http.exceptions.UnirestException;
+import io.github.openunirest.http.exceptions.UnirestException;
 import controller.Controller;
 import dto.DTOBranch;
 import dto.DTOServicePoint;

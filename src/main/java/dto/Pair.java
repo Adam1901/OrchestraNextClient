@@ -1,6 +1,6 @@
 package dto;
 
-import com.mashape.unirest.http.HttpResponse;
+import io.github.openunirest.http.HttpResponse;
 
 /**
  * Created by Adam on 20/06/2017.

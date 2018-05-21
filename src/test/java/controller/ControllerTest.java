@@ -1,8 +1,8 @@
 package controller;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.exceptions.UnirestException;
+import io.github.openunirest.http.HttpResponse;
+import io.github.openunirest.http.JsonNode;
+import io.github.openunirest.http.exceptions.UnirestException;
 import com.qmatic.qp.api.connectors.dto.Visit;
 import dto.*;
 import org.junit.After;

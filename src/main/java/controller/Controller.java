@@ -2,11 +2,11 @@ package controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.Gson;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.ObjectMapper;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
+import io.github.openunirest.http.HttpResponse;
+import io.github.openunirest.http.JsonNode;
+import io.github.openunirest.http.ObjectMapper;
+import io.github.openunirest.http.Unirest;
+import io.github.openunirest.http.exceptions.UnirestException;
 import dto.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

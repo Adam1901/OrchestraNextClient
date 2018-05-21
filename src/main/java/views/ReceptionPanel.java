@@ -3,7 +3,7 @@ package views;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.mashape.unirest.http.exceptions.UnirestException;
+import io.github.openunirest.http.exceptions.UnirestException;
 import controller.Controller;
 import dto.*;
 import org.apache.logging.log4j.LogManager;
