@@ -12,4 +12,6 @@ Build using "mvn package"
 
 Copy lib folder to target
 
+Copy messages.properties, log4j2.xml, run.bat to target
+
 Run using "java -jar OrchestraNextClient-X.X.X.X-jar-with-dependencies.jar"
